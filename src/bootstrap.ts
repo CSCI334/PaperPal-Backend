@@ -1,4 +1,4 @@
-import { ApplicationOptions, MorganLoggingTypes } from "./config/ApplicationConfig.js";
+import { ApplicationOptions } from "./config/ApplicationConfig.js";
 import App from "./app.js";
 
 export default function bootstrap() {
@@ -7,7 +7,7 @@ export default function bootstrap() {
             defaultScope: 'Singleton',
         },
         morganConfig: {
-            format: MorganLoggingTypes.COMBINED
+            format: 'tiny',
         }
     };
     new App(applicationOptions);
