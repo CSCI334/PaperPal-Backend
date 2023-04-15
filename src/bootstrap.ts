@@ -1,5 +1,5 @@
 import { ApplicationOptions, MorganLoggingTypes } from "./config/ApplicationConfig.js";
-import App from "./index.js";
+import App from "./app.js";
 
 export default function bootstrap() {
     const applicationOptions: ApplicationOptions = {
@@ -12,3 +12,4 @@ export default function bootstrap() {
     };
     new App(applicationOptions);
 }
+bootstrap();

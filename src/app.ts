@@ -10,17 +10,11 @@ import path from "path";
 import * as dotenv from "dotenv";
 
 import DbService from "./database/db.js";
-import TranslateService from "./todo/service/TranslateService.js";
 
 import AuthRepository from "./todo/repository/AuthRepository.js";
-import TodoRepository from "./todo/repository/TodoRepository.js";
-
 import AuthService from "./todo/service/AuthService.js";
-import TodoService from "./todo/service/TodoService.js";
-
-import "./todo/controller/TranslateController.js";
-import "./todo/controller/TodoController.js";
 import "./todo/controller/AuthController.js";
+
 import morgan from 'morgan';
 import { ApplicationOptions } from "./config/ApplicationConfig.js";
 export default class App {
@@ -35,12 +29,9 @@ export default class App {
     bindService(): void {
         // External services
         this.container.bind(DbService).toSelf();
-        this.container.bind(TranslateService).toSelf();
 
         // Internal services
         this.container.bind(AuthRepository).toSelf();
-        this.container.bind(TodoRepository).toSelf();
-        this.container.bind(TodoService).toSelf();
         this.container.bind(AuthService).toSelf();
     }
 
