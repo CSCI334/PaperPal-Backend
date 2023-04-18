@@ -1,12 +1,12 @@
-import AuthRepository from "../repository/AuthRepository.js";
+import { createHash, randomBytes } from "crypto";
+import { inject, injectable } from "inversify";
 import jwt from "jsonwebtoken";
 import { SECRET } from "../../config/Secret.js";
-import { createHash, randomBytes } from "crypto";
-import SignUpDTO from "../dto/SignUpDTO.js";
-import { inject, injectable } from "inversify";
 import Account from "../../database/models/Account.js";
 import InvalidInputException from "../../exceptions/InvalidInputException.js";
 import LoginDTO from "../dto/LoginDTO.js";
+import SignUpDTO from "../dto/SignUpDTO.js";
+import AuthRepository from "../repository/AuthRepository.js";
 
 @injectable()
 export default class AuthService {

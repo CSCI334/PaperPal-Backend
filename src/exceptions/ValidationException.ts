@@ -2,9 +2,9 @@ import { ValidationError } from "express-validator";
 
 export default class ValidationException extends Error {
     public readonly statusCode: number = 422;
-    public readonly errors: ValidationError[];
-    constructor(errors: ValidationError[]) {
+    public readonly error: ValidationError;
+    constructor(error: ValidationError) {
         super();
-        this.errors = errors;
+        this.error = error;
     }
 }

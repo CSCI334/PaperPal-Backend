@@ -11,12 +11,13 @@ import * as dotenv from "dotenv";
 
 import DbService from "./database/db.js";
 
-import AuthRepository from "./todo/repository/AuthRepository.js";
-import AuthService from "./todo/service/AuthService.js";
-import "./todo/controller/AuthController.js";
+import AuthRepository from "./paperpal/repository/AuthRepository.js";
+import AuthService from "./paperpal/service/AuthService.js";
+import "./paperpal/controller/AuthController.js";
 
 import morgan from 'morgan';
 import { ApplicationOptions } from "./config/ApplicationConfig.js";
+
 export default class App {
     private readonly container: Container;
 

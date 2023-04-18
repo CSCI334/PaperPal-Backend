@@ -19,7 +19,7 @@ export default class ValidateRequest {
         }
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const err = new ValidationException(errors.array());
+            const err = new ValidationException(errors.array()[0]);
             next(err);
         }
         next();

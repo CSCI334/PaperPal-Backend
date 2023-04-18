@@ -10,4 +10,4 @@ WORKDIR /backend
 COPY --from=build /backend/package.* ./
 COPY --from=build /backend/dist ./dist
 COPY --from=build /backend/node_modules ./node_modules
-CMD ["node", "./dist/index.js"]
+CMD ["node", "./dist/bootstrap.js"]

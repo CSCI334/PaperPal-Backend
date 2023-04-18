@@ -12,14 +12,9 @@ export default class SignUpDTO {
     }
     static validator = [
         check("email", "Email field does not exist").exists(),
-        check("email", "Malformed email")
-            .isEmail()
-            .normalizeEmail(),
+        check("email", "Malformed email").isEmail().normalizeEmail(),
         check("username", "Username field does not exist").exists(),
         check("password", "Password field does not exist").exists(),
-        check(
-            "password",
-            "Password field must contain at least 6 characters"
-        ).isLength({ min: 6 }),
+        check("password","Password field must contain at least 6 characters").isLength({ min: 6 }),
     ];
 }

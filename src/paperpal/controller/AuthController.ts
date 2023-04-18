@@ -34,7 +34,8 @@ export default class AuthController {
         return res.status(STATUS_CODE.OK).json({
             token: res.locals.token,
             username: response.username,
-            email: response.email
+            email: response.email,
+            "userrelevantdata":"hello"
         });
     }
 }
