@@ -6,7 +6,7 @@ import { errorHandler } from "./middleware/ErrorHandler.js";
 import { fileURLToPath } from "url";
 
 import cors from "cors";
-import path, { dirname } from "path";
+import path from "path";
 import * as dotenv from "dotenv";
 
 import DbService from "./database/db.js";
@@ -57,7 +57,9 @@ export default class App {
         // Tests db connection
         const dbService: DbService = this.container.get(DbService);
         await dbService.connect();
-
+        
+        console.log(`Connection succesful!`);
+        
         const app = server.build();
         app.listen(process.env.BACKEND_PORT || 8000, () => {
             console.log(`Server (${process.env.DOMAIN}) is running at PORT : ${process.env.BACKEND_PORT || 8000}`);
