@@ -5,17 +5,15 @@ import { PgErrorMap } from "../../database/types.js";
 
 @injectable()
 export default class AuthRepository {
-    private readonly db: DbService;
 
-    constructor(@inject(DbService) dbService: DbService) {
-        this.db = dbService;
-    }
-
+    constructor(@inject(DbService) private readonly db: DbService) {}
+    
     async insertUser(
         email: string,
         username: string,
         hashedPassword: string,
-        salt: string
+        salt: string,
+        userType: string,
     ): Promise<number> {
         const errorMap: PgErrorMap = new Map([
             ["23505", "Email already used by another account"],
@@ -25,7 +23,7 @@ export default class AuthRepository {
             INSERT INTO account(email, username, hashedpassword, salt, accountType) 
             VALUES($1, $2, $3, $4 ,$5)
             RETURNING ID`,
-            [email, username, hashedPassword, salt, "CHAIR"],
+            [email, username, hashedPassword, salt, userType],
             errorMap
         );
         return rows[0].id;

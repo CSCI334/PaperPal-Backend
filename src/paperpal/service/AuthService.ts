@@ -21,7 +21,8 @@ export default class AuthService {
             signupDto.email,
             signupDto.username,
             hashedPassword,
-            salt
+            salt,
+            signupDto.userType
         );
 
         const jwtToken = jwt.sign({ uid: id }, SECRET.PRIVATE_KEY, {

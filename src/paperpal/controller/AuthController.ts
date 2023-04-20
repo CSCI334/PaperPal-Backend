@@ -12,10 +12,7 @@ import AuthService from "../service/AuthService.js";
 
 @controller("/auth")
 export default class AuthController {
-    private readonly authService: AuthService;
-    constructor(@inject(AuthService) authService: AuthService) {
-        this.authService = authService;
-    }
+    constructor(@inject(AuthService) private readonly authService: AuthService) {}
 
     @httpPost("/register", ValidateRequest.using(SignUpDTO.validator))
     async signUp(req: Request, res: Response) {
