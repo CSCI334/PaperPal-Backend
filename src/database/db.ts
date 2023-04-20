@@ -3,6 +3,7 @@ import { injectable } from "inversify";
 import pg from "pg";
 import DatabaseException from "../exceptions/DatabaseException.js";
 import { PgErrorMap } from "./types.js";
+import { error } from "console";
 @injectable()
 export default class DbService {
     readonly pool: pg.Pool;
@@ -24,12 +25,13 @@ export default class DbService {
         try {
             return await this.pool.query(query, values);
         } catch (err) {
+            // Expected Postgres errors
             if (errorMap && err instanceof pg.DatabaseError && errorMap.has(err.code)) {
                 const pgError: string = errorMap.get(err.code);
                 throw new DatabaseException(pgError);
-            } else if (err instanceof pg.DatabaseError) {
-                throw new Error(err.detail);
-            }
+            } 
+            // Unexpected errors
+            throw err;
         }
     }
 

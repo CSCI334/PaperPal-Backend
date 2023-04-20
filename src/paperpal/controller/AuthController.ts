@@ -9,6 +9,7 @@ import LoginDTO from "../dto/LoginDTO.js";
 import SignUpDTO from "../dto/SignUpDTO.js";
 import AuthService from "../service/AuthService.js";
 
+
 @controller("/auth")
 export default class AuthController {
     private readonly authService: AuthService;
@@ -35,7 +36,6 @@ export default class AuthController {
             token: res.locals.token,
             username: response.username,
             email: response.email,
-            "userrelevantdata":"hello"
         });
     }
 }

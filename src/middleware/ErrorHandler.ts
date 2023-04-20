@@ -4,14 +4,14 @@ import InvalidInputException from "../exceptions/InvalidInputException.js";
 import NotFoundException from "../exceptions/NotFoundException.js";
 import ValidationException from "../exceptions/ValidationException.js";
 export const errorHandler = (
-    err: InvalidInputException| SyntaxError | DatabaseException | NotFoundException | Error,
+    err: unknown,
     req: Request,
     res: Response,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     next: NextFunction
 ) => {
     if (err instanceof ValidationException)
-        return res.status(err.statusCode).json(err.error);
+        return res.status(err.statusCode).json(err.error);  
     else if(err instanceof SyntaxError) 
         return res.status(400).json({msg: err.message});
     else if (err instanceof NotFoundException

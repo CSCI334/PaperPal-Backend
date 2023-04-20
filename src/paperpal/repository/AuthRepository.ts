@@ -22,10 +22,10 @@ export default class AuthRepository {
         ]);
         const { rows } = await this.db.query(
             `
-            INSERT INTO account(email, username, hashedpassword, isadmin, salt) 
+            INSERT INTO account(email, username, hashedpassword, salt, accountType) 
             VALUES($1, $2, $3, $4 ,$5)
             RETURNING ID`,
-            [email, username, hashedPassword, false, salt],
+            [email, username, hashedPassword, salt, "CHAIR"],
             errorMap
         );
         return rows[0].id;
