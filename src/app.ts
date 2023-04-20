@@ -6,7 +6,7 @@ import { errorHandler } from "./middleware/ErrorHandler.js";
 import { fileURLToPath } from "url";
 
 import cors from "cors";
-import path from "path";
+import path, { dirname } from "path";
 import * as dotenv from "dotenv";
 
 import DbService from "./database/db.js";
@@ -39,7 +39,6 @@ export default class App {
     async setup(options: ApplicationOptions) {
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = path.dirname(__filename);
-
         dotenv.config({ path: __dirname + "/.env" });
         const server: InversifyExpressServer = new InversifyExpressServer(
             this.container
@@ -57,8 +56,7 @@ export default class App {
 
         // Tests db connection
         const dbService: DbService = this.container.get(DbService);
-        const conn = await dbService.pool.connect();
-        conn.release();
+        await dbService.connect();
 
         const app = server.build();
         app.listen(process.env.BACKEND_PORT || 8000, () => {

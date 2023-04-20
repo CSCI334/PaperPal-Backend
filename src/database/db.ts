@@ -3,7 +3,8 @@ import { injectable } from "inversify";
 import pg from "pg";
 import DatabaseException from "../exceptions/DatabaseException.js";
 import { PgErrorMap } from "./types.js";
-import { error } from "console";
+import { DB_RETRY_AMOUNT, DB_RETRY_INTERVAL_IN_SECOND } from "../constants/DbConstants.js";
+import { sleep } from "../common/utils.js";
 @injectable()
 export default class DbService {
     readonly pool: pg.Pool;
@@ -35,7 +36,20 @@ export default class DbService {
         }
     }
 
-    async testConnection(): Promise<void> {
-        this.pool.connect();
+    async connect() {
+        let retries = 0;
+        while(retries <= DB_RETRY_AMOUNT) {
+            try{
+                console.log(`Attempting DB connection`);
+                await this.pool.connect();
+                return;
+            } catch(err : unknown) {
+                retries += 1;
+                console.log(`Connection with ${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT} failed, retry ${retries}`);
+                await sleep(DB_RETRY_INTERVAL_IN_SECOND * 1000);
+            }
+        }
+        console.log("Could not connect to database, exiting program");
+        process.exit(1);
     }
 }
