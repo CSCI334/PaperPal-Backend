@@ -5,7 +5,7 @@ import DbService from "../../database/db.js";
 export default class ReviewRepository{
     constructor(@inject(DbService) private readonly db: DbService) {}
     
-    async insertReview() {
+    async insertReview(reviewScore : number, paperId : number, reviewerid : number) {
         return;
     }
 

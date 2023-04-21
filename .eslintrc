@@ -11,6 +11,7 @@
     ],
     "rules": {
         "semi": [2, "always"],
-        "linebreak-style": 0
+        "linebreak-style": 0,
+        "quotes": [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }]
     }
   }

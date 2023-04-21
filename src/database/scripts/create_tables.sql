@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS account(
 CREATE TABLE IF NOT EXISTS reviewer(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     accountId INTEGER,
-		bidPoints INTEGER,
+    bidPoints INTEGER,
     CONSTRAINT accountId FOREIGN KEY(accountId) REFERENCES account(id)
 );
 
@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS paper(
 
 CREATE TABLE IF NOT EXISTS bids(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    bidAmount INTEGER,
     reviewerId INTEGER,
     paperId INTEGER,
     CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES reviewer(id),
@@ -62,6 +63,7 @@ CREATE TABLE IF NOT EXISTS review(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     reviewerId INTEGER,
     paperId INTEGER,
+    score INTEGER,
     CONSTRAINT paperId FOREIGN KEY(paperId) REFERENCES paper(id),
     CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES paper(ownerReviewerId)
 );

@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import DbService from "../../database/db.js";
-import Account from "../../database/models/Account.js";
+import Account, { AccountStatus } from "../../database/models/Account.js";
 import { PgErrorMap } from "../../database/types.js";
 
 @injectable()
@@ -8,22 +8,16 @@ export default class AuthRepository {
 
     constructor(@inject(DbService) private readonly db: DbService) {}
     
-    async insertUser(
-        email: string,
-        username: string,
-        hashedPassword: string,
-        salt: string,
-        userType: string,
-    ): Promise<number> {
+    async insertUser(account: Partial<Account>): Promise<number> {
         const errorMap: PgErrorMap = new Map([
             ["23505", "Email already used by another account"],
         ]);
         const { rows } = await this.db.query(
             `
-            INSERT INTO account(email, username, hashedpassword, salt, accountType) 
-            VALUES($1, $2, $3, $4 ,$5)
+            INSERT INTO account(email, username, hashedpassword, salt, accountType, accountStatus) 
+            VALUES($1, $2, $3, $4, $5, $6)
             RETURNING ID`,
-            [email, username, hashedPassword, salt, userType],
+            [account.email, account.username, account.hashedPassword, account.salt, account.accountType, account.accountStatus],
             errorMap
         );
         return rows[0].id;
@@ -47,10 +41,10 @@ export default class AuthRepository {
         return rows[0] as Account;
     }
 
-    async grantAdminPrivilege(accountid: number): Promise<number> {
+    async updateAccountStatus(accountStatus: AccountStatus, accountid: number): Promise<number> {
         const { rows } = await this.db.query(
-            `UPDATE account SET isadmin = true WHERE id = $1 RETURNING id`,
-            [accountid]
+            `UPDATE account SET accountstatus = $1 WHERE id = $2 RETURNING id`,
+            [accountStatus, accountid]
         );
         return rows[0].id;
     }

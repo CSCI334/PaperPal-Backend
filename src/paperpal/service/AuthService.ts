@@ -17,13 +17,14 @@ export default class AuthService {
             signupDto.password
         );
 
-        const id: number = await this.authRepository.insertUser(
-            signupDto.email,
-            signupDto.username,
-            hashedPassword,
-            salt,
-            signupDto.userType
-        );
+        const id: number = await this.authRepository.insertUser({
+            email : signupDto.email,
+            username: signupDto.username,
+            hashedPassword: hashedPassword,
+            salt: salt,
+            accountType : signupDto.accountType,
+            accountStatus : "PENDING"
+        });
 
         const jwtToken = jwt.sign({ uid: id }, SECRET.PRIVATE_KEY, {
             expiresIn: "1d",
@@ -39,7 +40,7 @@ export default class AuthService {
         // Authenticate them here by checking if their input = hash
         const user: Account = await this.authRepository.getUserByEmail(loginDTO.email);
         if (!user) throw new InvalidInputException("Invalid login credentials");
-        if (this.createPasswordHash(loginDTO.password, user.salt) !== user.hashedpassword)
+        if (this.createPasswordHash(loginDTO.password, user.salt) !== user.hashedPassword)
             throw new InvalidInputException("Invalid login credentials");
 
         const jwtToken = jwt.sign({ uid: user.id }, SECRET.PRIVATE_KEY, {
