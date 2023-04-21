@@ -1,10 +1,10 @@
 import { ValidationError } from "express-validator";
+import { STATUS_CODE } from "../constants/HttpConstants.js";
+import BaseHttpError from "../interfaces/BaseHttpError.js";
 
-export default class ValidationException extends Error {
-    public readonly statusCode: number = 422;
-    public readonly error: ValidationError;
+export default class ValidationException extends BaseHttpError {
     constructor(error: ValidationError) {
-        super();
-        this.error = error;
+        super(error.msg);
+        this.statusCode = STATUS_CODE.INVALID_INPUT;
     }
 }

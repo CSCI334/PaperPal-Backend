@@ -1,7 +1,5 @@
 import { inject, injectable } from "inversify";
 import DbService from "../../database/db.js";
-import Account from "../../database/models/Account.js";
-import { PgErrorMap } from "../../database/types.js";
 
 @injectable()
 export default class ReviewRepository{

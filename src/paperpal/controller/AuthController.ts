@@ -3,11 +3,11 @@ import { inject } from "inversify";
 import { controller, httpGet, httpPost } from "inversify-express-utils";
 
 import { STATUS_CODE } from "../../constants/HttpConstants.js";
-import { authenticated } from "../../middleware/Authenticated.js";
 import ValidateRequest from "../../middleware/ValidateRequest.js";
 import LoginDTO from "../dto/LoginDTO.js";
 import SignUpDTO from "../dto/SignUpDTO.js";
 import AuthService from "../service/AuthService.js";
+import { Authenticate } from "../../middleware/Authenticate.js";
 
 
 @controller("/auth")
@@ -26,7 +26,7 @@ export default class AuthController {
         return res.status(STATUS_CODE.OK).json(response);
     }
 
-    @httpGet("/user", authenticated)
+    @httpGet("/user", Authenticate.use())
     async user(req: Request, res: Response) {
         const response = await this.authService.getUserData(res.locals.decodedToken.uid);
         return res.status(STATUS_CODE.OK).json({
