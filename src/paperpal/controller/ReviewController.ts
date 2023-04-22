@@ -9,13 +9,13 @@ import ReviewService from "../service/review/ReviewService.js";
 export default class ReviewController{
     constructor(@inject(ReviewService) private readonly reviewService: ReviewService) {}
 
-    @httpGet("/:paperId/comments", Authenticate.use()) 
+    @httpGet("/:paperId/comments", Authenticate.any()) 
     async getPaperComments(@requestParam("paperId") paperId: number, req: Request, res: Response) {
         const response = this.reviewService.getComments(res.locals.accountType, paperId);
         return res.status(STATUS_CODE.OK).json(response);
     }
 
-    @httpGet("/:paperId", Authenticate.use()) 
+    @httpGet("/:paperId", Authenticate.any()) 
     async getPaperReview(@requestParam("paperId") paperId: number, req: Request, res: Response) {
         const response = this.reviewService.getReviews(res.locals.accountType, paperId);
         return res.status(STATUS_CODE.OK).json(response);

@@ -26,7 +26,7 @@ export default class AuthController {
         return res.status(STATUS_CODE.OK).json(response);
     }
 
-    @httpGet("/user", Authenticate.use())
+    @httpGet("/user", Authenticate.any())
     async user(req: Request, res: Response) {
         const response = await this.authService.getUserData(res.locals.decodedToken.uid);
         return res.status(STATUS_CODE.OK).json({

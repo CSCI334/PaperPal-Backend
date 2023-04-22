@@ -28,7 +28,7 @@ export class Authenticate extends BaseMiddleware{
             next();
         });
     };
-    static use = () => {return new Authenticate().handler;};
+    static any = () => {return new Authenticate().handler;};
     static for = (accountType: AccountType) => {
         return new Authenticate(accountType).handler;
     };
