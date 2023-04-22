@@ -4,10 +4,10 @@ import App from "./app.js";
 export default function bootstrap() {
     const applicationOptions: ApplicationOptions = {
         containerOptions: {
-            defaultScope: 'Singleton',
+            defaultScope: "Singleton",
         },
         morganConfig: {
-            format: 'tiny',
+            format: "tiny",
         }
     };
     new App(applicationOptions);

@@ -1,9 +1,7 @@
 import express from "express";
 import "reflect-metadata";
 import { Container } from "inversify";
-import { InversifyExpressServer } from "inversify-express-utils";
-import { errorHandler } from "./middleware/ErrorHandler.js";
-import { fileURLToPath } from "url";
+import { InversifyExpressServer } from "inversify-express-utils";import { fileURLToPath } from "url";
 
 import cors from "cors";
 import path from "path";
@@ -15,8 +13,9 @@ import AuthRepository from "./paperpal/repository/AuthRepository.js";
 import AuthService from "./paperpal/service/AuthService.js";
 import "./paperpal/controller/AuthController.js";
 
-import morgan from 'morgan';
+import morgan from "morgan";
 import { ApplicationOptions } from "./config/ApplicationConfig.js";
+import ErrorHandler from "./middleware/ErrorHandler.js";
 
 export default class App {
     private readonly container: Container;
@@ -51,7 +50,7 @@ export default class App {
 
         });
         server.setErrorConfig((app) => {
-            app.use(errorHandler);
+            app.use(new ErrorHandler().handler);
         });
 
         // Tests db connection

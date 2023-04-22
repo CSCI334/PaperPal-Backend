@@ -1,5 +1,5 @@
 import { LooseObject } from "../common/LooseObject.js";
-import { interfaces } from 'inversify';
+import { interfaces } from "inversify";
 
 export type MorganConfig = {
     format: string,

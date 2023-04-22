@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ValidationChain, validationResult } from "express-validator";
 import ValidationException from "../exceptions/ValidationException.js";
-import BaseMiddleware from "../interfaces/BaseMiddleware.js";
+import BaseMiddleware from "../helper/BaseMiddleware.js";
 
 export default class ValidateRequest extends BaseMiddleware {
     public readonly dtoValidator: ValidationChain[];

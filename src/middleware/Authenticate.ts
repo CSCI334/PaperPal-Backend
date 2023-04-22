@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { SECRET } from "../config/Secret.js";
-import BaseMiddleware from "../interfaces/BaseMiddleware.js";
+import BaseMiddleware from "../helper/BaseMiddleware.js";
 import NotAuthenticatedException from "../exceptions/NotAuthenticatedException.js";
 import { AccountType } from "../database/models/Account.js";
 import { JwtPayload } from "jsonwebtoken";
@@ -21,14 +21,15 @@ export class Authenticate extends BaseMiddleware{
             if(this.accountType && decodedToken.accountType === this.accountType)  
                 next(new NotAuthenticatedException(`User not authenticated for this operation. User is not of type ${this.accountType}`));
             
-            res.locals.token = token;
             res.locals.decodedToken = decodedToken;
             res.locals.accountType = decodedToken.accountType;
             res.locals.uid = decodedToken.uid;
             next();
         });
     };
-    static any = () => {return new Authenticate().handler;};
+    static any = () => {
+        return new Authenticate().handler;
+    };
     static for = (accountType: AccountType) => {
         return new Authenticate(accountType).handler;
     };
