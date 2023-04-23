@@ -1,8 +1,8 @@
 import { injectable } from "inversify";
-import ReviewInterface from "../ReviewInterface.js";
+import ReviewStrategy from "../interfaces/ReviewStrategy.js";
 
 @injectable()
-export default class ReviewerReviewStrategy implements ReviewInterface {
+export default class ReviewerReviewStrategy implements ReviewStrategy {
     async getComments(id: number) {
         return "";
     }

@@ -7,7 +7,8 @@ export default function bootstrap() {
             defaultScope: "Singleton",
         },
         morganConfig: {
-            format: "tiny",
+            format: "common",
+            logFileLocation: "./access.log"
         }
     };
     new App(applicationOptions);

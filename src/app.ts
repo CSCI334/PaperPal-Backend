@@ -12,11 +12,12 @@ import DbService from "./database/db.js";
 import AuthRepository from "./paperpal/repository/AuthRepository.js";
 import AuthService from "./paperpal/service/AuthService.js";
 import "./paperpal/controller/AuthController.js";
+import "./paperpal/controller/AdminController.js";
 
 import morgan from "morgan";
 import { ApplicationOptions } from "./config/ApplicationConfig.js";
 import ErrorHandler from "./middleware/ErrorHandler.js";
-
+import fs from "fs";
 export default class App {
     private readonly container: Container;
 
@@ -47,7 +48,9 @@ export default class App {
             app.use(cors());
             app.use(express.json());
             app.use(morgan(options.morganConfig.format));
-
+            app.use(morgan(options.morganConfig.format, {
+                stream: fs.createWriteStream("./access.log", {flags: "a"})
+            }));
         });
         server.setErrorConfig((app) => {
             app.use(new ErrorHandler().handler);

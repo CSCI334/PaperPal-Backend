@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import AuthorReviewStrategy from "./impl/AuthorReviewStrategy.js";
 import ReviewerReviewStrategy from "./impl/ReviewerReviewStrategy.js";
-import ReviewInterface from "./ReviewInterface.js";
+import ReviewStrategy from "./interfaces/ReviewStrategy.js";
 import { AccountType } from "../../../database/models/Account.js";
 import ChairReviewStrategy from "./impl/ChairReviewStrategy.js";
 import ReviewRepository from "../../repository/ReviewRepository.js";
@@ -24,12 +24,12 @@ export default class ReviewService {
     }
         
     async getComments(accountType : AccountType, paperId : number) {
-        const strategy : ReviewInterface = this.getStrategy(accountType);
+        const strategy : ReviewStrategy = this.getStrategy(accountType);
         return strategy.getComments(paperId);
     }
 
     async getReviews(accountType : AccountType, paperId : number) {
-        const strategy : ReviewInterface = this.getStrategy(accountType);
+        const strategy : ReviewStrategy = this.getStrategy(accountType);
         return strategy.getReviews(paperId);
     }
 

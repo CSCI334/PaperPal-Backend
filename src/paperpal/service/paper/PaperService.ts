@@ -21,9 +21,4 @@ export default class PaperService {
         else if(accountType === "CHAIR")
             return this.chairPaperStrategy;
     }
-
-    
-
-
-
 }
