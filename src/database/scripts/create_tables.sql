@@ -10,6 +10,21 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
+DO $$ BEGIN
+    CREATE TYPE PaperStatus AS ENUM ('ACCEPTED', 'REJECTED');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+CREATE TABLE IF NOT EXISTS conference(
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    conferenceName TEXT NOT NULL, 
+    conferenceLocation TEXT NOT NULL,
+    submissionDeadline TIMESTAMP NOT NULL,
+    biddingDeadline TIMESTAMP NOT NULL,
+    announcementTime TIMESTAMP NOT NULL,
+);
+
 CREATE TABLE IF NOT EXISTS account(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     email TEXT NOT NULL, 
@@ -18,8 +33,12 @@ CREATE TABLE IF NOT EXISTS account(
     accountType AccountType NOT NULL,
     accountStatus AccountStatus NOT NULL,
     salt TEXT NOT NULL,
-    UNIQUE(email)
+    conferenceId INTEGER NOT NULL,
+    CONSTRAINT conferenceId FOREIGN KEY(conferenceId) REFERENCES conference(id)
 );
+
+ALTER TABLE account
+ADD CONSTRAINT uniqueEmailAndConference UNIQUE(email, conferenceId)
 
 CREATE TABLE IF NOT EXISTS reviewer(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
