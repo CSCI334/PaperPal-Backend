@@ -5,19 +5,27 @@ import { controller, httpGet, httpPost } from "inversify-express-utils";
 import { STATUS_CODE } from "../../constants/HttpConstants.js";
 import ValidateRequest from "../../middleware/ValidateRequest.js";
 import LoginDTO from "../dto/LoginDTO.js";
-import SignUpDTO from "../dto/SignUpDTO.js";
-import AuthService from "../service/AuthService.js";
+import SignUpDTO from "../dto/AuthorRegisterDTO.js";
+import AuthService from "../service/AccountService.js";
 import { Authenticate } from "../../middleware/Authenticate.js";
 import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
+import InviteDTO from "../dto/InviteDTO.js";
 
 
-@controller("/auth")
+@controller("")
 export default class AuthController {
     constructor(@inject(AuthService) private readonly authService: AuthService) {}
 
     @httpPost("/register", ValidateRequest.using(SignUpDTO.validator))
     async signUp(req: Request, res: Response) {
-        const userData = await this.authService.signUp(req.body as SignUpDTO);
+        const userData = await this.authService.register(req.body as SignUpDTO);
+        const response = BaseHttpResponse.success(userData);
+        return response.toExpressResponse(res);
+    }
+
+    @httpPost("/invite", ValidateRequest.using(InviteDTO.validator))
+    async invite(req: Request, res: Response) {
+        const userData = await this.authService.register(req.body as InviteDTO);
         const response = BaseHttpResponse.success(userData);
         return response.toExpressResponse(res);
     }

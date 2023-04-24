@@ -6,6 +6,7 @@ export default class Account {
     accountType: AccountType;
     accountStatus: AccountStatus;
     salt: string;
+    conferenceId: number;
 }
 
 export type AccountType = "CHAIR" | "REVIEWER" | "AUTHOR" | "ADMIN";

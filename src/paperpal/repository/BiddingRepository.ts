@@ -5,4 +5,9 @@ import DbService from "../../database/db.js";
 export default class BiddingRepository{
     constructor(@inject(DbService) private readonly db: DbService) {}
 
+    async insertBid(){
+        return;
+    }
+
+
 }

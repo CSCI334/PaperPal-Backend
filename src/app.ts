@@ -9,8 +9,8 @@ import * as dotenv from "dotenv";
 
 import DbService from "./database/db.js";
 
-import AuthRepository from "./paperpal/repository/AuthRepository.js";
-import AuthService from "./paperpal/service/AuthService.js";
+import AuthRepository from "./paperpal/repository/AccountRepository.js";
+import AuthService from "./paperpal/service/AccountService.js";
 import "./paperpal/controller/AuthController.js";
 import "./paperpal/controller/AdminController.js";
 

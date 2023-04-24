@@ -14,16 +14,22 @@ export default class AuthRepository {
         ]);
         const { rows } = await this.db.query(
             `
-            INSERT INTO account(email, username, hashedpassword, salt, accountType, accountStatus) 
-            VALUES($1, $2, $3, $4, $5, $6)
+            INSERT INTO account(email, username, hashedpassword, salt, accountType, accountStatus, conferenceId) 
+            VALUES($1, $2, $3, $4, $5, $6, $7)
             RETURNING ID`,
-            [account.email, account.username, account.hashedPassword, account.salt, account.accountType, account.accountStatus],
+            [   account.email, 
+                account.username, 
+                account.hashedPassword, 
+                account.salt, 
+                account.accountType, 
+                account.accountStatus, 
+                account.conferenceId],
             errorMap
         );
         return rows[0].id;
     }
 
-    async getUserByEmail(email: string): Promise<Account> {
+    async getAccountByEmail(email: string): Promise<Account> {
         const { rows } = await this.db.query(
             `SELECT * FROM account WHERE email = $1`,
             [email]
@@ -32,7 +38,7 @@ export default class AuthRepository {
         return rows[0] as Account;
     }
 
-    async getUserById(accountid: number): Promise<Account> {
+    async getAccountById(accountid: number): Promise<Account> {
         const { rows } = await this.db.query(
             `SELECT * FROM account WHERE id = $1`,
             [accountid]
@@ -41,7 +47,7 @@ export default class AuthRepository {
         return rows[0] as Account;
     }
 
-    async updateAccountStatus(accountStatus: AccountStatus, accountid: number): Promise<number> {
+    async updateAccountStatus(accountid: number, accountStatus: AccountStatus): Promise<number> {
         const { rows } = await this.db.query(
             `UPDATE account SET accountstatus = $1 WHERE id = $2 RETURNING id`,
             [accountStatus, accountid]
