@@ -6,9 +6,10 @@ import NotAuthenticatedException from "../exceptions/NotAuthenticatedException.j
 import { AccountType } from "../database/models/Account.js";
 import { JwtPayload } from "jsonwebtoken";
 
+
 export class Authenticate extends BaseMiddleware{
-    private accountType? : AccountType;
-    constructor(accountType? : AccountType){
+    private accountType? : AccountType[];
+    constructor(...accountType : AccountType[]){
         super();
         this.accountType = accountType;
     }
@@ -18,19 +19,22 @@ export class Authenticate extends BaseMiddleware{
         jwt.verify(token, SECRET.PRIVATE_KEY, (err, decodedToken : JwtPayload) => {
             
             if(err) next(new NotAuthenticatedException(err.message));
-            if(this.accountType && decodedToken.accountType === this.accountType)  
+            if(this.accountType && this.accountType.includes(decodedToken.accountType))  
                 next(new NotAuthenticatedException(`User not authenticated for this operation. User is not of type ${this.accountType}`));
             
-            res.locals.decodedToken = decodedToken;
-            res.locals.accountType = decodedToken.accountType;
-            res.locals.uid = decodedToken.uid;
+            res.locals = {
+                token : decodedToken,
+                accountType : decodedToken.accountType,
+                uid : decodedToken.uid,
+                email: decodedToken.email,
+            };
             next();
         });
     };
     static any = () => {
         return new Authenticate().handler;
     };
-    static for = (accountType: AccountType) => {
-        return new Authenticate(accountType).handler;
+    static for = (...accountType: AccountType[]) => {
+        return new Authenticate(...accountType).handler;
     };
 }

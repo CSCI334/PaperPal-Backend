@@ -3,10 +3,11 @@ import PaperStrategy from "../interfaces/PaperStrategy.js";
 
 @injectable()
 export default class ReviewerPaperStrategy implements PaperStrategy {
-    async getAvailablePapers(): Promise<string> {
+    // For bidding phase, return a nice and joined table of Papers and Bids, might need to populate some values when returning
+    async getAvailablePapers(accountId: number): Promise<string> {
         throw new Error("Method not implemented.");
     }
-    async getPaper(id: number): Promise<string> {
+    async getPaper(paperId: number): Promise<string> {
         throw new Error("Method not implemented.");
     }
 }

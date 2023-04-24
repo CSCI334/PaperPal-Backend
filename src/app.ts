@@ -12,7 +12,7 @@ import DbService from "./database/db.js";
 import AuthRepository from "./paperpal/repository/AccountRepository.js";
 import AuthService from "./paperpal/service/account/AccountService.js";
 import "./paperpal/controller/AuthController.js";
-import "./paperpal/controller/AdminController.js";
+import "./paperpal/controller/ConferenceController.js";
 
 import morgan from "morgan";
 import { ApplicationOptions } from "./config/ApplicationConfig.js";

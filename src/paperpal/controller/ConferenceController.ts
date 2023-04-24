@@ -22,13 +22,13 @@ export default class ConferenceController{
         return response.toExpressResponse(res);
     }
 
-    @httpGet("/reviewer")
+    @httpGet("/contact")
     async getAllReviewer(req: Request, res: Response) {
         const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/email/reviewer")
+    @httpPost("/contact/email")
     async sendEmailToReviewer(req: Request, res: Response) {
         const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);

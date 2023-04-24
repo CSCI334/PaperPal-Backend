@@ -22,9 +22,9 @@ export default class AccountUtils {
         const hash = createHash("sha256").update(input).digest("hex");
         return hash;
     }
-    
+
     public static createUserJwtToken(user : Partial<Account>, options: jwt.SignOptions = {expiresIn : "3d"} ) {
-        const jwtToken = jwt.sign({ uid: user.id, email: user.email }, SECRET.PRIVATE_KEY, options);
+        const jwtToken = jwt.sign({ uid: user.id, email: user.email, accountType: user.accountType }, SECRET.PRIVATE_KEY, options);
         return jwtToken;
     }
 }
