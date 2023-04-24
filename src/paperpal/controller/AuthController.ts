@@ -6,7 +6,7 @@ import { STATUS_CODE } from "../../constants/HttpConstants.js";
 import ValidateRequest from "../../middleware/ValidateRequest.js";
 import LoginDTO from "../dto/LoginDTO.js";
 import SignUpDTO from "../dto/AuthorRegisterDTO.js";
-import AuthService from "../service/AccountService.js";
+import AuthService from "../service/account/AccountService.js";
 import { Authenticate } from "../../middleware/Authenticate.js";
 import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
 import InviteDTO from "../dto/InviteDTO.js";

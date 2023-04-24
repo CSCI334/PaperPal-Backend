@@ -3,7 +3,7 @@ import { controller, httpGet, httpPost, httpPut } from "inversify-express-utils"
 import { Response } from "express";
 import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
 import { Authenticate } from "../../middleware/Authenticate.js";
-import AuthService from "../service/AccountService.js";
+import AuthService from "../service/account/AccountService.js";
 import { inject } from "inversify";
 
 @controller("/admin", Authenticate.for("ADMIN"))
