@@ -4,7 +4,7 @@ import Account, { AccountStatus } from "../../database/models/Account.js";
 import { PgErrorMap } from "../../database/types.js";
 
 @injectable()
-export default class AuthRepository {
+export default class AccountRepository {
 
     constructor(@inject(DbService) private readonly db: DbService) {}
     
@@ -19,11 +19,11 @@ export default class AuthRepository {
             RETURNING ID`,
             [   account.email, 
                 account.username, 
-                account.hashedPassword, 
+                account.hashedpassword, 
                 account.salt, 
-                account.accountType, 
-                account.accountStatus, 
-                account.conferenceId],
+                account.accounttype, 
+                account.accountstatus, 
+                account.conferenceid],
             errorMap
         );
         return rows[0].id;
@@ -34,7 +34,6 @@ export default class AuthRepository {
             `SELECT * FROM account WHERE email = $1`,
             [email]
         );
-
         return rows[0] as Account;
     }
 
@@ -53,5 +52,13 @@ export default class AuthRepository {
             [accountStatus, accountid]
         );
         return rows[0].id;
+    }
+
+    async getAllReviewer(): Promise<Account[]> {
+        const { rows } = await this.db.query(
+            `SELECT * FROM account`
+        );
+
+        return rows as Account[];
     }
 }

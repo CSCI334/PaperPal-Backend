@@ -30,18 +30,22 @@ export default class AuthService {
         const id: number = await this.accountRepository.insertUser({
             email : registerDTO.email,
             username: registerDTO.username,
-            hashedPassword: hashedPassword,
+            hashedpassword: hashedPassword,
             salt: salt,
-            accountType : registerDTO.accountType,
-            accountStatus : "PENDING",
-            conferenceId: registerDTO.conferenceId,
+            accounttype : registerDTO.accountType,
+            accountstatus : "PENDING",
+            conferenceid: registerDTO.conferenceId,
         });
 
-        const jwtToken = AccountUtils.createUserJwtToken({id: id, email: registerDTO.email}, {expiresIn: "7d"});
+        const jwtToken = AccountUtils.createUserJwtToken({
+            uid: id, 
+            email: registerDTO.email,
+            accountType: registerDTO.accountType
+        }, {expiresIn: "7d"});
 
         // Send verify email here, verify link should contain jwtToken and email
 
-        // TODO: This return is a bit sus, will think again later
+        // TODO: Not sure about this return
         return {
             token: jwtToken,
             email: registerDTO.email,
@@ -53,12 +57,16 @@ export default class AuthService {
         // Authenticate them here by checking if their input = hash
         const user: Account = await this.accountRepository.getAccountByEmail(loginDTO.email);
         if (!user) throw new InvalidInputException("Invalid login credentials");
-        if (AccountUtils.createPasswordHash(loginDTO.password, user.salt) !== user.hashedPassword)
+        if (AccountUtils.createPasswordHash(loginDTO.password, user.salt) !== user.hashedpassword)
             throw new InvalidInputException("Invalid login credentials");
-        if (user.accountStatus === "PENDING")
+        if (user.accountstatus === "PENDING")
             throw new NotAuthenticatedException("Email is not verified");
 
-        const jwtToken = AccountUtils.createUserJwtToken({id: user.id, email: user.email});
+        const jwtToken = AccountUtils.createUserJwtToken({
+            uid: user.id,
+            email: user.email,
+            accountType: user.accounttype
+        });
 
         return {
             token: jwtToken,
@@ -74,12 +82,21 @@ export default class AuthService {
 
         this.accountRepository.updateAccountStatus(token.uid, "ACCEPTED");
         return {
-            token : AccountUtils.createUserJwtToken({id: token.uid, email: token.email})
+            token : AccountUtils.createUserJwtToken({
+                uid: token.uid, 
+                email: token.email,
+                accountType: token.accountType
+            })
         };
     }
 
     async getUserData(id: number) {
         const user: Account = await this.accountRepository.getAccountById(id);
         return user;
+    }
+
+    async getAllReviewer() {
+        const data = await this.accountRepository.getAllReviewer();
+        return data;
     }
 }

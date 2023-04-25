@@ -1,12 +1,14 @@
 export default class Account {
-    id: number;
-    username: string;
-    email: string;
-    hashedPassword: string;
-    accountType: AccountType;
-    accountStatus: AccountStatus;
-    salt: string;
-    conferenceId: number;
+    constructor(
+        public id: number,
+        public username: string,
+        public email: string,
+        public hashedpassword: string,
+        public accounttype: AccountType,
+        public accountstatus: AccountStatus,
+        public salt: string,
+        public conferenceid: number,
+    ) {}
 }
 
 export type AccountType = "CHAIR" | "REVIEWER" | "AUTHOR" | "ADMIN";

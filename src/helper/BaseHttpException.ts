@@ -1,4 +1,4 @@
-export default abstract class BaseHttpError extends Error {
+export default abstract class BaseHttpException extends Error {
     statusCode : number;
     
     constructor(message: string) {

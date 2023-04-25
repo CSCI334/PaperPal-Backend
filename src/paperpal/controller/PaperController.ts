@@ -1,6 +1,5 @@
 
 import { controller, httpGet, httpPost, requestParam } from "inversify-express-utils";
-import { STATUS_CODE } from "../../constants/HttpConstants.js";
 import { Response } from "express";
 import { Authenticate } from "../../middleware/Authenticate.js";
 import { inject } from "inversify";
@@ -11,38 +10,43 @@ import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
 export default class PaperController {
     constructor(@inject(PaperService) private readonly paperService: PaperService) {}
 
-    @httpGet("/", Authenticate.for("ADMIN", "CHAIR", "REVIEWER"))
-    async getAllPapers(req: Request, res: Response) {
+    @httpGet("/", Authenticate.any())
+    async getAvailablePapers(req: Request, res: Response) {
         const data = this.paperService.getAllPapers(res.locals.accountType, res.locals.uid);
+        
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/", Authenticate.for("AUTHOR"))
+    @httpPost("/upload", Authenticate.for("AUTHOR"))
     async addPaper(req: Request, res: Response) {
         const data = this.paperService.addPaper(null);
-        return res.status(STATUS_CODE.OK).json();
+        
+        const response = BaseHttpResponse.success(data);
+        return response.toExpressResponse(res);
     }
 
     @httpGet("/:paperId")
     async getPaperById(@requestParam("paperId") paperId: number,req: Request, res: Response) {
         const data = this.paperService.getPaper(res.locals.accountType, paperId);
         const response = BaseHttpResponse.success(data);
+
         return response.toExpressResponse(res);
     }
 
-    @httpGet("/author/:authorId", Authenticate.for("AUTHOR"))
+    @httpGet("/author", Authenticate.for("AUTHOR"))
     async getPaperByAuthorId(@requestParam("authorId") authorId : number, req: Request, res: Response) {
-        return res.status(STATUS_CODE.OK).json();
+        const data = this.paperService.getAllPapers(res.locals.accountType, res.locals.uid);
+        
+        const response = BaseHttpResponse.success(data);
+        return response.toExpressResponse(res);
     }
 
     @httpPost("/judge/:paperId")
     async judgePaper(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        return res.status(STATUS_CODE.OK).json();
-    }
+        const data = this.paperService.getAllPapers(res.locals.accountType, res.locals.uid);
 
-    @httpPost("/upload")
-    async uploadPaper(req: Request, res: Response) {
-        return res.status(STATUS_CODE.OK).json();
+        const response = BaseHttpResponse.success(data);
+        return response.toExpressResponse(res);
     }
 }

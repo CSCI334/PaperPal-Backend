@@ -15,21 +15,21 @@ export class Authenticate extends BaseMiddleware{
     }
 
     public handler = async (req : Request, res : Response, next: NextFunction) => {
-        const token = req.headers.authorization;
-        jwt.verify(token, SECRET.PRIVATE_KEY, (err, decodedToken : JwtPayload) => {
-            
-            if(err) next(new NotAuthenticatedException(err.message));
-            if(this.accountType && this.accountType.includes(decodedToken.accountType))  
-                next(new NotAuthenticatedException(`User not authenticated for this operation. User is not of type ${this.accountType}`));
-            
+        const token = req.headers.authorization.split(" ")[1];
+        try{
+            const decoded = jwt.verify(token, SECRET.PRIVATE_KEY) as JwtPayload;
             res.locals = {
-                token : decodedToken,
-                accountType : decodedToken.accountType,
-                uid : decodedToken.uid,
-                email: decodedToken.email,
+                token : decoded,
+                accountType : decoded.accountType,
+                uid : decoded.uid,
+                email: decoded.email,
             };
+            if(this.accountType.length > 0 && !this.accountType.includes(decoded.accountType))
+                next(new NotAuthenticatedException(`User not authenticated for this operation. User is not of type ${this.accountType}`));
             next();
-        });
+        } catch (err) {
+            next(new NotAuthenticatedException(err.message));
+        }
     };
     static any = () => {
         return new Authenticate().handler;

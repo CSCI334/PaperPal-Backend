@@ -2,9 +2,9 @@ import { createHash, randomBytes } from "crypto";
 import Account from "../../../database/models/Account.js";
 import { SECRET } from "../../../config/Secret.js";
 import jwt from "jsonwebtoken";
+import { Locals } from "express";
 
 export default class AccountUtils {
-
     public static createPasswordHash(password: string, salt: string) {
         const hashedPassword = this.createHashFromString(
             this.createHashFromString(password) + salt
@@ -23,8 +23,8 @@ export default class AccountUtils {
         return hash;
     }
 
-    public static createUserJwtToken(user : Partial<Account>, options: jwt.SignOptions = {expiresIn : "3d"} ) {
-        const jwtToken = jwt.sign({ uid: user.id, email: user.email, accountType: user.accountType }, SECRET.PRIVATE_KEY, options);
+    public static createUserJwtToken(locals : Locals, options: jwt.SignOptions = {expiresIn : "3d"} ) {
+        const jwtToken = jwt.sign(locals, SECRET.PRIVATE_KEY, options);
         return jwtToken;
     }
 }

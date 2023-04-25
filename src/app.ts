@@ -9,15 +9,22 @@ import * as dotenv from "dotenv";
 
 import DbService from "./database/db.js";
 
-import AuthRepository from "./paperpal/repository/AccountRepository.js";
-import AuthService from "./paperpal/service/account/AccountService.js";
-import "./paperpal/controller/AuthController.js";
+import AccountRepository from "./paperpal/repository/AccountRepository.js";
+import AccountService from "./paperpal/service/account/AccountService.js";
+import "./paperpal/controller/AccountController.js";
 import "./paperpal/controller/ConferenceController.js";
 
 import morgan from "morgan";
 import { ApplicationOptions } from "./config/ApplicationConfig.js";
 import ErrorHandler from "./middleware/ErrorHandler.js";
 import fs from "fs";
+import ConferenceService from "./paperpal/service/conference/ConferenceService.js";
+import ConferenceRepository from "./paperpal/repository/ConferenceRepository.js";
+import BidRepository from "./paperpal/repository/BidRepository.js";
+import PaperRepository from "./paperpal/repository/PaperRepository.js";
+import ReviewRepository from "./paperpal/repository/ReviewRepository.js";
+import PaperService from "./paperpal/service/paper/PaperService.js";
+import ReviewService from "./paperpal/service/review/ReviewService.js";
 export default class App {
     private readonly container: Container;
 
@@ -32,8 +39,17 @@ export default class App {
         this.container.bind(DbService).toSelf();
 
         // Internal services
-        this.container.bind(AuthRepository).toSelf();
-        this.container.bind(AuthService).toSelf();
+        this.container.bind(AccountService).toSelf();
+        this.container.bind(ConferenceService).toSelf();
+        this.container.bind(PaperService).toSelf();
+        this.container.bind(ReviewService).toSelf();
+
+        // Internal repositories
+        this.container.bind(AccountRepository).toSelf();
+        this.container.bind(BidRepository).toSelf();
+        this.container.bind(PaperRepository).toSelf();
+        this.container.bind(ReviewRepository).toSelf();
+        this.container.bind(ConferenceRepository).toSelf();
     }
 
     async setup(options: ApplicationOptions) {

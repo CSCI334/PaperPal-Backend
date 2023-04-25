@@ -1,4 +1,3 @@
-import { JwtPayload } from "jsonwebtoken";
 import { AccountType } from "./database/models/Account.ts";
 
 declare global {
@@ -7,7 +6,6 @@ declare global {
             uid: number;
             email: string;
             accountType: AccountType;
-            token: JwtPayload;
         }
     }
 }

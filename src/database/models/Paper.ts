@@ -1,6 +1,9 @@
 export default class Paper {
     id: number;
     title: string;
-    reviewerId: number;
-    paperId: number;
+    paperstatus : PaperStatus;
+    reviewerid: number;
+    paperid: number;
 }
+
+export type PaperStatus = "ACCEPTED" | "REJECTED" | "IN REVIEW"

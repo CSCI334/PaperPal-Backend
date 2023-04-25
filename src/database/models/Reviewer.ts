@@ -1,5 +1,5 @@
 export default class Reviewer {
     id: number;
-    bidPoints : number;
-    accountId : number;
+    bidpoints : number;
+    accountid : number;
 }

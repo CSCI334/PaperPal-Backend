@@ -5,7 +5,7 @@ import ChairPaperStrategy from "./impl/ChairPaperStrategy.js";
 import ReviewerPaperStrategy from "./impl/ReviewerPaperStrategy.js";
 import { AccountType } from "../../../database/models/Account.js";
 import PaperStrategy from "./interfaces/PaperStrategy.js";
-import Paper from "../../../database/models/Paper.js";
+import Paper, { PaperStatus } from "../../../database/models/Paper.js";
 
 @injectable()
 export default class PaperService {
@@ -13,7 +13,7 @@ export default class PaperService {
         @inject(AuthorPaperStrategy) private readonly authorPaperStrategy : AuthorPaperStrategy,
         @inject(ReviewerPaperStrategy) private readonly reviewerPaperStrategy : ReviewerPaperStrategy,
         @inject(ChairPaperStrategy) private readonly chairPaperStrategy : ChairPaperStrategy,
-        @inject(PaperRepository) private readonly PaperRepository : PaperRepository) {}
+        @inject(PaperRepository) private readonly paperRepository : PaperRepository) {}
         
     private getStrategy(accountType : AccountType) {
         if(accountType === "ADMIN")
@@ -34,7 +34,13 @@ export default class PaperService {
         return strategy.getAvailablePapers(accountId);
     }
 
+    async judgePaper(status : Extract<PaperStatus, "ACCEPTED" | "REJECTED">) {
+        const data = this.paperRepository.setPaperStatus(status);
+        return data;
+    }
+
     async addPaper(paper: Partial<Paper>) {
-        return;
+        const data = this.paperRepository.insertPaper(paper);
+        return data;
     }
 }

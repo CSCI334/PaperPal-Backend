@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { inject } from "inversify";
 import { controller, httpGet, httpPost } from "inversify-express-utils";
-import "./helper/TokenType.js";
 
 import { STATUS_CODE } from "../../constants/HttpConstants.js";
 import ValidateRequest from "../../middleware/ValidateRequest.js";
@@ -21,6 +20,7 @@ export default class AccountController {
     @httpPost("/register", ValidateRequest.using(SignUpDTO.validator))
     async signUp(req: Request, res: Response) {
         const userData = await this.accountService.register(req.body as SignUpDTO);
+
         const response = BaseHttpResponse.success(userData);
         return response.toExpressResponse(res);
     }
@@ -28,6 +28,7 @@ export default class AccountController {
     @httpPost("/invite", Authenticate.for("ADMIN"), ValidateRequest.using(InviteDTO.validator))
     async invite(req: Request, res: Response) {
         const userData = await this.accountService.register(req.body as InviteDTO);
+
         const response = BaseHttpResponse.success(userData);
         return response.toExpressResponse(res);
     }
@@ -35,6 +36,7 @@ export default class AccountController {
     @httpPost("/login", ValidateRequest.using(LoginDTO.validator))
     async login(req: Request, res: Response) {
         const userData = await this.accountService.login(req.body as LoginDTO);
+
         const response = BaseHttpResponse.success(userData);
         return response.toExpressResponse(res);
     }
@@ -42,6 +44,7 @@ export default class AccountController {
     @httpPost("/verify", ValidateRequest.using(VerifyEmailDTO.validator))
     async verify(req: Request, res: Response) {
         const data = await this.accountService.verifyEmail(req.body as VerifyEmailDTO);
+
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
     }
@@ -54,5 +57,19 @@ export default class AccountController {
             username: response.username,
             email: response.email,
         });
+    }
+
+    @httpGet("/contact", Authenticate.for("ADMIN"))
+    async getAllReviewer(req: Request, res: Response) {
+        const data = this.accountService.getAllReviewer();
+
+        const response = BaseHttpResponse.success(data);
+        return response.toExpressResponse(res);
+    }
+
+    @httpPost("/contact/email", Authenticate.for("ADMIN"))
+    async sendEmailToReviewer(req: Request, res: Response) {
+        const response = BaseHttpResponse.success({});
+        return response.toExpressResponse(res);
     }
 }

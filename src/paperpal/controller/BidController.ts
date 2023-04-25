@@ -1,32 +1,26 @@
 import { controller, httpGet, httpPost } from "inversify-express-utils";
-import ValidateRequest from "../../middleware/ValidateRequest.js";
-import AccountService from "../service/account/AccountService.js";
 import { inject } from "inversify";
-import SignUpDTO from "../dto/AuthorRegisterDTO.js";
 import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
 import { Request, Response } from "express";
+import BidService from "../service/bid/BidService.js";
 
 @controller("")
 export default class BidController {
-    constructor(@inject(AccountService) private readonly accountService: AccountService) {}
+    constructor(@inject(BidService) private readonly bidService: BidService) {}
 
     @httpPost("/bid")
     async addBid(req: Request, res: Response) {
-        const userData = await this.accountService.register(req.body as SignUpDTO);
-        const response = BaseHttpResponse.success(userData);
+        const userData = await this.bidService.addBid();
+
+        const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);
     }
 
     @httpPost("/workload")
     async setReviewerWorkload(req: Request, res: Response) {
-        const userData = await this.accountService.register(req.body as SignUpDTO);
-        const response = BaseHttpResponse.success(userData);
-        return response.toExpressResponse(res);
-    }
+        const userData = await this.bidService.setWorkload();
 
-    // Return 
-    @httpGet("/bid")
-    async getAllBids(req: Request, res: Response) {
-        return;
+        const response = BaseHttpResponse.success({});
+        return response.toExpressResponse(res);
     }
 }

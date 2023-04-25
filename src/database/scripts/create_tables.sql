@@ -5,7 +5,7 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
-    CREATE TYPE AccountStatus AS ENUM ('PENDING', 'REJECTED', 'ACCEPTED', 'ADMIN');
+    CREATE TYPE AccountStatus AS ENUM ('PENDING', 'REJECTED', 'ACCEPTED');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -33,13 +33,15 @@ CREATE TABLE IF NOT EXISTS account(
     salt TEXT,
     accountType AccountType NOT NULL,
     accountStatus AccountStatus NOT NULL,
-    conferenceId INTEGER NOT NULL,
+    conferenceId INTEGER,
     CONSTRAINT conferenceId FOREIGN KEY(conferenceId) REFERENCES conference(id)
 );
 
-
 ALTER TABLE account
 ADD CONSTRAINT uniqueEmailAndConference UNIQUE(email, conferenceId);
+
+INSERT INTO account(email, username, hashedPassword, salt, accountType, accountStatus) 
+VALUES('admin@email.com', 'Admin', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bdee401a71019cbae4e1b84', '89946a', 'ADMIN', 'ACCEPTED');
 
 CREATE TABLE IF NOT EXISTS reviewer(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
