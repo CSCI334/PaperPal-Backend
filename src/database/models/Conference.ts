@@ -5,6 +5,7 @@ export default class Conference {
         public conferencelocation : string,
         public submissiondeadline : number,
         public biddingdeadline : number,
+        public reviewDeadline : number,
         public announcementtime: number,
     ) {}
 }

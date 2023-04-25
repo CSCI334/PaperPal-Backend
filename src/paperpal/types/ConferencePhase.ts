@@ -1,0 +1,1 @@
+export type ConferencePhase = "SUBMISSION" | "BIDDING" | "ANNOUNCEMENT" | "REVIEW" | "ENDED" | "JUDGEMENT"

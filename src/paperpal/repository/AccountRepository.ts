@@ -9,14 +9,13 @@ export default class AccountRepository {
     constructor(@inject(DbService) private readonly db: DbService) {}
     
     async insertUser(account: Partial<Account>): Promise<number> {
+        console.log(account);
         const errorMap: PgErrorMap = new Map([
             ["23505", "Email already used by another account"],
         ]);
         const { rows } = await this.db.query(
-            `
-            INSERT INTO account(email, username, hashedpassword, salt, accountType, accountStatus, conferenceId) 
-            VALUES($1, $2, $3, $4, $5, $6, $7)
-            RETURNING ID`,
+            `INSERT INTO account(email, username, hashedpassword, salt, accountType, accountStatus, conferenceId) 
+            VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING ID`,
             [   account.email, 
                 account.username, 
                 account.hashedpassword, 
@@ -60,5 +59,13 @@ export default class AccountRepository {
         );
 
         return rows as Account[];
+    }
+
+    async setUserPasswordAndSalt(password : string, salt : string, accountId: number) {
+        const { rows } = await this.db.query(
+            `UPDATE account SET hashedPassword = $1, salt = $2 WHERE id = $3 RETURNING id`,
+            [password, salt, accountId]
+        );
+        return rows[0].id;
     }
 }

@@ -1,4 +1,4 @@
-import { AccountType } from "../../database/models/Account.js";
+import { AccountType } from "../../../database/models/Account.js";
 import RegisterDTO from "./RegisterDTO.js";
 
 export default class InviteDTO extends RegisterDTO {

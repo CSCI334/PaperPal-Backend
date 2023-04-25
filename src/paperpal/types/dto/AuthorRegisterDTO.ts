@@ -1,5 +1,5 @@
 import { check } from "express-validator";
-import { AccountType } from "../../database/models/Account.js";
+import { AccountType } from "../../../database/models/Account.js";
 import RegisterDTO from "./RegisterDTO.js";
 
 export default class SignUpDTO extends RegisterDTO {

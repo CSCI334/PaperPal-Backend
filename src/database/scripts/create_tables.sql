@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS conference(
     conferenceLocation TEXT NOT NULL,
     submissionDeadline TIMESTAMP NOT NULL,
     biddingDeadline TIMESTAMP NOT NULL,
+    reviewDeadline TIMESTAMP NOT NULL,
     announcementTime TIMESTAMP NOT NULL
 );
 

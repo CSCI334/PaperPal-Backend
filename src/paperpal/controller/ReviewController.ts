@@ -11,7 +11,7 @@ export default class ReviewController{
 
     @httpGet("/:paperId/comments", Authenticate.any()) 
     async getPaperComments(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const response = this.reviewService.getComments(res.locals.accounttype, paperId);
+        const response = this.reviewService.getComments(res.locals.accountType, paperId);
         return res.status(STATUS_CODE.OK).json(response);
     }
 
@@ -23,7 +23,7 @@ export default class ReviewController{
 
     @httpGet("/:paperId/review", Authenticate.any()) 
     async getPaperReview(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const response = this.reviewService.getReviews(res.locals.accounttype, paperId);
+        const response = this.reviewService.getReviews(res.locals.accountType, paperId);
         return res.status(STATUS_CODE.OK).json(response);
     }
 

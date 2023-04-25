@@ -4,10 +4,10 @@ import { SECRET } from "../../../config/Secret.js";
 import Account from "../../../database/models/Account.js";
 import InvalidInputException from "../../../exceptions/InvalidInputException.js";
 import NotAuthenticatedException from "../../../exceptions/NotAuthenticatedException.js";
-import AuthorRegisterDTO from "../../dto/AuthorRegisterDTO.js";
-import InviteDTO from "../../dto/InviteDTO.js";
-import LoginDTO from "../../dto/LoginDTO.js";
-import VerifyEmailDTO from "../../dto/VerifyEmailDTO.js";
+import AuthorRegisterDTO from "../../types/dto/AuthorRegisterDTO.js";
+import InviteDTO from "../../types/dto/InviteDTO.js";
+import LoginDTO from "../../types/dto/LoginDTO.js";
+import VerifyEmailDTO from "../../types/dto/VerifyEmailDTO.js";
 import AccountRepository from "../../repository/AccountRepository.js";
 import AccountUtils from "./AccountUtils.js";
 
@@ -81,6 +81,8 @@ export default class AuthService {
         if(verifyEmailDTO.email !== token.email) throw new NotAuthenticatedException("Invalid verification token");
 
         this.accountRepository.updateAccountStatus(token.uid, "ACCEPTED");
+        this.setUserPassword(verifyEmailDTO.password, token.uid);
+
         return {
             token : AccountUtils.createUserJwtToken({
                 uid: token.uid, 
@@ -88,6 +90,11 @@ export default class AuthService {
                 accountType: token.accountType
             })
         };
+    }
+
+    async setUserPassword(password : string, accountId: number) {
+        const [hashedpassword, salt] = AccountUtils.createNewPasswordHash(password);
+        this.accountRepository.setUserPasswordAndSalt(hashedpassword, salt, accountId);
     }
 
     async getUserData(id: number) {

@@ -4,13 +4,13 @@ import { controller, httpGet, httpPost } from "inversify-express-utils";
 
 import { STATUS_CODE } from "../../constants/HttpConstants.js";
 import ValidateRequest from "../../middleware/ValidateRequest.js";
-import LoginDTO from "../dto/LoginDTO.js";
-import SignUpDTO from "../dto/AuthorRegisterDTO.js";
+import LoginDTO from "../types/dto/LoginDTO.js";
+import SignUpDTO from "../types/dto/AuthorRegisterDTO.js";
 import AccountService from "../service/account/AccountService.js";
 import { Authenticate } from "../../middleware/Authenticate.js";
 import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
-import InviteDTO from "../dto/InviteDTO.js";
-import VerifyEmailDTO from "../dto/VerifyEmailDTO.js";
+import InviteDTO from "../types/dto/InviteDTO.js";
+import VerifyEmailDTO from "../types/dto/VerifyEmailDTO.js";
 
 
 @controller("")
