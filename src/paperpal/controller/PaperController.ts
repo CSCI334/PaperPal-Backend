@@ -42,9 +42,9 @@ export default class PaperController {
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/judge/:paperId")
+    @httpPost("/judge/:paperId", Authenticate.for("CHAIR"))
     async judgePaper(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const data = this.paperService.getAllPapers(res.locals.accountType, res.locals.uid);
+        const data = this.paperService.judgePaper("ACCEPTED");
 
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
