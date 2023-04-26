@@ -40,7 +40,8 @@ export default class AuthService {
         const jwtToken = AccountUtils.createUserJwtToken({
             uid: id, 
             email: registerDTO.email,
-            accountType: registerDTO.accountType
+            accountType: registerDTO.accountType,
+            conferenceId: registerDTO.conferenceId
         }, {expiresIn: "7d"});
 
         // Send verify email here, verify link should contain jwtToken and email
@@ -65,7 +66,8 @@ export default class AuthService {
         const jwtToken = AccountUtils.createUserJwtToken({
             uid: user.id,
             email: user.email,
-            accountType: user.accounttype
+            accountType: user.accounttype,
+            conferenceId: user.conferenceid
         });
 
         return {
@@ -87,7 +89,8 @@ export default class AuthService {
             token : AccountUtils.createUserJwtToken({
                 uid: token.uid, 
                 email: token.email,
-                accountType: token.accountType
+                accountType: token.accountType,
+                conferenceId: token.conferenceId
             })
         };
     }

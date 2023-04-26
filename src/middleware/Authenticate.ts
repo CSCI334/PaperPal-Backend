@@ -23,6 +23,7 @@ export class Authenticate extends BaseMiddleware{
                 accountType : decoded.accountType,
                 uid : decoded.uid,
                 email: decoded.email,
+                conferenceId: decoded.conferenceId
             };
             if(this.accountType.length > 0 && !this.accountType.includes(decoded.accountType))
                 next(new NotAuthenticatedException(`User not authenticated for this operation. User is not of type ${this.accountType}`));

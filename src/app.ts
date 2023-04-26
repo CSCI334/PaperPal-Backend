@@ -25,6 +25,7 @@ import PaperRepository from "./paperpal/repository/PaperRepository.js";
 import ReviewRepository from "./paperpal/repository/ReviewRepository.js";
 import PaperService from "./paperpal/service/paper/PaperService.js";
 import ReviewService from "./paperpal/service/review/ReviewService.js";
+import { ConferencePhase } from "./paperpal/types/ConferencePhase.js";
 export default class App {
     private readonly container: Container;
 
@@ -78,6 +79,9 @@ export default class App {
         
         console.log(`Connection succesful!`);
         
+        if(ConferencePhase.Review > ConferencePhase.Submission)
+            console.log("heyo");
+            
         const app = server.build();
         app.listen(process.env.BACKEND_PORT || 8000, () => {
             console.log(`Server (${process.env.DOMAIN}) is running at PORT : ${process.env.BACKEND_PORT || 8000}`);

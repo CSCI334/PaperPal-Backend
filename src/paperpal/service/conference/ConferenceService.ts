@@ -6,6 +6,8 @@ import CreateConferenceDTO from "../../types/dto/CreateConferenceDTO.js";
 import UpdateConferenceDTO from "../../types/dto/UpdateConferenceDTO.js";
 import InvalidInputException from "../../../exceptions/InvalidInputException.js";
 import { ConferencePhase } from "../../types/ConferencePhase.js";
+import Conference from "../../../database/models/Conference.js";
+import NotFoundException from "../../../exceptions/NotFoundException.js";
 
 @injectable()
 export default class ConferenceService {
@@ -34,13 +36,19 @@ export default class ConferenceService {
     }
 
     // TODO : Remember to make a utility function to move to next phase, the functions should simply shift around the epoch of the conference
-    async getCurrentPhase(conferenceId : number) : Promise<ConferencePhase> {
+    static getCurrentPhase(conference : Conference) : ConferencePhase {
         const currentEpoch = Date.now();
-        const data = await this.conferenceRepository.getConference(conferenceId);
-        if(currentEpoch < data.submissiondeadline) return "SUBMISSION";
-        else if(currentEpoch > data.submissiondeadline && currentEpoch < data.biddingdeadline) return "BIDDING";
-        else if(currentEpoch > data.biddingdeadline && currentEpoch < data.reviewDeadline) return "REVIEW";
-        else if(currentEpoch > data.reviewDeadline && currentEpoch < data.announcementtime) return "JUDGEMENT";
-        else if(currentEpoch > data.announcementtime) return "ANNOUNCEMENT";
+
+        if(currentEpoch < conference.submissiondeadline) return ConferencePhase.Submission;
+        else if(currentEpoch > conference.submissiondeadline && currentEpoch < conference.biddingdeadline) return ConferencePhase.Bidding;
+        else if(currentEpoch > conference.biddingdeadline && currentEpoch < conference.reviewDeadline) return ConferencePhase.Review;
+        else if(currentEpoch > conference.reviewDeadline && currentEpoch < conference.announcementtime) return ConferencePhase.Judgment;
+        else if(currentEpoch > conference.announcementtime) return ConferencePhase.Announcement;
+
+        throw new Error("Invalid value");
+    }
+
+    async moveToNextPhase() : Promise<ConferencePhase> {
+        return;
     }
 }

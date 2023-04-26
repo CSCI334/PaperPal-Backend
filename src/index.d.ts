@@ -6,6 +6,7 @@ declare global {
             uid: number;
             email: string;
             accountType: AccountType;
+            conferenceId: number;
         }
     }
 }
