@@ -42,6 +42,9 @@ export default class PaperRepository{
 
     // Get all papers an author is in
     async getAllPaperForAuthor(authorId: number){
+        `SELECT * 
+        FROM author
+        LEFT JOIN paper ON author.id = paper.authorid;`;
         return {};
     }
     

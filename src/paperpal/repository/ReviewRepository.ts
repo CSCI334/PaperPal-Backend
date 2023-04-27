@@ -30,12 +30,14 @@ export default class ReviewRepository{
     async deleteReview() {
         return;
     }
-
-    async getAllReviewsForPaper(paperId: number): Promise<Review[]>{
-        return;
-    }
     
     async getAllCommentsForPaper(paperId: number): Promise<Comment[]> {
+        return;
+    }
+    async getAllReviewsForPaper(paperId: number): Promise<Review[]>{
+        `SELECT * 
+        FROM review 
+        LEFT JOIN paper ON review.paperid = paper.id;`;
         return;
     }
 
