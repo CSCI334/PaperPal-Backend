@@ -8,6 +8,8 @@ export default class ReviewRepository{
     constructor(@inject(DbService) private readonly db: DbService) {}
     
     async insertReview(review : Partial<Review>) {
+        `INSERT INTO review (reviewerid, paperid, score)
+        VALUES (reviewerid, paperid, score);`
         return;
     }
 
@@ -24,14 +26,22 @@ export default class ReviewRepository{
     }
 
     async deleteReview() {
+        `DELETE FROM review
+        WHERE colData = valData;`
         return;
     }
 
     async getAllReviewForPaper(){
+        `SELECT * 
+        FROM review 
+        LEFT JOIN paper ON review.paperid = paper.id;`
         return;
     }
 
     async updateReview() {
+        `UPDATE review
+        SET col1 = val1, col2 =val2
+        WHERE colData = valData;`
         return;
     }
 
