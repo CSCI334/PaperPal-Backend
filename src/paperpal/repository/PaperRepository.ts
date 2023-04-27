@@ -40,6 +40,10 @@ export default class PaperRepository{
         return;
     }
 
+    async isPaperInConference(paperId:number, conferenceId : number): Promise<boolean> {
+        return true;
+    }
+
     // Get all papers an author is in
     async getAllPaperForAuthor(authorId: number){
         `SELECT * 

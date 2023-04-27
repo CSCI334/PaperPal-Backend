@@ -21,7 +21,6 @@ export default class AuthorPaperStrategy implements PaperStrategy {
         if(!authorId) throw new NotAuthenticatedException("User is not an author"); 
 
         const data = await this.paperRepository.getAllPaperForAuthor(authorId);
-        
         return data;
     }
 
@@ -32,7 +31,7 @@ export default class AuthorPaperStrategy implements PaperStrategy {
 
         const authorId = await this.accountRepository.getAuthorIdFromAccount(user.id);
         if(!authorId) throw new NotAuthenticatedException("User is not an author");
-        if(data.authorId != authorId) throw new NotAuthenticatedException("User is not author of paper");   
+        if(data.authorid != authorId) throw new NotAuthenticatedException("User is not author of paper");   
         
         return data;
     }

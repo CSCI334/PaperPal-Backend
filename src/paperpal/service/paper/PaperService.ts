@@ -45,7 +45,6 @@ export default class PaperService {
         const strategy : PaperStrategy = this.getStrategy(user.accounttype);
         const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
 
-        
         return strategy.getAvailablePapers(user, phase);
     }
 

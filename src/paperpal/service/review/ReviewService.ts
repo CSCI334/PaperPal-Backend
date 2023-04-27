@@ -10,7 +10,8 @@ import ReviewRatingDTO from "../../types/dto/ReviewRatingDTO.js";
 import ConferenceService from "../conference/ConferenceService.js";
 import AccountService from "../account/AccountService.js";
 import { ConferencePhase } from "../../types/ConferencePhase.js";
-import NotFoundException from "../../../exceptions/NotFoundException.js";
+import PaperRepository from "../../repository/PaperRepository.js";
+import ForbiddenException from "../../../exceptions/ForbiddenException.js";
 
 @injectable()
 export default class ReviewService {
@@ -19,6 +20,7 @@ export default class ReviewService {
         @inject(ReviewerReviewStrategy) private readonly reviewerReviewStrategy : ReviewerReviewStrategy,
         @inject(ChairReviewStrategy) private readonly chairReviewStrategy : ChairReviewStrategy,
 
+        @inject(PaperRepository) private readonly paperRepository : PaperRepository,
         @inject(ReviewRepository) private readonly reviewRepository : ReviewRepository,
         @inject(ConferenceService) private readonly conferenceService : ConferenceService,
         @inject(AccountService) private readonly accountService : AccountService,
@@ -38,6 +40,9 @@ export default class ReviewService {
         const strategy = this.getStrategy(user.accounttype);
         const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
 
+        if(!(await this.paperRepository.isPaperInConference(paperId, user.conferenceid))) 
+            throw new ForbiddenException("Paper does not belong to your conference");
+
         return strategy.getComments(user, paperId, phase);
     }
 
@@ -46,14 +51,10 @@ export default class ReviewService {
         const strategy = this.getStrategy(user.accounttype);
         const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
         
-        return strategy.getReviews(user, paperId, phase);
-    }
+        if(!(await this.paperRepository.isPaperInConference(paperId, user.conferenceid))) 
+            throw new ForbiddenException("Paper does not belong to your conference");
 
-    async reviewerHasSubmittedReviewForPaper(accountId: number, paperId: number): Promise<boolean> {
-        const review = await this.reviewRepository.getReviewFromAccountAndPaper(accountId, paperId);
-        if(!review) throw new NotFoundException("Review not found");
-        
-        return review.paperRating === undefined;
+        return strategy.getReviews(user, paperId, phase);
     }
     
     async addComments(reviewerId : number, commentDTO : CommentDTO) {

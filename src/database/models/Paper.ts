@@ -3,10 +3,9 @@ export default class Paper {
         public readonly id: number,
         public readonly title: string,
         public readonly paperstatus : PaperStatus,
-        public readonly reviewerid: number[],
         public readonly paperid: number,
-        public readonly authorId: number,
-        public readonly coAuthors: string[],
+        public readonly authorid: number,
+        public readonly coauthors: string[],
     ) {}
 }
 

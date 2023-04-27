@@ -1,18 +1,21 @@
-import { injectable } from "inversify";
-import Comment from "../../../../database/models/Comment.js";
+import { inject, injectable } from "inversify";
 import ReviewStrategy from "../interfaces/ReviewStrategy.js";
-import Review from "../../../../database/models/Review.js";
-import { ConferencePhase } from "../../../types/ConferencePhase.js";
 import Account from "../../../../database/models/Account.js";
+import ReviewRepository from "../../../repository/ReviewRepository.js";
 
 @injectable()
 export default class ChairReviewStrategy implements ReviewStrategy {
-    async getComments(user: Account, phase? : ConferencePhase) {
-        const commentList : Comment[] = [];
-        return commentList;
+    constructor(
+        @inject(ReviewRepository) private readonly reviewRepository: ReviewRepository,
+    ) {}
+
+    // Chair can get comments and reviews anytime
+    async getComments(user: Account, paperId: number) {
+        return this.reviewRepository.getAllCommentsForPaper(paperId);
     }
-    async getReviews(user: Account, phase? : ConferencePhase) {
-        const reviewList : Review[] = [];
-        return reviewList;
+    // 
+    async getReviews(user: Account, paperId: number) {
+        const reviews = this.reviewRepository.getAllReviewsForPaper(paperId);
+        return (await reviews).filter(i => i.paperrating !== undefined);
     }
 }

@@ -7,7 +7,8 @@ import Comment from "../../database/models/Comment.js";
 export default class ReviewRepository{
     constructor(@inject(DbService) private readonly db: DbService) {}
     
-    async getReviewFromAccountAndPaper(reviewerId: number, paperId: number) : Promise<Review> {
+    // Note that this is accountId and not reviewer id. Join sequence are accountId > reviewerId > paperId
+    async getReviewFromAccountAndPaper(accountId: number, paperId: number) : Promise<Review> {
         return;
     }
 
@@ -30,7 +31,7 @@ export default class ReviewRepository{
     async deleteReview() {
         return;
     }
-    
+
     async getAllCommentsForPaper(paperId: number): Promise<Comment[]> {
         return;
     }

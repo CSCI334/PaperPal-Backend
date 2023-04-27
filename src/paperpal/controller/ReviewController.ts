@@ -1,5 +1,4 @@
 import { controller, httpGet, httpPost, requestParam } from "inversify-express-utils";
-import { STATUS_CODE } from "../../constants/HttpConstants.js";
 import { Request ,Response } from "express";
 
 import { Authenticate } from "../../middleware/Authenticate.js";
@@ -17,7 +16,7 @@ export default class ReviewController{
 
     @httpGet("/:paperId/comments", Authenticate.any()) 
     async getPaperComments(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const data = await this.reviewService.getComments(res.locals.accountType, paperId);
+        const data = await this.reviewService.getComments(res.locals.accountId, paperId);
         
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
@@ -25,7 +24,7 @@ export default class ReviewController{
 
     @httpGet("/:paperId/review", Authenticate.any()) 
     async getPaperReview(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const data = await this.reviewService.getReviews(res.locals.accountType, paperId);
+        const data = await this.reviewService.getReviews(res.locals.accountId, paperId);
         
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
@@ -47,7 +46,7 @@ export default class ReviewController{
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/review", Authenticate.for("AUTHOR"), ValidateRequest.using(ReviewRatingDTO.validator))
+    @httpPost("/review/rating", Authenticate.for("AUTHOR"), ValidateRequest.using(ReviewRatingDTO.validator))
     async addRatingOfReview(req: Request, res: Response) {
         await this.reviewService.addRatingOfReview(res.locals.accountId, req.body as ReviewRatingDTO);
         
