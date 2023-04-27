@@ -41,7 +41,7 @@ export default class PaperRepository{
     }
 
     // Get all papers an author is in
-    async getAllPaperForAuthor(accountId: number){
+    async getAllPaperForAuthor(authorId: number){
         return {};
     }
     
@@ -54,7 +54,7 @@ export default class PaperRepository{
         return;
     }
 
-    async getPapersAndBids(conferenceId: number, accountId: number) {
+    async getPapersAndBids(conferenceId: number, reviewerId: number) {
         return {};
     }
 

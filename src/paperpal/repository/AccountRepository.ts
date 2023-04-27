@@ -68,4 +68,9 @@ export default class AccountRepository {
         );
         return rows[0].id;
     }
+
+    async getAuthorIdFromAccount(accountId: number) {
+        `SELECT * FROM account WHERE id = $1`;
+        return 0;
+    }
 }

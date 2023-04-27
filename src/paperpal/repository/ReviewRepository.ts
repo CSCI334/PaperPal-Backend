@@ -7,6 +7,10 @@ import Comment from "../../database/models/Comment.js";
 export default class ReviewRepository{
     constructor(@inject(DbService) private readonly db: DbService) {}
     
+    async getReviewFromAccountAndPaper(reviewerId: number, paperId: number) : Promise<Review> {
+        return;
+    }
+
     async insertReview(review : Partial<Review>) {
         return;
     }
@@ -27,7 +31,11 @@ export default class ReviewRepository{
         return;
     }
 
-    async getAllReviewForPaper(){
+    async getAllReviewsForPaper(paperId: number): Promise<Review[]>{
+        return;
+    }
+    
+    async getAllCommentsForPaper(paperId: number): Promise<Comment[]> {
         return;
     }
 
@@ -38,4 +46,5 @@ export default class ReviewRepository{
     async addReviewRating() {
         return;
     }
+    
 }

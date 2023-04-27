@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS account(
 ALTER TABLE account
 ADD CONSTRAINT uniqueEmailAndConference UNIQUE(email, conferenceId);
 
+
 INSERT INTO account(email, username, hashedPassword, salt, accountType, accountStatus) 
 VALUES('admin@email.com', 'Admin', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bdee401a71019cbae4e1b84', '89946a', 'ADMIN', 'ACCEPTED');
 
@@ -83,4 +84,9 @@ CREATE TABLE IF NOT EXISTS review(
     CONSTRAINT paperId FOREIGN KEY(paperId) REFERENCES paper(id),
     CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES paper(ownerReviewerId)
 );
+
+-- ReviewerId and PaperId combined must be unique, 
+-- you cannot get allocated the same paper twice, nor submit a review twice for the same paper
+ALTER TABLE review
+ADD CONSTRAINT uniqueReviewerAndPaper UNIQUE(reviewerId, paperId);
 

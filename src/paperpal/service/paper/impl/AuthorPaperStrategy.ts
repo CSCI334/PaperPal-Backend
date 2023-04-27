@@ -5,17 +5,23 @@ import PaperRepository from "../../../repository/PaperRepository.js";
 import NotAuthenticatedException from "../../../../exceptions/NotAuthenticatedException.js";
 import NotFoundException from "../../../../exceptions/NotFoundException.js";
 import Account from "../../../../database/models/Account.js";
+import AccountRepository from "../../../repository/AccountRepository.js";
 
 @injectable()
 export default class AuthorPaperStrategy implements PaperStrategy {
     constructor(
+        @inject(AccountRepository) private readonly accountRepository : AccountRepository,
         @inject(ConferenceService) private readonly conferenceService : ConferenceService,
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
     ) {}
 
     // Gets all paper created by the logged in Author
     async getAvailablePapers(user: Account) {
-        const data = await this.paperRepository.getAllPaperForAuthor(user.id);
+        const authorId = await this.accountRepository.getAuthorIdFromAccount(user.id);
+        if(!authorId) throw new NotAuthenticatedException("User is not an author"); 
+
+        const data = await this.paperRepository.getAllPaperForAuthor(authorId);
+        
         return data;
     }
 
@@ -23,7 +29,10 @@ export default class AuthorPaperStrategy implements PaperStrategy {
     async getPaperFile(user: Account, paperId: number) {
         const data = await this.paperRepository.getPaper(paperId);
         if(!data) throw new NotFoundException("Paper not found");
-        if(data.authorId != user.id) throw new NotAuthenticatedException("User is not author of paper");   
+
+        const authorId = await this.accountRepository.getAuthorIdFromAccount(user.id);
+        if(!authorId) throw new NotAuthenticatedException("User is not an author");
+        if(data.authorId != authorId) throw new NotAuthenticatedException("User is not author of paper");   
         
         return data;
     }

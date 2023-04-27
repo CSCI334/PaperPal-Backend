@@ -7,6 +7,10 @@ import ReviewRepository from "../../repository/ReviewRepository.js";
 import CommentDTO from "../../types/dto/CommentDTO.js";
 import PaperRatingDTO from "../../types/dto/PaperRatingDTO.js";
 import ReviewRatingDTO from "../../types/dto/ReviewRatingDTO.js";
+import ConferenceService from "../conference/ConferenceService.js";
+import AccountService from "../account/AccountService.js";
+import { ConferencePhase } from "../../types/ConferencePhase.js";
+import NotFoundException from "../../../exceptions/NotFoundException.js";
 
 @injectable()
 export default class ReviewService {
@@ -14,7 +18,11 @@ export default class ReviewService {
         @inject(AuthorReviewStrategy) private readonly authorReviewStrategy : AuthorReviewStrategy,
         @inject(ReviewerReviewStrategy) private readonly reviewerReviewStrategy : ReviewerReviewStrategy,
         @inject(ChairReviewStrategy) private readonly chairReviewStrategy : ChairReviewStrategy,
-        @inject(ReviewRepository) private readonly reviewRepository : ReviewRepository) {}
+
+        @inject(ReviewRepository) private readonly reviewRepository : ReviewRepository,
+        @inject(ConferenceService) private readonly conferenceService : ConferenceService,
+        @inject(AccountService) private readonly accountService : AccountService,
+    ) {}
 
     private getStrategy(accountType : AccountType) {
         if(accountType === "ADMIN")
@@ -25,14 +33,27 @@ export default class ReviewService {
             return this.chairReviewStrategy;
     }
         
-    async getComments(accountType : AccountType, paperId : number) {
-        const strategy = this.getStrategy(accountType);
-        return strategy.getComments(paperId);
+    async getComments(accountId: number, paperId : number) {
+        const user = await this.accountService.getUser(accountId);
+        const strategy = this.getStrategy(user.accounttype);
+        const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
+
+        return strategy.getComments(user, paperId, phase);
     }
 
-    async getReviews(accountType : AccountType, paperId : number) {
-        const strategy = this.getStrategy(accountType);
-        return strategy.getReviews(paperId);
+    async getReviews(accountId: number, paperId : number) {
+        const user = await this.accountService.getUser(accountId);
+        const strategy = this.getStrategy(user.accounttype);
+        const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
+        
+        return strategy.getReviews(user, paperId, phase);
+    }
+
+    async reviewerHasSubmittedReviewForPaper(accountId: number, paperId: number): Promise<boolean> {
+        const review = await this.reviewRepository.getReviewFromAccountAndPaper(accountId, paperId);
+        if(!review) throw new NotFoundException("Review not found");
+        
+        return review.paperRating === undefined;
     }
     
     async addComments(reviewerId : number, commentDTO : CommentDTO) {

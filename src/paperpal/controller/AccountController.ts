@@ -15,7 +15,9 @@ import VerifyEmailDTO from "../types/dto/VerifyEmailDTO.js";
 
 @controller("")
 export default class AccountController {
-    constructor(@inject(AccountService) private readonly accountService: AccountService) {}
+    constructor(
+        @inject(AccountService) private readonly accountService: AccountService
+    ) {}
 
     @httpPost("/register", ValidateRequest.using(SignUpDTO.validator))
     async signUp(req: Request, res: Response) {
