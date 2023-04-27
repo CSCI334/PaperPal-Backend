@@ -6,6 +6,9 @@ import ReviewerPaperStrategy from "./impl/ReviewerPaperStrategy.js";
 import { AccountType } from "../../../database/models/Account.js";
 import PaperStrategy from "./interfaces/PaperStrategy.js";
 import Paper, { PaperStatus } from "../../../database/models/Paper.js";
+import { ConferencePhase } from "../../types/ConferencePhase.js";
+import ConferenceService from "../conference/ConferenceService.js";
+import AccountService from "../account/AccountService.js";
 
 @injectable()
 export default class PaperService {
@@ -13,7 +16,9 @@ export default class PaperService {
         @inject(AuthorPaperStrategy) private readonly authorPaperStrategy : AuthorPaperStrategy,
         @inject(ReviewerPaperStrategy) private readonly reviewerPaperStrategy : ReviewerPaperStrategy,
         @inject(ChairPaperStrategy) private readonly chairPaperStrategy : ChairPaperStrategy,
-        @inject(PaperRepository) private readonly paperRepository : PaperRepository) {}
+        @inject(PaperRepository) private readonly paperRepository : PaperRepository,
+        @inject(ConferenceService) private readonly conferenceService: ConferenceService,
+        @inject(AccountService) private readonly accountService: AccountService) {}
         
     private getStrategy(accountType : AccountType) {
         if(accountType === "ADMIN")
@@ -24,14 +29,21 @@ export default class PaperService {
             return this.chairPaperStrategy;
     }
 
-    async getPaper(accountType : AccountType, paperId : number) {
-        const strategy : PaperStrategy = this.getStrategy(accountType);
-        return strategy.getPaper(paperId);
+    async getPaper(accountId: number, paperId : number) {
+        const user = await this.accountService.getUser(accountId);
+        const strategy : PaperStrategy = this.getStrategy(user.accounttype);
+        const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
+        
+        return strategy.getPaperFile(user, paperId, phase);
     }
 
-    async getAllPapers(accountType : AccountType, accountId : number) {
-        const strategy : PaperStrategy = this.getStrategy(accountType);
-        return strategy.getAvailablePapers(accountId);
+    async getAllPapers(accountId : number) {
+        const user = await this.accountService.getUser(accountId);        
+        const strategy : PaperStrategy = this.getStrategy(user.accounttype);
+        const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
+
+        
+        return strategy.getAvailablePapers(user, phase);
     }
 
     async judgePaper(status : Extract<PaperStatus, "ACCEPTED" | "REJECTED">) {

@@ -21,7 +21,7 @@ export class Authenticate extends BaseMiddleware{
             res.locals = {
                 token : decoded,
                 accountType : decoded.accountType,
-                uid : decoded.uid,
+                accountId : decoded.uid,
                 email: decoded.email,
                 conferenceId: decoded.conferenceId
             };

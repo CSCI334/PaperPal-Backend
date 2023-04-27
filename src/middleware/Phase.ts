@@ -6,11 +6,12 @@ import ConferenceRepository from "../paperpal/repository/ConferenceRepository.js
 import { inject } from "inversify";
 import ConferenceUtils from "../paperpal/service/conference/ConferenceUtils.js";
 import ForbiddenException from "../exceptions/ForbiddenException.js";
+import ConferenceService from "../paperpal/service/conference/ConferenceService.js";
 
 export default class Phase extends BaseMiddleware {
     public readonly phases: ConferencePhase[];
     @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository;
-
+    @inject(ConferenceService) private readonly conferenceService : ConferenceService;
     constructor(...phases: ConferencePhase[]) {
         super();
         this.phases = phases;

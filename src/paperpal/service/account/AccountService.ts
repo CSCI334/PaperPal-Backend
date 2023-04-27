@@ -10,6 +10,7 @@ import LoginDTO from "../../types/dto/LoginDTO.js";
 import VerifyEmailDTO from "../../types/dto/VerifyEmailDTO.js";
 import AccountRepository from "../../repository/AccountRepository.js";
 import AccountUtils from "./AccountUtils.js";
+import NotFoundException from "../../../exceptions/NotFoundException.js";
 
 @injectable()
 export default class AuthService {
@@ -38,7 +39,7 @@ export default class AuthService {
         });
 
         const jwtToken = AccountUtils.createUserJwtToken({
-            uid: id, 
+            accountId: id, 
             email: registerDTO.email,
             accountType: registerDTO.accountType,
             conferenceId: registerDTO.conferenceId
@@ -64,7 +65,7 @@ export default class AuthService {
             throw new NotAuthenticatedException("Email is not verified");
 
         const jwtToken = AccountUtils.createUserJwtToken({
-            uid: user.id,
+            accountId: user.id,
             email: user.email,
             accountType: user.accounttype,
             conferenceId: user.conferenceid
@@ -87,7 +88,7 @@ export default class AuthService {
 
         return {
             token : AccountUtils.createUserJwtToken({
-                uid: token.uid, 
+                accountId: token.uid, 
                 email: token.email,
                 accountType: token.accountType,
                 conferenceId: token.conferenceId
@@ -100,8 +101,11 @@ export default class AuthService {
         this.accountRepository.setUserPasswordAndSalt(hashedpassword, salt, accountId);
     }
 
-    async getUserData(id: number) {
+    async getUser(id: number) {
         const user: Account = await this.accountRepository.getAccountById(id);
+        if(!user) throw new NotFoundException("User not found");
+        if(!user.conferenceid && !(user.accounttype === "ADMIN")) throw new NotFoundException("User does not belong to any conference");
+
         return user;
     }
 

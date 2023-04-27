@@ -31,12 +31,19 @@ export default class ConferenceService {
         if(conferenceDTO.biddingDeadline > conferenceDTO.announcementTime) throw new InvalidInputException("Bidding deadline cannot be after announcement date");
         
         const id = await this.conferenceRepository.insertConference(CreateConferenceDTO.toConferenceModel(conferenceDTO));
-        const data = this.accountService.register(new InviteDTO(conferenceDTO.chairEmail, conferenceDTO.chairName, "CHAIR", id));
+        const data = await this.accountService.register(new InviteDTO(conferenceDTO.chairEmail, conferenceDTO.chairName, "CHAIR", id));
         return data;
     }
 
+    async getConferencePhase(conferenceId : number) {
+        const conference = await this.conferenceRepository.getConference(conferenceId);
+        if(!conference) throw new NotFoundException("Conference not found");
+        
+        return ConferenceService.getCurrentPhase(conference);
+    }
+
     // TODO : Remember to make a utility function to move to next phase, the functions should simply shift around the epoch of the conference
-    static getCurrentPhase(conference : Conference) : ConferencePhase {
+    public static getCurrentPhase(conference : Conference) : ConferencePhase {
         const currentEpoch = Date.now();
 
         if(currentEpoch < conference.submissiondeadline) return ConferencePhase.Submission;

@@ -17,7 +17,7 @@ export default class ReviewController{
 
     @httpPost("/:paperId/comments", Authenticate.for("REVIEWER"))
     async addComments(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const response = this.reviewService.addReviewForPaper(0, paperId, res.locals.uid);
+        const response = this.reviewService.addReviewForPaper(0, paperId, res.locals.accountId);
         return res.status(STATUS_CODE.OK).json(response);
     }
 
@@ -29,7 +29,7 @@ export default class ReviewController{
 
     @httpPost("/:paperId/review", Authenticate.for("REVIEWER"))
     async addReview(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const response = this.reviewService.addReviewForPaper(0, paperId, res.locals.uid);
+        const response = this.reviewService.addReviewForPaper(0, paperId, res.locals.accountId);
         return res.status(STATUS_CODE.OK).json(response);
     }
 

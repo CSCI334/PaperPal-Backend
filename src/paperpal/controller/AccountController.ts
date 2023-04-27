@@ -51,7 +51,7 @@ export default class AccountController {
 
     @httpGet("/user", Authenticate.any())
     async getUserData(req: Request, res: Response) {
-        const response = await this.accountService.getUserData(res.locals.uid);
+        const response = await this.accountService.getUser(res.locals.accountId);
         return res.status(STATUS_CODE.OK).json({
             token: res.locals.token,
             username: response.username,
