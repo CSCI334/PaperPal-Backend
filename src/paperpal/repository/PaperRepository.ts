@@ -69,4 +69,9 @@ export default class PaperRepository{
     async setPaperReviewer(){
         return;
     }
+
+    
+    async allocatePaperToReviewer(paperId: number, reviewerId: number){
+        return;
+    }
 }

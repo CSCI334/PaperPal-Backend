@@ -1,10 +1,12 @@
 import { inject, injectable } from "inversify";
 import AuthorReviewStrategy from "./impl/AuthorReviewStrategy.js";
 import ReviewerReviewStrategy from "./impl/ReviewerReviewStrategy.js";
-import ReviewStrategy from "./interfaces/ReviewStrategy.js";
 import { AccountType } from "../../../database/models/Account.js";
 import ChairReviewStrategy from "./impl/ChairReviewStrategy.js";
 import ReviewRepository from "../../repository/ReviewRepository.js";
+import CommentDTO from "../../types/dto/CommentDTO.js";
+import PaperRatingDTO from "../../types/dto/PaperRatingDTO.js";
+import ReviewRatingDTO from "../../types/dto/ReviewRatingDTO.js";
 
 @injectable()
 export default class ReviewService {
@@ -24,17 +26,27 @@ export default class ReviewService {
     }
         
     async getComments(accountType : AccountType, paperId : number) {
-        const strategy : ReviewStrategy = this.getStrategy(accountType);
+        const strategy = this.getStrategy(accountType);
         return strategy.getComments(paperId);
     }
 
     async getReviews(accountType : AccountType, paperId : number) {
-        const strategy : ReviewStrategy = this.getStrategy(accountType);
+        const strategy = this.getStrategy(accountType);
         return strategy.getReviews(paperId);
     }
+    
+    async addComments(reviewerId : number, commentDTO : CommentDTO) {
+        const data = this.reviewRepository.addComment(reviewerId, commentDTO.paperId, commentDTO.comment);
+        return data;
+    }
 
-    async addReviewForPaper(reviewScore : number, paperId : number, reviewerId : number)  {
+    async addPaperRating(reviewerId : number, ratingDTO : PaperRatingDTO)  {
+        const data = await this.reviewRepository.setPaperRating(reviewerId, ratingDTO.paperId, ratingDTO.rating);
+        return data;
+    }
 
-        this.reviewRepository.insertReview(reviewScore, paperId, reviewerId);
+    async addRatingOfReview(reviewerId : number, ratingDTO : ReviewRatingDTO){
+        const data = await this.reviewRepository.setReviewRating(reviewerId, ratingDTO.reviewId, ratingDTO.rating);
+        return data;
     }
 }

@@ -9,6 +9,7 @@ import Paper, { PaperStatus } from "../../../database/models/Paper.js";
 import { ConferencePhase } from "../../types/ConferencePhase.js";
 import ConferenceService from "../conference/ConferenceService.js";
 import AccountService from "../account/AccountService.js";
+import ReviewRepository from "../../repository/ReviewRepository.js";
 
 @injectable()
 export default class PaperService {
@@ -16,9 +17,11 @@ export default class PaperService {
         @inject(AuthorPaperStrategy) private readonly authorPaperStrategy : AuthorPaperStrategy,
         @inject(ReviewerPaperStrategy) private readonly reviewerPaperStrategy : ReviewerPaperStrategy,
         @inject(ChairPaperStrategy) private readonly chairPaperStrategy : ChairPaperStrategy,
-        @inject(PaperRepository) private readonly paperRepository : PaperRepository,
+
         @inject(ConferenceService) private readonly conferenceService: ConferenceService,
-        @inject(AccountService) private readonly accountService: AccountService) {}
+        @inject(AccountService) private readonly accountService: AccountService,
+        @inject(PaperRepository) private readonly paperRepository : PaperRepository,
+        @inject(ReviewRepository) private readonly reviewRepository: ReviewRepository) {}
         
     private getStrategy(accountType : AccountType) {
         if(accountType === "ADMIN")
@@ -53,6 +56,11 @@ export default class PaperService {
 
     async addPaper(paper: Partial<Paper>) {
         const data = this.paperRepository.insertPaper(paper);
+        return data;
+    }
+
+    async allocatePaperToReviewer(paperId: number, reviewerId: number) {
+        const data = this.paperRepository.allocatePaperToReviewer(paperId, reviewerId);
         return data;
     }
 }

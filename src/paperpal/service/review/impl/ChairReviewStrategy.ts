@@ -1,12 +1,15 @@
 import { injectable } from "inversify";
 import ReviewStrategy from "../interfaces/ReviewStrategy.js";
+import Review from "../../../../database/models/Review.js";
 
 @injectable()
 export default class ChairReviewStrategy implements ReviewStrategy {
     async getComments(id: number) {
-        return "";
+        const commentList : Comment[] = [];
+        return commentList;
     }
     async getReviews(id: number) {
-        return "";
+        const reviewList : Review[] = [];
+        return reviewList;
     }
 }
