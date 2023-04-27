@@ -19,15 +19,23 @@ export default class PaperRepository{
     }
 
     async deletePaper(){
+        `DELETE FROM paper
+        WHERE colData = valData;`
         return;
     }
 
     async setPaperStatus(status : PaperStatus) {
+        `UPDATE review
+        SET col1 = val1, col2 =val2
+        WHERE colData = valData;`
         return;
     }
 
     // May be multiple reviewers
     async getAllReviewerFromPaper(paperId: number) {
+        `SELECT * 
+        FROM reviewer
+        LEFT JOIN paper ON reviewer.id = paper.ownerreviewerid;`
         return;
     }
 
@@ -42,6 +50,9 @@ export default class PaperRepository{
 
     // Get all papers an author is in
     async getAllPaperForAuthor(accountId: number){
+        `SELECT * 
+        FROM author
+        LEFT JOIN paper ON author.id = paper.authorid;`
         return {};
     }
     
