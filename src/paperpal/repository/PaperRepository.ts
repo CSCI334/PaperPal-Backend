@@ -12,6 +12,9 @@ export default class PaperRepository{
     }
 
     async insertPaper(paper : Partial<Paper>){
+        `INSERT INTO paper ( title, filelocation, authorid, ownerreviewerid)
+        VALUES ( title, filelocation, authorid, ownerreviewerid);`;
+
         return;
     }
 

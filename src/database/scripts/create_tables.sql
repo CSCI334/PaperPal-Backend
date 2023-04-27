@@ -46,20 +46,14 @@ VALUES('admin@email.com', 'Admin', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bde
 
 CREATE TABLE IF NOT EXISTS reviewer(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    accountId INTEGER,
     bidPoints INTEGER,
+    accountId INTEGER NOT NULL,
     CONSTRAINT accountId FOREIGN KEY(accountId) REFERENCES account(id)
 );
 
 CREATE TABLE IF NOT EXISTS author(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    accountId INTEGER,
-    CONSTRAINT accountId FOREIGN KEY(accountId) REFERENCES account(id)
-);
-
-CREATE TABLE IF NOT EXISTS chair(
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    accountId INTEGER,
+    accountId INTEGER NOT NULL,
     CONSTRAINT accountId FOREIGN KEY(accountId) REFERENCES account(id)
 );
 
@@ -67,26 +61,26 @@ CREATE TABLE IF NOT EXISTS paper(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     title TEXT,
     fileLocation TEXT,
-    authorId INTEGER,
-    ownerReviewerId INTEGER UNIQUE,
-    CONSTRAINT ownerReviewerId FOREIGN KEY(ownerReviewerId) REFERENCES reviewer(id),
+    authorId INTEGER NOT NULL,
     CONSTRAINT authorId FOREIGN KEY(authorId) REFERENCES author(id)
 );
 
 CREATE TABLE IF NOT EXISTS bids(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     bidAmount INTEGER,
-    reviewerId INTEGER,
-    paperId INTEGER,
+    reviewerId INTEGER NOT NULL,
+    paperId INTEGER NOT NULL,
     CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES reviewer(id),
     CONSTRAINT paperId FOREIGN KEY(paperId) REFERENCES paper(id)
 );
 
 CREATE TABLE IF NOT EXISTS review(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    reviewerId INTEGER,
-    paperId INTEGER,
-    score INTEGER,
+    paperRating INTEGER,
+    reviewRating INTEGER,
+    reviewerId INTEGER NOT NULL,
+    paperId INTEGER NOT NULL,
     CONSTRAINT paperId FOREIGN KEY(paperId) REFERENCES paper(id),
     CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES paper(ownerReviewerId)
 );
+

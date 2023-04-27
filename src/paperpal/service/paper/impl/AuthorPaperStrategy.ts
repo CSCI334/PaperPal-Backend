@@ -13,13 +13,14 @@ export default class AuthorPaperStrategy implements PaperStrategy {
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
     ) {}
 
+    // Gets all paper created by the logged in Author
     async getAvailablePapers(user: Account) {
         const data = await this.paperRepository.getAllPaperForAuthor(user.id);
         return data;
     }
 
+    // Gets paper file for own's paper, checks if user actually owns paper
     async getPaperFile(user: Account, paperId: number) {
-        // Check if author is authenticated to get this paper
         const data = await this.paperRepository.getPaper(paperId);
         if(!data) throw new NotFoundException("Paper not found");
         if(data.authorId != user.id) throw new NotAuthenticatedException("User is not author of paper");   

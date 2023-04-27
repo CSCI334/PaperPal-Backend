@@ -14,8 +14,8 @@ export default class ChairPaperStrategy implements PaperStrategy {
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
     ) {}
     
+    // Always get all papers to be accepted/rejected 
     async getAvailablePapers(user: Account) {
-        // Always get all papers to be reviewed
         const data = await this.paperRepository.getAllPapersInConference(user.conferenceid);
         return data;
     }

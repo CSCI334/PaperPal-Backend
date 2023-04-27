@@ -20,4 +20,8 @@ export default class ReviewRepository{
     async updateReview() {
         return;
     }
+
+    async addReviewOfReview() {
+        return;
+    }
 }

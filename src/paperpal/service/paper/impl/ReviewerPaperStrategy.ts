@@ -16,19 +16,15 @@ export default class ReviewerPaperStrategy implements PaperStrategy {
     async getAvailablePapers(user: Account, phase: ConferencePhase) {
         switch(phase) {
         case ConferencePhase.Bidding:
-            // TODO : For bidding phase, return a nice and joined table of Papers and Bids, 
-            // might need to populate some values when returning
-            // Will only return simple title, co-authors, and not file location
-            
-            return await this.getBiddablePapers(user);
-        case ConferencePhase.Review:
-            // TODO : For review phase, return all allocated papers
-            return await this.getAllocatedPaper(user);
-        default:
+            // For bidding phase, return a nice and joined table of Papers and Bids, 
+            // some values such as unbidded papers need to be populated when returning
 
+            // Will only return a list of title, co-authors and date. Will not return the file itself
+            return await this.getBiddablePapers(user);
+        default:
+            // For any other phase, return all allocated papers
+            return await this.getAllocatedPaper(user);
         }
-        
-        return {};
     }
 
 
