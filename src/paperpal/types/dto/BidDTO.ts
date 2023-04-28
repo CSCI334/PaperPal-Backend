@@ -7,6 +7,6 @@ export default class BidDTO {
     ) {}
     static validator = [
         check("paperId", "paperId field does not exist").exists(),
-        check("bidAmount", "bidAmount field does not exist").optional(),
+        check("bidAmount", "bidAmount field does not exist").exists(),
     ];
 }

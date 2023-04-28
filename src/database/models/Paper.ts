@@ -2,6 +2,7 @@ export default class Paper {
     constructor(
         public readonly id: number,
         public readonly title: string,
+        public readonly filelocation: string,
         public readonly paperstatus : PaperStatus,
         public readonly paperid: number,
         public readonly authorid: number,
@@ -9,4 +10,4 @@ export default class Paper {
     ) {}
 }
 
-export type PaperStatus = "ACCEPTED" | "REJECTED" | "IN REVIEW"
+export type PaperStatus = "ACCEPTED" | "REJECTED" | "TBD"

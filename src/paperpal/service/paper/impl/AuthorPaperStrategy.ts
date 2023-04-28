@@ -23,14 +23,14 @@ export default class AuthorPaperStrategy implements PaperStrategy {
     }
 
     // Gets paper file for own's paper, checks if user actually owns paper
-    async getPaperFile(user: Account, paperId: number) {
-        const data = await this.paperRepository.getPaper(paperId);
-        if(!data) throw new NotFoundException("Paper not found");
+    async getPaperFileLocation(user: Account, paperId: number) {
+        const paper = await this.paperRepository.getPaper(paperId);
+        if(!paper) throw new NotFoundException("Paper not found");
 
         const authorId = await this.accountRepository.getAuthorIdFromAccount(user.id);
         if(!authorId) throw new NotAuthenticatedException("User is not an author");
-        if(data.authorid != authorId) throw new NotAuthenticatedException("User is not author of paper");   
+        if(paper.authorid != authorId) throw new NotAuthenticatedException("User is not author of paper");   
         
-        return data;
+        return paper.filelocation;
     }
 }

@@ -47,6 +47,8 @@ export default class AuthService {
         }, {expiresIn: "7d"});
 
         // Send verify email here, verify link should contain jwtToken and email
+        if(registerDTO.accountType === "AUTHOR") this.sendVerificationEmail();
+
 
         // TODO: Not sure about this return
         return {
@@ -77,6 +79,10 @@ export default class AuthService {
             email: user.email,
             username: user.username,
         };
+    }
+
+    async sendVerificationEmail() {
+        return;
     }
 
     async verifyEmail(verifyEmailDTO: VerifyEmailDTO) {

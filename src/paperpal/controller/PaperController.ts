@@ -9,6 +9,7 @@ import Phase from "../../middleware/Phase.js";
 import { ConferencePhase } from "../types/ConferencePhase.js";
 import { upload } from "../../middleware/Upload.js";
 import PaperDTO from "../types/dto/PaperDTO.js";
+import ValidateRequest from "../../middleware/ValidateRequest.js";
 
 @controller("/paper")
 export default class PaperController {
@@ -24,19 +25,17 @@ export default class PaperController {
 
     @httpPost("/upload", Authenticate.for("AUTHOR"), Phase.isCurrently(ConferencePhase.Submission), upload.single("paper"))
     async addPaper(req: Request, res: Response) {
-        const data = this.paperService.addPaper(req.body as PaperDTO, res.locals.accountId);
+        const data = this.paperService.addPaper(req.body as PaperDTO, req.file.path, res.locals.accountId);
         
-        console.log(req.file.filename);
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
     }
 
     @httpGet("/:paperId")
-    async getPaperById(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const data = this.paperService.getPaper(res.locals.accountId, paperId);
-        const response = BaseHttpResponse.success(data);
+    async getPaperFile(@requestParam("paperId") paperId: number, req: Request, res: Response) {
+        const path = await this.paperService.getPaperFileLocation(res.locals.accountId, paperId);
 
-        return response.toExpressResponse(res);
+        return res.sendFile(path);
     }
 
     @httpGet("/author", Authenticate.for("AUTHOR"))
@@ -47,9 +46,12 @@ export default class PaperController {
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/judge/:paperId", Authenticate.for("CHAIR"), Phase.isCurrently(ConferencePhase.Judgment))
+    @httpPost("/judge/:paperId", 
+        Authenticate.for("CHAIR"), 
+        Phase.isCurrently(ConferencePhase.Judgment), 
+        ValidateRequest.using(PaperDTO.paperStatusValidator))
     async judgePaper(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const data = this.paperService.judgePaper(paperId ,"ACCEPTED");
+        const data = this.paperService.judgePaper(paperId , req.body.paperStatus);
 
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);

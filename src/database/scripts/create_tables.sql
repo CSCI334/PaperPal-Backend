@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS review(
     reviewerId INTEGER NOT NULL,
     paperId INTEGER NOT NULL,
     CONSTRAINT paperId FOREIGN KEY(paperId) REFERENCES paper(id),
-    CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES reviwer(id)
+    CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES paper(ownerReviewerId)
 );
 
 -- ReviewerId and PaperId combined must be unique, 

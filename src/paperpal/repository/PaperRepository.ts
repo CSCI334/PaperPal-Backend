@@ -18,10 +18,6 @@ export default class PaperRepository{
         return;
     }
 
-    async deletePaper(){
-        return;
-    }
-
     async setPaperStatus(paperId:number, status : PaperStatus) {
         return;
     }
@@ -30,16 +26,11 @@ export default class PaperRepository{
     async getAllReviewerFromPaper(paperId: number) {
         `SELECT * 
         FROM reviewer
-        LEFT JOIN review ON reviewer.id = review.reviewerid;`
+        LEFT JOIN review ON reviewer.id = review.reviewerid;`;
         return;
     }
 
-    async getAllocatedPaperForReviewer(reviewerId: number) : Promise<Paper[]>{
-        return;
-    }
-
-    // May be multiple authors
-    async getAllAuthorFromPaper() {
+    async getAllocatedPapersForReviewer(reviewerId: number) : Promise<Paper[]>{
         return;
     }
 
@@ -55,7 +46,6 @@ export default class PaperRepository{
         return {};
     }
     
-    
     async getAllPapersInConference(conferenceId : number): Promise<Paper[]>{
         return;
     }
@@ -68,19 +58,6 @@ export default class PaperRepository{
         return {};
     }
 
-    async getPaperForReviewer(){
-        return;
-    }
-
-    async getPaperFileLocation(){
-        return;
-    }
-    
-    async setPaperReviewer(){
-        return;
-    }
-
-    
     async allocatePaperToReviewer(paperId: number, reviewerId: number){
         return;
     }

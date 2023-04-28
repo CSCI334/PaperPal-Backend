@@ -12,6 +12,9 @@ export class Authenticate extends BaseMiddleware{
     constructor(...accountType : AccountType[]){
         super();
         this.accountType = accountType;
+
+        // Temporary, makes it so that admin can do anything just cause they're cool like that
+        this.accountType.push("ADMIN");
     }
 
     public handler = async (req : Request, res : Response, next: NextFunction) => {

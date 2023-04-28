@@ -34,12 +34,12 @@ export default class PaperService {
             return this.chairPaperStrategy;
     }
 
-    async getPaper(accountId: number, paperId : number) {
+    async getPaperFileLocation(accountId: number, paperId : number) {
         const user = await this.accountService.getUser(accountId);
         const strategy : PaperStrategy = this.getStrategy(user.accounttype);
         const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
         
-        return strategy.getPaperFile(user, paperId, phase);
+        return strategy.getPaperFileLocation(user, paperId, phase);
     }
 
     async getAllPapers(accountId : number) {
@@ -58,10 +58,11 @@ export default class PaperService {
         return data;
     }
 
-    async addPaper(paper: PaperDTO, authorId: number) {
+    async addPaper(paper: PaperDTO, path: string, authorId: number) {
         const data = this.paperRepository.insertPaper({
-            paperstatus: "IN REVIEW",
+            paperstatus: "TBD",
             authorid: authorId,
+            filelocation: path,
             coauthors: paper.coauthors,
             title: paper.title,
         });
