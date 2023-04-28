@@ -1,5 +1,4 @@
 import { createHash, randomBytes } from "crypto";
-import Account from "../../../database/models/Account.js";
 import { SECRET } from "../../../config/Secret.js";
 import jwt from "jsonwebtoken";
 import { Locals } from "express";

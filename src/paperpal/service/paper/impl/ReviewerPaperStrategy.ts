@@ -19,7 +19,7 @@ export default class ReviewerPaperStrategy implements PaperStrategy {
             // For bidding phase, return a nice and joined table of Papers and Bids, 
             // some values such as unbidded papers need to be populated when returning
 
-            // Will only return a list of title, co-authors and date. Will not return the file itself
+            // Will only return a list of title, co-authors and date. Will not return the file itself.
             return await this.getBiddablePapers(user);
         default:
             // For any other phase, return all allocated papers

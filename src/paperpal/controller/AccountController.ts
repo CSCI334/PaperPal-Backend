@@ -12,7 +12,6 @@ import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
 import InviteDTO from "../types/dto/InviteDTO.js";
 import VerifyEmailDTO from "../types/dto/VerifyEmailDTO.js";
 
-
 @controller("")
 export default class AccountController {
     constructor(

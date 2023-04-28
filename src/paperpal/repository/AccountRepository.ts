@@ -2,10 +2,10 @@ import { inject, injectable } from "inversify";
 import DbService from "../../database/db.js";
 import Account, { AccountStatus } from "../../database/models/Account.js";
 import { PgErrorMap } from "../../database/types.js";
+import Reviewer from "../../database/models/Reviewer.js";
 
 @injectable()
 export default class AccountRepository {
-
     constructor(@inject(DbService) private readonly db: DbService) {}
     
     async insertUser(account: Partial<Account>): Promise<number> {
@@ -73,4 +73,25 @@ export default class AccountRepository {
         `SELECT * FROM account WHERE id = $1`;
         return 0;
     }
+
+    async getReviewerIdFromAccount(accountId: number) {
+        `SELECT * FROM account WHERE id = $1`;
+        return 0;
+    }
+    
+    getReviewerFromAccountId(accountId: number): (Account & Reviewer) | PromiseLike<Account & Reviewer> {
+        throw new Error("Method not implemented.");
+    }
+
+    async updateReviewer(reviewerId: number, reviewer: Partial<Reviewer>) {
+        const { rows } = await this.db.query(
+            `UPDATE reviewer SET 
+            bidPoints = COALESCE($2, bidPoints)
+            workload = COALESCE($3, workload)
+            WHERE id = $1`,
+            [reviewerId, reviewer.bidpoints, reviewer.workload]
+        ); 
+        return;
+    }
+
 }

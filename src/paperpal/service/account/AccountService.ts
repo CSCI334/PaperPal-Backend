@@ -11,6 +11,7 @@ import VerifyEmailDTO from "../../types/dto/VerifyEmailDTO.js";
 import AccountRepository from "../../repository/AccountRepository.js";
 import AccountUtils from "./AccountUtils.js";
 import NotFoundException from "../../../exceptions/NotFoundException.js";
+import Reviewer from "../../../database/models/Reviewer.js";
 
 @injectable()
 export default class AuthService {
@@ -106,6 +107,13 @@ export default class AuthService {
         if(!user) throw new NotFoundException("User not found");
         if(!user.conferenceid && !(user.accounttype === "ADMIN")) throw new NotFoundException("User does not belong to any conference");
 
+        return user;
+    }
+
+    async getReviewer(accountId: number) {
+        const user: Reviewer = await this.accountRepository.getReviewerFromAccountId(accountId);
+        if(!user) throw new NotFoundException("User is not a reviewer");
+        
         return user;
     }
 

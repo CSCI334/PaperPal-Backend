@@ -22,7 +22,7 @@ export default class PaperRepository{
         return;
     }
 
-    async setPaperStatus(status : PaperStatus) {
+    async setPaperStatus(paperId:number, status : PaperStatus) {
         return;
     }
 

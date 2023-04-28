@@ -5,11 +5,13 @@ import ChairPaperStrategy from "./impl/ChairPaperStrategy.js";
 import ReviewerPaperStrategy from "./impl/ReviewerPaperStrategy.js";
 import { AccountType } from "../../../database/models/Account.js";
 import PaperStrategy from "./interfaces/PaperStrategy.js";
-import Paper, { PaperStatus } from "../../../database/models/Paper.js";
+import { PaperStatus } from "../../../database/models/Paper.js";
 import { ConferencePhase } from "../../types/ConferencePhase.js";
 import ConferenceService from "../conference/ConferenceService.js";
 import AccountService from "../account/AccountService.js";
 import ReviewRepository from "../../repository/ReviewRepository.js";
+import PaperDTO from "../../types/dto/PaperDTO.js";
+import NotFoundException from "../../../exceptions/NotFoundException.js";
 
 @injectable()
 export default class PaperService {
@@ -48,13 +50,21 @@ export default class PaperService {
         return strategy.getAvailablePapers(user, phase);
     }
 
-    async judgePaper(status : Extract<PaperStatus, "ACCEPTED" | "REJECTED">) {
-        const data = this.paperRepository.setPaperStatus(status);
+    async judgePaper(paperId: number, status : Extract<PaperStatus, "ACCEPTED" | "REJECTED">) {
+        const paper = await this.paperRepository.getPaper(paperId);
+        if(!paper) throw new NotFoundException("Paper not found"); 
+        
+        const data = this.paperRepository.setPaperStatus(paperId, status);
         return data;
     }
 
-    async addPaper(paper: Partial<Paper>) {
-        const data = this.paperRepository.insertPaper(paper);
+    async addPaper(paper: PaperDTO, authorId: number) {
+        const data = this.paperRepository.insertPaper({
+            paperstatus: "IN REVIEW",
+            authorid: authorId,
+            coauthors: paper.coauthors,
+            title: paper.title,
+        });
         return data;
     }
 

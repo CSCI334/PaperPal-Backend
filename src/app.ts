@@ -79,9 +79,6 @@ export default class App {
         
         console.log(`Connection succesful!`);
         
-        if(ConferencePhase.Review > ConferencePhase.Submission)
-            console.log("heyo");
-            
         const app = server.build();
         app.listen(process.env.BACKEND_PORT || 8000, () => {
             console.log(`Server (${process.env.DOMAIN}) is running at PORT : ${process.env.BACKEND_PORT || 8000}`);

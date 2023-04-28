@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import PaperStrategy from "../interfaces/PaperStrategy.js";
-import ConferenceService from "../../conference/ConferenceService.js";
 import PaperRepository from "../../../repository/PaperRepository.js";
 import NotAuthenticatedException from "../../../../exceptions/NotAuthenticatedException.js";
 import NotFoundException from "../../../../exceptions/NotFoundException.js";
@@ -11,7 +10,6 @@ import AccountRepository from "../../../repository/AccountRepository.js";
 export default class AuthorPaperStrategy implements PaperStrategy {
     constructor(
         @inject(AccountRepository) private readonly accountRepository : AccountRepository,
-        @inject(ConferenceService) private readonly conferenceService : ConferenceService,
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
     ) {}
 
