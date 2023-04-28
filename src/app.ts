@@ -26,6 +26,7 @@ import ReviewRepository from "./paperpal/repository/ReviewRepository.js";
 import PaperService from "./paperpal/service/paper/PaperService.js";
 import ReviewService from "./paperpal/service/review/ReviewService.js";
 import BidService from "./paperpal/service/bid/BidService.js";
+
 export default class App {
     private readonly container: Container;
 

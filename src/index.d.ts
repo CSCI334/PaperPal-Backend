@@ -1,4 +1,5 @@
-import { AccountType } from "./database/models/Account.ts";
+import { AccountType } from "./database/models/Account.js";
+import "express";
 
 declare global {
     namespace Express {

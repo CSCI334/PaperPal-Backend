@@ -49,7 +49,7 @@ export default class PaperController {
     @httpPost("/judge/:paperId", 
         Authenticate.for("CHAIR"), 
         Phase.isCurrently(ConferencePhase.Judgment), 
-        ValidateRequest.using(PaperDTO.paperStatusValidator))
+        ValidateRequest.using(PaperDTO.paperStatusValidator()))
     async judgePaper(@requestParam("paperId") paperId: number, req: Request, res: Response) {
         const data = this.paperService.judgePaper(paperId , req.body.paperStatus);
 

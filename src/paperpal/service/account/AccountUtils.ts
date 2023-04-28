@@ -2,6 +2,7 @@ import { createHash, randomBytes } from "crypto";
 import { SECRET } from "../../../config/Secret.js";
 import jwt from "jsonwebtoken";
 import { Locals } from "express";
+import { TokenData } from "../../types/TokenData.js";
 
 export default class AccountUtils {
     public static createPasswordHash(password: string, salt: string) {
@@ -22,7 +23,7 @@ export default class AccountUtils {
         return hash;
     }
 
-    public static createUserJwtToken(locals : Locals, options: jwt.SignOptions = {expiresIn : "3d"} ) {
+    public static createUserJwtToken(locals : TokenData, options: jwt.SignOptions = {expiresIn : "3d"} ) {
         const jwtToken = jwt.sign(locals, SECRET.PRIVATE_KEY, options);
         return jwtToken;
     }

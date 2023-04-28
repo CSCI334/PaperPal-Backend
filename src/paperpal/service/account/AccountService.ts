@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { SECRET } from "../../../config/Secret.js";
 import Account from "../../../database/models/Account.js";
 import InvalidInputException from "../../../exceptions/InvalidInputException.js";
@@ -11,8 +11,7 @@ import VerifyEmailDTO from "../../types/dto/VerifyEmailDTO.js";
 import AccountRepository from "../../repository/AccountRepository.js";
 import AccountUtils from "./AccountUtils.js";
 import NotFoundException from "../../../exceptions/NotFoundException.js";
-import Reviewer from "../../../database/models/Reviewer.js";
-import { Locals } from "express";
+import { TokenData } from "../../types/TokenData.js";
 
 @injectable()
 export default class AuthService {
@@ -83,7 +82,7 @@ export default class AuthService {
     }
 
     async verifyEmail(verifyEmailDTO: VerifyEmailDTO) {
-        const token = jwt.verify(verifyEmailDTO.token, SECRET.PRIVATE_KEY) as Locals;
+        const token = jwt.verify(verifyEmailDTO.token, SECRET.PRIVATE_KEY) as TokenData;
         if(!token.email) throw new NotAuthenticatedException("Invalid verification token");
         if(verifyEmailDTO.email !== token.email) throw new NotAuthenticatedException("Invalid verification token");
 
