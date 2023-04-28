@@ -1,4 +1,4 @@
-import { } from "express-validator";
+import { body } from "express-validator";
 
 export default class WorkloadDTO {
     constructor(

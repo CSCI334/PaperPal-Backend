@@ -12,8 +12,8 @@ export default class VerifyEmailDTO {
             body("email", "Email field does not exist").exists(),
             body("email", "Malformed email").isEmail().normalizeEmail(),
             body("token", "Token field does not exist").exists(),
-            body("password", "Password field does not exist").exists().escape(),
-            body("password","Password field must contain at least 6 characters").isLength({ min: 6 }),
+            body("password", "Password field does not exist").exists(),
+            body("password","Password field must contain at least 6 characters").isLength({ min: 6 }).escape(),
         ];
     }; 
 }
