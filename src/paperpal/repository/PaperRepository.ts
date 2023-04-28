@@ -8,6 +8,9 @@ export default class PaperRepository{
     constructor(@inject(DbService) private readonly db: DbService) {}
     
     async getPaper(paperId: number) : Promise<Paper> {
+        `SELECT *
+        FROM paper
+        WHERE id = paper.id;`
         return;
     }
 
@@ -19,6 +22,9 @@ export default class PaperRepository{
     }
 
     async setPaperStatus(paperId:number, status : PaperStatus) {
+        `UPDATE paper
+        SET status = 'status'
+        WHERE id = id;`
         return;
     }
 
@@ -30,11 +36,24 @@ export default class PaperRepository{
         return;
     }
 
-    async getAllocatedPapersForReviewer(reviewerId: number) : Promise<Paper[]>{
+    async getAllocatedPapersForReviewer(reviewerId: number) : Promise<Paper[]>{        
+        `SELECT paper.title , account.username, review.reviewrating
+        FROM paper
+        INNER JOIN account ON paper.authorid = account.id
+        INNER JOIN review ON account.id = review.reviewerid;`
         return;
     }
 
     async isPaperInConference(paperId:number, conferenceId : number): Promise<boolean> {
+        `SELECT
+        CASE WHEN EXISTS(
+            SELECT paper.id
+          FROM paper
+          INNER JOIN conference ON paper.id = conference.id
+        )
+        THEN 'TRUE'
+        ELSE 'FALSE'
+        END;`
         return true;
     }
 
@@ -47,19 +66,30 @@ export default class PaperRepository{
     }
     
     async getAllPapersInConference(conferenceId : number): Promise<Paper[]>{
+        `SELECT * 
+        FROM paper
+        LEFT JOIN conference ON paper.id = conference.id;`
         return;
     }
 
     async getConferenceFromPaper(paperId: number): Promise<Conference> {
+        `SELECT *
+        FROM conference
+        LEFT JOIN paper ON conference.id = paper.id;`
         return;
     }
 
     async getPapersAndBids(conferenceId: number, reviewerId: number) {
+        `SELECT paper.*, bids.bidamount
+        FROM paper
+        INNER JOIN bids ON paper.id = bids.paperid;`
         return {};
     }
 
     async allocatePaperToReviewer(paperId: number, reviewerId: number){
         // Create empty Review column with paperId and reviewerId
+       `INSERT INTO (paperrating, reviewrating)
+        VALUES (val1, val2);`
         return;
     }
 }
