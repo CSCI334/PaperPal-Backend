@@ -28,6 +28,9 @@ export default class PaperRepository{
 
     // May be multiple reviewers
     async getAllReviewerFromPaper(paperId: number) {
+        `SELECT * 
+        FROM reviewer
+        LEFT JOIN review ON reviewer.id = review.reviewerid;`
         return;
     }
 
