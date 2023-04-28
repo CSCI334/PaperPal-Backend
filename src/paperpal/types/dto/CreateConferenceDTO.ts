@@ -1,4 +1,4 @@
-import { ValidationChain, body } from "express-validator";
+import { body } from "express-validator";
 import Conference from "../../../database/models/Conference.js";
 
 export default class CreateConferenceDTO {
@@ -25,16 +25,18 @@ export default class CreateConferenceDTO {
         };
     } 
 
-    static validator: ValidationChain[] = [
-        body("conferenceName", "conferenceName does not exists").exists(),
-        body("conferenceLocation", "conferenceLocation does not exists").exists(),
-        body("submissionDeadline", "submissionDeadline does not exists").exists(),
-        body("submissionDeadline", "submissionDeadline is not an epoch number").isNumeric(),
-        body("biddingDeadline", "biddingDeadline does not exists").exists(),
-        body("biddingDeadline", "biddingDeadline is not an epoch number").isNumeric(),
-        body("announcementTime", "announcementTime does not exists").exists(),
-        body("announcementTime", "announcementTime is not an epoch number").isNumeric(),
-        body("chairEmail", "chairEmail does not exists").exists(),
-        body("chairName", "chairName does not exists").exists(),
-    ];
+    static validator = () => {
+        return [
+            body("conferenceName", "conferenceName does not exists").exists().escape(),
+            body("conferenceLocation", "conferenceLocation does not exists").exists().escape(),
+            body("submissionDeadline", "submissionDeadline does not exists").exists(),
+            body("submissionDeadline", "submissionDeadline is not an epoch number").isNumeric(),
+            body("biddingDeadline", "biddingDeadline does not exists").exists(),
+            body("biddingDeadline", "biddingDeadline is not an epoch number").isNumeric(),
+            body("announcementTime", "announcementTime does not exists").exists(),
+            body("announcementTime", "announcementTime is not an epoch number").isNumeric(),
+            body("chairEmail", "chairEmail does not exists").exists().normalizeEmail(),
+            body("chairName", "chairName does not exists").exists().escape(),
+        ];
+    };
 }

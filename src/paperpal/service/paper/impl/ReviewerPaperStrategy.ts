@@ -4,14 +4,14 @@ import PaperRepository from "../../../repository/PaperRepository.js";
 import { ConferencePhase } from "../../../types/ConferencePhase.js";
 import Account from "../../../../database/models/Account.js";
 import NotFoundException from "../../../../exceptions/NotFoundException.js";
-import AccountService from "../../account/AccountService.js";
 import ReviewRepository from "../../../repository/ReviewRepository.js";
 import ForbiddenException from "../../../../exceptions/ForbiddenException.js";
+import AccountRepository from "../../../repository/AccountRepository.js";
 
 @injectable()
 export default class ReviewerPaperStrategy implements PaperStrategy {
     constructor(
-        @inject(AccountService) private readonly accountService : AccountService,
+        @inject(AccountRepository) private readonly accountRepository : AccountRepository,
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
         @inject(ReviewRepository) private readonly reviewRepository : ReviewRepository
     ) {}
@@ -42,14 +42,14 @@ export default class ReviewerPaperStrategy implements PaperStrategy {
     }
 
     async getAllocatedPaper(user: Account) {
-        const reviewer = await this.accountService.getReviewer(user.id);
+        const reviewer = await this.accountRepository.getReviewer(user.id);
         const data = this.paperRepository.getAllocatedPapersForReviewer(reviewer.id);
         if(!data) throw new NotFoundException("Reviewer has no allocated paper");
         return data;
     }
 
     async getBiddablePapers(user: Account) {
-        const reviewer = await this.accountService.getReviewer(user.id);
+        const reviewer = await this.accountRepository.getReviewer(user.id);
         const data = this.paperRepository.getPapersAndBids(user.conferenceid, reviewer.id);
         return data;
     }

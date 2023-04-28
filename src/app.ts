@@ -25,7 +25,7 @@ import PaperRepository from "./paperpal/repository/PaperRepository.js";
 import ReviewRepository from "./paperpal/repository/ReviewRepository.js";
 import PaperService from "./paperpal/service/paper/PaperService.js";
 import ReviewService from "./paperpal/service/review/ReviewService.js";
-import { ConferencePhase } from "./paperpal/types/ConferencePhase.js";
+import BidService from "./paperpal/service/bid/BidService.js";
 export default class App {
     private readonly container: Container;
 
@@ -40,6 +40,7 @@ export default class App {
         this.container.bind(DbService).toSelf();
 
         // Internal services
+        this.container.bind(BidService).toSelf();
         this.container.bind(AccountService).toSelf();
         this.container.bind(ConferenceService).toSelf();
         this.container.bind(PaperService).toSelf();

@@ -1,12 +1,15 @@
-import { check } from "express-validator";
+import { body, } from "express-validator";
 
 export default class BidDTO {
     constructor(
         public readonly paperId: number, 
         public readonly bidAmount: number
     ) {}
-    static validator = [
-        check("paperId", "paperId field does not exist").exists(),
-        check("bidAmount", "bidAmount field does not exist").exists(),
-    ];
+
+    static validator = () => {
+        return [
+            body("paperId", "paperId field does not exist").exists(),
+            body("bidAmount", "bidAmount field does not exist").exists(),
+        ];
+    };
 }

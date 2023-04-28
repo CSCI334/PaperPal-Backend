@@ -34,7 +34,7 @@ export default class AuthorReviewStrategy implements ReviewStrategy {
     }
 
     async authorOwnsPaper(accountId: number, paperId: number) {
-        const authorId = await this.accountRepository.getAuthorIdFromAccount(accountId);
+        const authorId = await this.accountRepository.getAuthor(accountId);
         const paper = await this.paperRepository.getPaper(paperId);
 
         if(!paper) throw new NotFoundException("Paper not found");

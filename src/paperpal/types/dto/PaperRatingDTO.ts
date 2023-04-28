@@ -1,4 +1,4 @@
-import { check } from "express-validator";
+import { body, } from "express-validator";
 import { Rating } from "../Rating.js";
 import RatingDTO from "./RatingDTO.js";
 
@@ -10,9 +10,11 @@ export default class PaperRatingDTO extends RatingDTO {
         super(rating, paperId);
     }
 
-    static validator = [
-        ...RatingDTO.validator,
-        check("paperId", "PaperId field does not exist").exists(),
-        check("paperId", "PaperId field is not an integer").isInt(),
-    ];
+    static validator = () => {
+        return [
+            ...RatingDTO.validator(),
+            body("paperId", "PaperId field does not exist").exists(),
+            body("paperId", "PaperId field is not an integer").isInt(),
+        ];
+    };
 }

@@ -18,7 +18,7 @@ export default class AccountController {
         @inject(AccountService) private readonly accountService: AccountService
     ) {}
 
-    @httpPost("/register", ValidateRequest.using(SignUpDTO.validator))
+    @httpPost("/register", ValidateRequest.using(SignUpDTO.validator()))
     async signUp(req: Request, res: Response) {
         const userData = await this.accountService.register(req.body as SignUpDTO);
 
@@ -26,7 +26,7 @@ export default class AccountController {
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/invite", Authenticate.for("ADMIN"), ValidateRequest.using(InviteDTO.validator))
+    @httpPost("/invite", Authenticate.for("ADMIN"), ValidateRequest.using(InviteDTO.validator()))
     async invite(req: Request, res: Response) {
         const userData = await this.accountService.register(req.body as InviteDTO);
 
@@ -34,7 +34,7 @@ export default class AccountController {
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/login", ValidateRequest.using(LoginDTO.validator))
+    @httpPost("/login", ValidateRequest.using(LoginDTO.validator()))
     async login(req: Request, res: Response) {
         const userData = await this.accountService.login(req.body as LoginDTO);
 
@@ -42,7 +42,7 @@ export default class AccountController {
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/verify", ValidateRequest.using(VerifyEmailDTO.validator))
+    @httpPost("/verify", ValidateRequest.using(VerifyEmailDTO.validator()))
     async verify(req: Request, res: Response) {
         const data = await this.accountService.verifyEmail(req.body as VerifyEmailDTO);
 

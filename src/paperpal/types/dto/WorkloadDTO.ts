@@ -1,10 +1,12 @@
-import { check } from "express-validator";
+import { } from "express-validator";
 
 export default class WorkloadDTO {
     constructor(
         public readonly amountOfPapers: number
     ) {}
-    static validator = [
-        check("amountOfPapers", "amountOfPapers field does not exist").exists(),
-    ];
+    static validator = () => {
+        return [
+            body("amountOfPapers", "amountOfPapers field does not exist").exists(),
+        ];
+    }; 
 }

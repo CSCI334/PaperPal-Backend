@@ -1,5 +1,4 @@
-import { check } from "express-validator";
-import { AccountType } from "../../../database/models/Account.js";
+import { body, } from "express-validator";
 import { Rating } from "../Rating.js";
 import RatingDTO from "./RatingDTO.js";
 
@@ -10,10 +9,11 @@ export default class PaperRatingDTO extends RatingDTO {
     ) {
         super(rating, reviewId);
     }
-
-    static validator = [
-        ...RatingDTO.validator,
-        check("reviewId", "reviewId field does not exist").exists(),
-        check("reviewId", "reviewId field is not an integer").isInt(),
-    ];
+    static validator = () => {
+        return [
+            ...RatingDTO.validator(),
+            body("reviewId", "reviewId field does not exist").exists(),
+            body("reviewId", "reviewId field is not an integer").isInt(),
+        ];
+    };
 }

@@ -12,6 +12,7 @@ import AccountRepository from "../../repository/AccountRepository.js";
 import AccountUtils from "./AccountUtils.js";
 import NotFoundException from "../../../exceptions/NotFoundException.js";
 import Reviewer from "../../../database/models/Reviewer.js";
+import { Locals } from "express";
 
 @injectable()
 export default class AuthService {
@@ -21,7 +22,7 @@ export default class AuthService {
         // This is inelegant but it's better than the alternative.
         // Registering a new user uses the same logic for every user (who needs admin to invite them) except author (who can register on their own)
         
-        // Rather than making three strategy consisting of different user roles with minute difference, we check if
+        // Rather than making three strategy consisting of different user roles with minute difference, we if
         // the request provided a password or not.
         // If true, it's an author register, create their hashedPassword and salt, send verify email
         // If false, it's other account type, send verify email.
@@ -29,7 +30,7 @@ export default class AuthService {
             AccountUtils.createNewPasswordHash(registerDTO.password) :
             [null, null];
         
-        const id: number = await this.accountRepository.insertUser({
+        const user: Account = await this.accountRepository.insertUser({
             email : registerDTO.email,
             username: registerDTO.username,
             hashedpassword: hashedPassword,
@@ -40,21 +41,19 @@ export default class AuthService {
         });
 
         const jwtToken = AccountUtils.createUserJwtToken({
-            accountId: id, 
+            accountId: user.id, 
             email: registerDTO.email,
             accountType: registerDTO.accountType,
             conferenceId: registerDTO.conferenceId
         }, {expiresIn: "7d"});
 
         // Send verify email here, verify link should contain jwtToken and email
-        if(registerDTO.accountType === "AUTHOR") this.sendVerificationEmail();
+        if(registerDTO.accountType === "AUTHOR") this.sendVerificationEmail(jwtToken);
 
 
         // TODO: Not sure about this return
         return {
             token: jwtToken,
-            email: registerDTO.email,
-            username: registerDTO.username,
         };
     }
 
@@ -76,26 +75,24 @@ export default class AuthService {
 
         return {
             token: jwtToken,
-            email: user.email,
-            username: user.username,
         };
     }
 
-    async sendVerificationEmail() {
+    async sendVerificationEmail(jwtToken : string) {
         return;
     }
 
     async verifyEmail(verifyEmailDTO: VerifyEmailDTO) {
-        const token = jwt.verify(verifyEmailDTO.token, SECRET.PRIVATE_KEY) as JwtPayload;
+        const token = jwt.verify(verifyEmailDTO.token, SECRET.PRIVATE_KEY) as Locals;
         if(!token.email) throw new NotAuthenticatedException("Invalid verification token");
         if(verifyEmailDTO.email !== token.email) throw new NotAuthenticatedException("Invalid verification token");
 
-        this.accountRepository.updateAccountStatus(token.uid, "ACCEPTED");
-        this.setUserPassword(verifyEmailDTO.password, token.uid);
+        this.accountRepository.updateAccountStatus(token.accountId, "ACCEPTED");
+        this.setUserPassword(verifyEmailDTO.password, token.accountId);
 
         return {
             token : AccountUtils.createUserJwtToken({
-                accountId: token.uid, 
+                accountId: token.accountId, 
                 email: token.email,
                 accountType: token.accountType,
                 conferenceId: token.conferenceId
@@ -113,13 +110,6 @@ export default class AuthService {
         if(!user) throw new NotFoundException("User not found");
         if(!user.conferenceid && !(user.accounttype === "ADMIN")) throw new NotFoundException("User does not belong to any conference");
 
-        return user;
-    }
-
-    async getReviewer(accountId: number) {
-        const user: Reviewer = await this.accountRepository.getReviewerFromAccountId(accountId);
-        if(!user) throw new NotFoundException("User is not a reviewer");
-        
         return user;
     }
 

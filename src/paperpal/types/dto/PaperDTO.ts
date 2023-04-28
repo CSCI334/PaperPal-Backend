@@ -1,19 +1,25 @@
-import { check } from "express-validator";
+import { body, } from "express-validator";
 
 export default class PaperDTO {
     constructor(
         public readonly title: string, 
         public readonly coauthors: string[]
     ) {}
-    static validator = [
-        check("title", "Title field does not exist").exists(),
-        check("coauthor").optional({nullable:true}),
-    ];
 
-    static paperStatusValidator = [
-        check("paperStatus", "paperStatus does not exist").exists(),
-        check("paperStatus", "paperStatus is not ACCEPTED or REJECTED").isIn(
-            ["ACCEPTED", "REJECTED"]
-        ),
-    ];
+    static validator = () => {
+        return [
+            body("title", "Title field does not exist").exists().escape(),
+            body("coauthor").optional({nullable:true}),
+        ];
+    };
+
+    
+    static paperStatusValidator = () =>{
+        return [
+            body("paperStatus", "paperStatus does not exist").exists(),
+            body("paperStatus", "paperStatus is not ACCEPTED or REJECTED").isIn(
+                ["ACCEPTED", "REJECTED"]
+            ),
+        ];
+    };
 }

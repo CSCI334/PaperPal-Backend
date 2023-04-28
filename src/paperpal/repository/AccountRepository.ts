@@ -3,19 +3,19 @@ import DbService from "../../database/db.js";
 import Account, { AccountStatus } from "../../database/models/Account.js";
 import { PgErrorMap } from "../../database/types.js";
 import Reviewer from "../../database/models/Reviewer.js";
+import Author from "../../database/models/Author.js";
 
 @injectable()
 export default class AccountRepository {
     constructor(@inject(DbService) private readonly db: DbService) {}
     
-    async insertUser(account: Partial<Account>): Promise<number> {
-        console.log(account);
+    async insertUser(account: Partial<Account>) {
         const errorMap: PgErrorMap = new Map([
             ["23505", "Email already used by another account"],
         ]);
         const { rows } = await this.db.query(
             `INSERT INTO account(email, username, hashedpassword, salt, accountType, accountStatus, conferenceId) 
-            VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING ID`,
+            VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
             [   account.email, 
                 account.username, 
                 account.hashedpassword, 
@@ -25,7 +25,7 @@ export default class AccountRepository {
                 account.conferenceid],
             errorMap
         );
-        return rows[0].id;
+        return rows[0] as Account;
     }
 
     async getAccountByEmail(email: string): Promise<Account> {
@@ -45,15 +45,15 @@ export default class AccountRepository {
         return rows[0] as Account;
     }
 
-    async updateAccountStatus(accountid: number, accountStatus: AccountStatus): Promise<number> {
+    async updateAccountStatus(accountid: number, accountStatus: AccountStatus) {
         const { rows } = await this.db.query(
             `UPDATE account SET accountstatus = $1 WHERE id = $2 RETURNING id`,
             [accountStatus, accountid]
         );
-        return rows[0].id;
+        return rows[0] as Account;
     }
 
-    async getAllReviewer(): Promise<Account[]> {
+    async getAllReviewer() {
         const { rows } = await this.db.query(
             `SELECT * FROM account`
         );
@@ -63,24 +63,26 @@ export default class AccountRepository {
 
     async setUserPasswordAndSalt(password : string, salt : string, accountId: number) {
         const { rows } = await this.db.query(
-            `UPDATE account SET hashedPassword = $1, salt = $2 WHERE id = $3 RETURNING id`,
+            `UPDATE account SET hashedPassword = $1, salt = $2 WHERE id = $3 RETURNING *`,
             [password, salt, accountId]
         );
-        return rows[0].id;
+        return rows[0] as Account;
     }
 
-    async getAuthorIdFromAccount(accountId: number) {
-        `SELECT * FROM account WHERE id = $1`;
-        return 0;
+    async getAuthor(accountId: number) {
+        const { rows } = await this.db.query(
+            `SELECT * FROM author WHERE accountid = $1`, 
+            [accountId]
+        ); 
+        return rows[0] as Author;
     }
 
-    async getReviewerIdFromAccount(accountId: number) {
-        `SELECT * FROM account WHERE id = $1`;
-        return 0;
-    }
-    
-    getReviewerFromAccountId(accountId: number): (Account & Reviewer) | PromiseLike<Account & Reviewer> {
-        throw new Error("Method not implemented.");
+    async getReviewer(accountId: number) {
+        const { rows } = await this.db.query(
+            `SELECT * FROM reviewer WHERE accountid = $1`, 
+            [accountId]
+        ); 
+        return rows[0] as Reviewer;
     }
 
     async updateReviewer(reviewerId: number, reviewer: Partial<Reviewer>) {
@@ -88,10 +90,11 @@ export default class AccountRepository {
             `UPDATE reviewer SET 
             bidPoints = COALESCE($2, bidPoints)
             workload = COALESCE($3, workload)
-            WHERE id = $1`,
+            WHERE id = $1
+            RETURNING *`,
             [reviewerId, reviewer.bidpoints, reviewer.workload]
         ); 
-        return;
+        return rows[0] as Reviewer;
     }
 
 }

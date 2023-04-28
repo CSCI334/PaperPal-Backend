@@ -1,4 +1,4 @@
-import { check } from "express-validator";
+import { body, } from "express-validator";
 import { AccountType } from "../../../database/models/Account.js";
 import RegisterDTO from "./RegisterDTO.js";
 
@@ -12,9 +12,11 @@ export default class SignUpDTO extends RegisterDTO {
         public readonly conferenceId: number) {
         super(email, username, password, accountType, conferenceId);
     }
-    static validator = [
-        ...RegisterDTO.validator,
-        check("password", "Password field does not exist").exists(),
-        check("password","Password field must contain at least 6 characters").isLength({ min: 6 }),
-    ];
+    static validator = () =>{
+        return [
+            ...RegisterDTO.validator(),
+            body("password", "Password field does not exist").exists(),
+            body("password", "Password field must contain at least 6 characters").isLength({ min: 6 }).escape(),
+        ];
+    }; 
 }

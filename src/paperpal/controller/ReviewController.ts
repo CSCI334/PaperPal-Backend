@@ -38,7 +38,7 @@ export default class ReviewController{
         return response.toExpressResponse(res);
     }
     
-    @httpPost("/review", Authenticate.for("REVIEWER"), ValidateRequest.using(PaperRatingDTO.validator))
+    @httpPost("/review", Authenticate.for("REVIEWER"), ValidateRequest.using(PaperRatingDTO.validator()))
     async addReview(req: Request, res: Response) {
         await this.reviewService.addPaperRating(res.locals.accountId, req.body as PaperRatingDTO);
         
@@ -46,7 +46,7 @@ export default class ReviewController{
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/review/rating", Authenticate.for("AUTHOR"), ValidateRequest.using(ReviewRatingDTO.validator))
+    @httpPost("/review/rating", Authenticate.for("AUTHOR"), ValidateRequest.using(ReviewRatingDTO.validator()))
     async addRatingOfReview(req: Request, res: Response) {
         await this.reviewService.addRatingOfReview(res.locals.accountId, req.body as ReviewRatingDTO);
         

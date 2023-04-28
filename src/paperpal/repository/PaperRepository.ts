@@ -59,6 +59,7 @@ export default class PaperRepository{
     }
 
     async allocatePaperToReviewer(paperId: number, reviewerId: number){
+        // Create empty Review column with paperId and reviewerId
         return;
     }
 }

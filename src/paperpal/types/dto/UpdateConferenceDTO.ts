@@ -1,4 +1,4 @@
-import { ValidationChain, body } from "express-validator";
+import { body } from "express-validator";
 
 export default class UpdateConferenceDTO {
     constructor(
@@ -9,11 +9,13 @@ export default class UpdateConferenceDTO {
         public readonly announcementTime : number,
     ) {}
 
-    static validator: ValidationChain[] = [
-        body("conferenceId", "conferenceId does not exists").exists(),
-        body("submissionDeadline", "submissionDeadline is not an epoch number").optional({nullable:true}).isNumeric(),
-        body("biddingDeadline", "biddingDeadline is not an epoch number").optional({nullable:true}).isNumeric(),
-        body("reviewDeadline", "reviewDeadline is not an epoch number").optional({nullable:true}).isNumeric(),
-        body("announcementTime", "announcementTime does not exists").optional({nullable:true}).isNumeric(),
-    ];
+    static validator = () => { 
+        return [
+            body("conferenceId", "conferenceId does not exists").exists(),
+            body("submissionDeadline", "submissionDeadline is not an epoch number").optional({nullable:true}).isInt(),
+            body("biddingDeadline", "biddingDeadline is not an epoch number").optional({nullable:true}).isInt(),
+            body("reviewDeadline", "reviewDeadline is not an epoch number").optional({nullable:true}).isInt(),
+            body("announcementTime", "announcementTime does not exists").optional({nullable:true}).isInt(),
+        ];
+    };
 }

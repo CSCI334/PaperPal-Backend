@@ -1,4 +1,4 @@
-import { check } from "express-validator";
+import { body } from "express-validator";
 
 export default abstract class CommentDTO {
     constructor(
@@ -6,10 +6,12 @@ export default abstract class CommentDTO {
         public readonly comment: string
     ) {}
 
-    static validator = [
-        check("comment", "Comment field does not exist").exists(),
-        check("comment", "Comment field is not a string").isString(),
-        check("paperId", "paperId field does not exist").exists(),
-        check("paperId", "paperId field is not an integer").isInt(),
-    ];
+    static validator = () => {
+        return [
+            body("comment", "Comment field does not exist").exists(),
+            body("comment", "Comment field is not a string").isString().escape(),
+            body("paperId", "paperId field does not exist").exists(),
+            body("paperId", "paperId field is not an integer").isInt(),
+        ];
+    }; 
 }

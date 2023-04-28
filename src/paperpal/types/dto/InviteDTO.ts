@@ -9,5 +9,7 @@ export default class InviteDTO extends RegisterDTO {
         public readonly conferenceId : number) {
         super(email, username, null, accountType, conferenceId);
     }
-    static validator = [...RegisterDTO.validator];
+    static validator = () => {
+        return [...RegisterDTO.validator()];
+    };
 }

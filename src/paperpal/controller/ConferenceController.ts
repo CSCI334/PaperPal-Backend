@@ -16,7 +16,7 @@ export default class ConferenceController{
         @inject(AccountService) private readonly accountService: AccountService,
         @inject(ConferenceService) private readonly conferenceService : ConferenceService) {}
 
-    @httpPost("/conference", ValidateRequest.using(CreateConferenceDTO.validator))
+    @httpPost("/conference", ValidateRequest.using(CreateConferenceDTO.validator()))
     async createConference(req: Request, res: Response) {
         const data = await this.conferenceService.createConference(req.body as CreateConferenceDTO);
         
