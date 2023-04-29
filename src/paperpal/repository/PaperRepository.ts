@@ -8,8 +8,11 @@ export default class PaperRepository{
     constructor(@inject(DbService) private readonly db: DbService) {}
     
     async getPaper(paperId: number) : Promise<Paper> {
+        
+        `SELECT *
+        FROM paper
+        WHERE id = paper.id;`;
         throw new Error("Method not implemented");
-
     }
 
     async insertPaper(paper : Partial<Paper>){
@@ -21,8 +24,11 @@ export default class PaperRepository{
     }
 
     async setPaperStatus(paperId:number, status : PaperStatus) {
+        
+        `UPDATE paper
+        SET status = 'status'
+        WHERE id = id;`;
         throw new Error("Method not implemented");
-
     }
 
     // May be multiple reviewers
@@ -34,12 +40,26 @@ export default class PaperRepository{
 
     }
 
-    async getAllocatedPapersForReviewer(reviewerId: number) : Promise<Paper[]>{
+        
+    async getAllocatedPapersForReviewer(reviewerId: number) : Promise<Paper[]>{      
+        
+        `SELECT paper.title , account.username, review.reviewrating
+        FROM paper
+        INNER JOIN account ON paper.authorid = account.id
+        INNER JOIN review ON account.id = review.reviewerid;`;
         throw new Error("Method not implemented");
-
     }
 
     async isPaperInConference(paperId:number, conferenceId : number): Promise<boolean> {
+        `SELECT
+        CASE WHEN EXISTS(
+            SELECT paper.id
+          FROM paper
+          INNER JOIN conference ON paper.id = conference.id
+        )
+        THEN 'TRUE'
+        ELSE 'FALSE'
+        END;`;
         return true;
     }
 
@@ -57,16 +77,25 @@ export default class PaperRepository{
     }
 
     async getConferenceFromPaper(paperId: number): Promise<Conference> {
+        
+        `SELECT * 
+        FROM paper
+        LEFT JOIN conference ON paper.id = conference.id;`;
         throw new Error("Method not implemented");
-
     }
 
+
     async getPapersAndBids(conferenceId: number, reviewerId: number) {
+        `SELECT paper.*, bids.bidamount
+        FROM paper
+        INNER JOIN bids ON paper.id = bids.paperid;`;
         return {};
     }
 
     async allocatePaperToReviewer(paperId: number, reviewerId: number){
         // Create empty Review column with paperId and reviewerId
+        `INSERT INTO (paperrating, reviewrating)
+        VALUES (val1, val2);`;
         throw new Error("Method not implemented");
     }
 }
