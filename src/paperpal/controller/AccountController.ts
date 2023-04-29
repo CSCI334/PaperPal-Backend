@@ -1,16 +1,17 @@
+import { STATUS_CODE } from "@app/constants/HttpConstants";
+import { Authenticate } from "@app/middleware/Authenticate";
+import ValidateRequest from "@app/middleware/ValidateRequest";
+import SignUpDTO from "@app/paperpal/types/dto/AuthorRegisterDTO";
+import InviteDTO from "@app/paperpal/types/dto/InviteDTO";
+import LoginDTO from "@app/paperpal/types/dto/LoginDTO";
+import VerifyEmailDTO from "@app/paperpal/types/dto/VerifyEmailDTO";
+import BaseHttpResponse from "@helper/BaseHttpResponse";
+import AccountService from "@service/account/AccountService";
 import { Request, Response } from "express";
 import { inject } from "inversify";
 import { controller, httpGet, httpPost } from "inversify-express-utils";
 
-import { STATUS_CODE } from "../../constants/HttpConstants.js";
-import ValidateRequest from "../../middleware/ValidateRequest.js";
-import LoginDTO from "../types/dto/LoginDTO.js";
-import SignUpDTO from "../types/dto/AuthorRegisterDTO.js";
-import AccountService from "../service/account/AccountService.js";
-import { Authenticate } from "../../middleware/Authenticate.js";
-import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
-import InviteDTO from "../types/dto/InviteDTO.js";
-import VerifyEmailDTO from "../types/dto/VerifyEmailDTO.js";
+
 
 @controller("")
 export default class AccountController {

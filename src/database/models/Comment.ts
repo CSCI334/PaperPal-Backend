@@ -1,5 +1,6 @@
-export default class Comment {
+interface Comment {
     comment: string;
     reviewerid : number;
     paperid: number;
 }
+export default Comment;

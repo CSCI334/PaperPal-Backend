@@ -1,12 +1,13 @@
+
+import AccountRepository from "@app/paperpal/repository/AccountRepository";
+import PaperRepository from "@app/paperpal/repository/PaperRepository";
+import ReviewRepository from "@app/paperpal/repository/ReviewRepository";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import ForbiddenException from "@exception/ForbiddenException";
+import NotFoundException from "@exception/NotFoundException";
+import Account from "@model/Account";
+import ReviewStrategy from "@service/review/interfaces/ReviewStrategy";
 import { inject, injectable } from "inversify";
-import ReviewStrategy from "../interfaces/ReviewStrategy.js";
-import { ConferencePhase } from "../../../types/ConferencePhase.js";
-import Account from "../../../../database/models/Account.js";
-import ReviewRepository from "../../../repository/ReviewRepository.js";
-import AccountRepository from "../../../repository/AccountRepository.js";
-import ForbiddenException from "../../../../exceptions/ForbiddenException.js";
-import PaperRepository from "../../../repository/PaperRepository.js";
-import NotFoundException from "../../../../exceptions/NotFoundException.js";
 
 @injectable()
 export default class AuthorReviewStrategy implements ReviewStrategy {

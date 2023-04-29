@@ -1,13 +1,12 @@
-import { inject, injectable } from "inversify";
-import ReviewStrategy from "../interfaces/ReviewStrategy.js";
-import { ConferencePhase } from "../../../types/ConferencePhase.js";
-import ForbiddenException from "../../../../exceptions/ForbiddenException.js";
-import AccountService from "../../account/AccountService.js";
-import Account from "../../../../database/models/Account.js";
-import ReviewRepository from "../../../repository/ReviewRepository.js";
-import NotFoundException from "../../../../exceptions/NotFoundException.js";
-import Comment from "../../../../database/models/Comment.js";
 
+import ReviewRepository from "@app/paperpal/repository/ReviewRepository";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import ForbiddenException from "@exception/ForbiddenException";
+import NotFoundException from "@exception/NotFoundException";
+import Account from "@model/Account";
+import AccountService from "@service/account/AccountService";
+import ReviewStrategy from "@service/review/interfaces/ReviewStrategy";
+import { inject, injectable } from "inversify";
 @injectable()
 export default class ReviewerReviewStrategy implements ReviewStrategy {
     constructor(

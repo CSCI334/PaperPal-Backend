@@ -1,27 +1,46 @@
 {
     "compilerOptions": {
-        "experimentalDecorators": true,
-        "target": "ESNext",
-        "module": "ESNext",
-        "watch": true,
-        "lib": ["dom", "ES2017"],
-        "noImplicitAny": true,
-        "moduleResolution": "node16",
-        "outDir": "dist",
-        "baseUrl": "./src",
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "paths": {
-            "*": [
-                "../node_modules/*",
-            ]
-        }
+      "baseUrl": "./src",
+      "outDir": "./dist",
+      "module": "commonjs",
+      "target": "es6",
+      "lib": ["es6", "dom"],
+      "sourceMap": true,
+      "experimentalDecorators": true,
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "resolveJsonModule": true,
+      "declaration": true,
+      "paths": {
+        "@utils/*": ["common/*"],
+        "@helper/*": ["helper/*"],
+        "@config/*": ["config/*"],
+        "@model/*": ["database/models/*"],
+        "@exception/*": ["exception/*"],
+        "@service/*": ["paperpal/service/*"],
+        "@controller/*": ["paperpal/controller/*"],
+        "@repository/*": ["paperpal/repository/*"],
+        "@app/*": ["*"],
+        "priority": [
+          "@app/*",
+          "@model/*",
+          "@exceptions/*",
+          "@controller/*",
+          "@service/*",
+          "@repository/*",
+          "@utils/*",
+          "@helper/*",
+          "@config/*"
+        ]
+      }
     },
     "ts-node": {
-        "esm" : true
+        "esm": true,
+        "require": ["tsconfig-paths/register"]
     },
-    "include": [
-        "src/**/*.ts"
-    ]
-}
+    "exclude": ["node_modules", "dist"],
+    "include": ["src/**/*.ts"]
+  }
+  

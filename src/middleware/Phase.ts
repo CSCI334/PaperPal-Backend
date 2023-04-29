@@ -1,17 +1,16 @@
-import { BaseMiddleware } from "inversify-express-utils";
 import { NextFunction, Request, Response } from "express";
-import { ConferencePhase } from "../paperpal/types/ConferencePhase.js";
-import NotFoundException from "../exceptions/NotFoundException.js";
-import ConferenceRepository from "../paperpal/repository/ConferenceRepository.js";
 import { inject } from "inversify";
-import ConferenceUtils from "../paperpal/service/conference/ConferenceUtils.js";
-import ForbiddenException from "../exceptions/ForbiddenException.js";
-import ConferenceService from "../paperpal/service/conference/ConferenceService.js";
+import ForbiddenException from "@exception/ForbiddenException";
+import NotFoundException from "@exception/NotFoundException";
+import ConferenceRepository from "@app/paperpal/repository/ConferenceRepository";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import ConferenceUtils from "@service/conference/ConferenceUtils";
+import BaseMiddleware from "@helper/BaseMiddleware";
+
 
 export default class Phase extends BaseMiddleware {
     public readonly phases: ConferencePhase[];
-    @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository;
-    @inject(ConferenceService) private readonly conferenceService : ConferenceService;
+    @inject(ConferenceRepository) private readonly conferenceRepository! : ConferenceRepository;
     constructor(...phases: ConferencePhase[]) {
         super();
         this.phases = phases;

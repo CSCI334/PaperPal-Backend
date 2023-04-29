@@ -1,13 +1,14 @@
+
+import ConferenceRepository from "@app/paperpal/repository/ConferenceRepository";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import CreateConferenceDTO from "@app/paperpal/types/dto/CreateConferenceDTO";
+import InviteDTO from "@app/paperpal/types/dto/InviteDTO";
+import UpdateConferenceDTO from "@app/paperpal/types/dto/UpdateConferenceDTO";
+import InvalidInputException from "@exception/InvalidInputException";
+import NotFoundException from "@exception/NotFoundException";
+import Conference from "@model/Conference";
+import AccountService from "@service/account/AccountService";
 import { inject, injectable } from "inversify";
-import InviteDTO from "../../types/dto/InviteDTO.js";
-import ConferenceRepository from "../../repository/ConferenceRepository.js";
-import AccountService from "../account/AccountService.js";
-import CreateConferenceDTO from "../../types/dto/CreateConferenceDTO.js";
-import UpdateConferenceDTO from "../../types/dto/UpdateConferenceDTO.js";
-import InvalidInputException from "../../../exceptions/InvalidInputException.js";
-import { ConferencePhase } from "../../types/ConferencePhase.js";
-import Conference from "../../../database/models/Conference.js";
-import NotFoundException from "../../../exceptions/NotFoundException.js";
 
 @injectable()
 export default class ConferenceService {
@@ -56,6 +57,6 @@ export default class ConferenceService {
     }
 
     async moveToNextPhase() : Promise<ConferencePhase> {
-        return;
+        throw new Error("Not implemented");
     }
 }

@@ -1,6 +1,7 @@
+import { STATUS_CODE } from "@app/constants/HttpConstants";
+import BaseHttpException from "@helper/BaseHttpException";
 import { ValidationError } from "express-validator";
-import { STATUS_CODE } from "../constants/HttpConstants.js";
-import BaseHttpException from "../helper/BaseHttpException.js";
+
 
 export default class ValidationException extends BaseHttpException {
     constructor(error: ValidationError) {

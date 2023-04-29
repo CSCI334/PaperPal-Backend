@@ -1,23 +1,25 @@
+import AccountRepository from "@app/paperpal/repository/AccountRepository";
+import { TokenData } from "@app/paperpal/types/TokenData";
+import AuthorRegisterDTO from "@app/paperpal/types/dto/AuthorRegisterDTO";
+import InviteDTO from "@app/paperpal/types/dto/InviteDTO";
+import LoginDTO from "@app/paperpal/types/dto/LoginDTO";
+import RegisterDTO from "@app/paperpal/types/dto/RegisterDTO";
+import VerifyEmailDTO from "@app/paperpal/types/dto/VerifyEmailDTO";
+import { SECRET } from "@config/Secret";
+import InvalidInputException from "@exception/InvalidInputException";
+import NotAuthenticatedException from "@exception/NotAuthenticatedException";
+import NotFoundException from "@exception/NotFoundException";
+import Account from "@model/Account";
+import AccountUtils from "@service/account/AccountUtils";
 import { inject, injectable } from "inversify";
 import jwt from "jsonwebtoken";
-import { SECRET } from "../../../config/Secret.js";
-import Account from "../../../database/models/Account.js";
-import InvalidInputException from "../../../exceptions/InvalidInputException.js";
-import NotAuthenticatedException from "../../../exceptions/NotAuthenticatedException.js";
-import AuthorRegisterDTO from "../../types/dto/AuthorRegisterDTO.js";
-import InviteDTO from "../../types/dto/InviteDTO.js";
-import LoginDTO from "../../types/dto/LoginDTO.js";
-import VerifyEmailDTO from "../../types/dto/VerifyEmailDTO.js";
-import AccountRepository from "../../repository/AccountRepository.js";
-import AccountUtils from "./AccountUtils.js";
-import NotFoundException from "../../../exceptions/NotFoundException.js";
-import { TokenData } from "../../types/TokenData.js";
+
 
 @injectable()
 export default class AuthService {
     constructor(@inject(AccountRepository) private readonly accountRepository: AccountRepository) { }
 
-    async register(registerDTO: AuthorRegisterDTO | InviteDTO) {
+    async register(registerDTO: RegisterDTO) {
         // This is inelegant but it's better than the alternative.
         // Registering a new user uses the same logic for every user (who needs admin to invite them) except author (who can register on their own)
         
@@ -27,7 +29,7 @@ export default class AuthService {
         // If false, it's other account type, send verify email.
         const [hashedPassword, salt] = registerDTO.password ? 
             AccountUtils.createNewPasswordHash(registerDTO.password) :
-            [null, null];
+            ["", ""];
         
         const user: Account = await this.accountRepository.insertUser({
             email : registerDTO.email,

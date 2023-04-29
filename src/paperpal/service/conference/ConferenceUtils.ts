@@ -1,5 +1,7 @@
-import Conference from "../../../database/models/Conference.js";
-import { ConferencePhase } from "../../types/ConferencePhase.js";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import Conference from "@model/Conference";
+
+
 
 export default class ConferenceUtils {
     // TODO : Remember to make a utility function to move to next phase, the functions should simply shift around the epoch of the conference

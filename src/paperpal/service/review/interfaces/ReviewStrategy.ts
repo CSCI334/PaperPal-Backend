@@ -1,7 +1,8 @@
-import Account from "../../../../database/models/Account.js";
-import Comment from "../../../../database/models/Comment.js";
-import Review from "../../../../database/models/Review.js";
-import { ConferencePhase } from "../../../types/ConferencePhase.js";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import Account from "@model/Account";
+import Review from "@model/Review";
+
+
 
 // The way you get comments and reviews changes drastically according to accountTypes
 interface ReviewStrategy{

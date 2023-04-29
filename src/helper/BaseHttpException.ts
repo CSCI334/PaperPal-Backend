@@ -1,7 +1,6 @@
-export default abstract class BaseHttpException extends Error {
-    statusCode : number;
-    
-    constructor(message: string) {
+export default abstract class BaseHttpException extends Error {    
+    constructor(message: string, public statusCode = 500) {
         super(message);
+        this.statusCode = statusCode;
     }
 }

@@ -1,17 +1,19 @@
+import PaperRepository from "@app/paperpal/repository/PaperRepository";
+import ReviewRepository from "@app/paperpal/repository/ReviewRepository";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import CommentDTO from "@app/paperpal/types/dto/CommentDTO";
+import PaperRatingDTO from "@app/paperpal/types/dto/PaperRatingDTO";
+import ReviewRatingDTO from "@app/paperpal/types/dto/ReviewRatingDTO";
+import ForbiddenException from "@exception/ForbiddenException";
+import NotAuthenticatedException from "@exception/NotAuthenticatedException";
+import { AccountType } from "@model/Account";
+import AccountService from "@service/account/AccountService";
+import ConferenceService from "@service/conference/ConferenceService";
+import AuthorReviewStrategy from "@service/review/impl/AuthorReviewStrategy";
+import ChairReviewStrategy from "@service/review/impl/ChairReviewStrategy";
+import ReviewerReviewStrategy from "@service/review/impl/ReviewerReviewStrategy";
 import { inject, injectable } from "inversify";
-import AuthorReviewStrategy from "./impl/AuthorReviewStrategy.js";
-import ReviewerReviewStrategy from "./impl/ReviewerReviewStrategy.js";
-import { AccountType } from "../../../database/models/Account.js";
-import ChairReviewStrategy from "./impl/ChairReviewStrategy.js";
-import ReviewRepository from "../../repository/ReviewRepository.js";
-import CommentDTO from "../../types/dto/CommentDTO.js";
-import PaperRatingDTO from "../../types/dto/PaperRatingDTO.js";
-import ReviewRatingDTO from "../../types/dto/ReviewRatingDTO.js";
-import ConferenceService from "../conference/ConferenceService.js";
-import AccountService from "../account/AccountService.js";
-import { ConferencePhase } from "../../types/ConferencePhase.js";
-import PaperRepository from "../../repository/PaperRepository.js";
-import ForbiddenException from "../../../exceptions/ForbiddenException.js";
+
 
 @injectable()
 export default class ReviewService {
@@ -27,12 +29,13 @@ export default class ReviewService {
     ) {}
 
     private getStrategy(accountType : AccountType) {
-        if(accountType === "ADMIN")
+        if(accountType === "AUTHOR")
             return this.authorReviewStrategy;
-        else if(accountType === "AUTHOR")
+        else if(accountType === "REVIEWER")
             return this.reviewerReviewStrategy;
         else if(accountType === "CHAIR")
             return this.chairReviewStrategy;
+        throw new NotAuthenticatedException("Account type not known");
     }
         
     async getComments(accountId: number, paperId : number) {

@@ -1,17 +1,19 @@
+
+import PaperRepository from "@app/paperpal/repository/PaperRepository";
+import ReviewRepository from "@app/paperpal/repository/ReviewRepository";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import PaperDTO from "@app/paperpal/types/dto/PaperDTO";
+import NotAuthenticatedException from "@exception/NotAuthenticatedException";
+import NotFoundException from "@exception/NotFoundException";
+import { AccountType } from "@model/Account";
+import { PaperStatus } from "@model/Paper";
+import AccountService from "@service/account/AccountService";
+import ConferenceService from "@service/conference/ConferenceService";
+import AuthorPaperStrategy from "@service/paper/impl/AuthorPaperStrategy";
+import ChairPaperStrategy from "@service/paper/impl/ChairPaperStrategy";
+import ReviewerPaperStrategy from "@service/paper/impl/ReviewerPaperStrategy";
+import PaperStrategy from "@service/paper/interfaces/PaperStrategy";
 import { injectable, inject } from "inversify";
-import PaperRepository from "../../repository/PaperRepository.js";
-import AuthorPaperStrategy from "./impl/AuthorPaperStrategy.js";
-import ChairPaperStrategy from "./impl/ChairPaperStrategy.js";
-import ReviewerPaperStrategy from "./impl/ReviewerPaperStrategy.js";
-import { AccountType } from "../../../database/models/Account.js";
-import PaperStrategy from "./interfaces/PaperStrategy.js";
-import { PaperStatus } from "../../../database/models/Paper.js";
-import { ConferencePhase } from "../../types/ConferencePhase.js";
-import ConferenceService from "../conference/ConferenceService.js";
-import AccountService from "../account/AccountService.js";
-import ReviewRepository from "../../repository/ReviewRepository.js";
-import PaperDTO from "../../types/dto/PaperDTO.js";
-import NotFoundException from "../../../exceptions/NotFoundException.js";
 
 @injectable()
 export default class PaperService {
@@ -32,6 +34,7 @@ export default class PaperService {
             return this.reviewerPaperStrategy;
         else if(accountType === "CHAIR")
             return this.chairPaperStrategy;
+        throw new NotAuthenticatedException("Unknown user type");
     }
 
     async getPaperFileLocation(accountId: number, paperId : number) {

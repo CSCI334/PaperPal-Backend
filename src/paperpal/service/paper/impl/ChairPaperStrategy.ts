@@ -1,9 +1,10 @@
+
+import PaperRepository from "@app/paperpal/repository/PaperRepository";
+import NotAuthenticatedException from "@exception/NotAuthenticatedException";
+import NotFoundException from "@exception/NotFoundException";
+import Account from "@model/Account";
+import PaperStrategy from "@service/paper/interfaces/PaperStrategy";
 import { inject, injectable } from "inversify";
-import PaperStrategy from "../interfaces/PaperStrategy.js";
-import PaperRepository from "../../../repository/PaperRepository.js";
-import NotFoundException from "../../../../exceptions/NotFoundException.js";
-import Account from "../../../../database/models/Account.js";
-import NotAuthenticatedException from "../../../../exceptions/NotAuthenticatedException.js";
 
 @injectable()
 export default class ChairPaperStrategy implements PaperStrategy {

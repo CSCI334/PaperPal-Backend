@@ -1,4 +1,4 @@
-import { LooseObject } from "../common/LooseObject.js";
+import { LooseObject } from "@utils/LooseObject";
 import { interfaces } from "inversify";
 
 export type MorganConfig = {

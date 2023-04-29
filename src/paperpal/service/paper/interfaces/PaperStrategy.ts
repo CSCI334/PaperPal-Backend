@@ -1,6 +1,8 @@
-import { LooseObject } from "../../../../common/LooseObject.js";
-import Account from "../../../../database/models/Account.js";
-import { ConferencePhase } from "../../../types/ConferencePhase.js";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import Account from "@model/Account";
+import { LooseObject } from "@utils/LooseObject";
+
+
 
 // The papers available to you is different according to your accountType
 interface PaperStrategy{

@@ -1,14 +1,15 @@
 import { controller, httpGet, httpPost, requestParam } from "inversify-express-utils";
-import { Request ,Response } from "express";
+import { Request , Response } from "express";
 
-import { Authenticate } from "../../middleware/Authenticate.js";
 import { inject } from "inversify";
-import ReviewService from "../service/review/ReviewService.js";
-import ValidateRequest from "../../middleware/ValidateRequest.js";
-import CommentDTO from "../types/dto/CommentDTO.js";
-import PaperRatingDTO from "../types/dto/PaperRatingDTO.js";
-import ReviewRatingDTO from "../types/dto/ReviewRatingDTO.js";
-import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
+import { Authenticate } from "@app/middleware/Authenticate";
+import ValidateRequest from "@app/middleware/ValidateRequest";
+import CommentDTO from "@app/paperpal/types/dto/CommentDTO";
+import PaperRatingDTO from "@app/paperpal/types/dto/PaperRatingDTO";
+import ReviewRatingDTO from "@app/paperpal/types/dto/ReviewRatingDTO";
+import BaseHttpResponse from "@helper/BaseHttpResponse";
+import ReviewService from "@service/review/ReviewService";
+
 
 @controller("/paper")
 export default class ReviewController{

@@ -1,7 +1,8 @@
+
+import ReviewRepository from "@app/paperpal/repository/ReviewRepository";
+import Account from "@model/Account";
+import ReviewStrategy from "@service/review/interfaces/ReviewStrategy";
 import { inject, injectable } from "inversify";
-import ReviewStrategy from "../interfaces/ReviewStrategy.js";
-import Account from "../../../../database/models/Account.js";
-import ReviewRepository from "../../../repository/ReviewRepository.js";
 
 @injectable()
 export default class ChairReviewStrategy implements ReviewStrategy {

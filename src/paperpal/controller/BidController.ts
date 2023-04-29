@@ -1,14 +1,15 @@
 import { controller, httpPost } from "inversify-express-utils";
+import { Request ,Response } from "express";
 import { inject } from "inversify";
-import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
-import { Request, Response } from "express";
-import BidService from "../service/bid/BidService.js";
-import { Authenticate } from "../../middleware/Authenticate.js";
-import Phase from "../../middleware/Phase.js";
-import { ConferencePhase } from "../types/ConferencePhase.js";
-import BidDTO from "../types/dto/BidDTO.js";
-import ValidateRequest from "../../middleware/ValidateRequest.js";
-import WorkloadDTO from "../types/dto/WorkloadDTO.js";
+import { Authenticate } from "@app/middleware/Authenticate";
+import Phase from "@app/middleware/Phase";
+import ValidateRequest from "@app/middleware/ValidateRequest";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import BidDTO from "@app/paperpal/types/dto/BidDTO";
+import WorkloadDTO from "@app/paperpal/types/dto/WorkloadDTO";
+import BaseHttpResponse from "@helper/BaseHttpResponse";
+import BidService from "@service/bid/BidService";
+
 
 @controller("")
 export default class BidController {

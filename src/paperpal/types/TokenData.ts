@@ -1,4 +1,5 @@
-import { AccountType } from "../../database/models/Account.js";
+import { AccountType } from "@model/Account";
+
 
 export interface TokenData{
     accountId: number;

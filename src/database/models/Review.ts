@@ -1,6 +1,6 @@
-import { Rating } from "../../paperpal/types/Rating.js";
+import { Rating } from "@app/paperpal/types/Rating";
 
-export default class Review {
+interface Review {
     id: number;
     text: string;
     paperrating : Rating;
@@ -8,3 +8,4 @@ export default class Review {
     reviewerid : number;
     paperid : number;
 }
+export default Review;

@@ -1,5 +1,5 @@
+import Conference from "@model/Conference";
 import { body } from "express-validator";
-import Conference from "../../../database/models/Conference.js";
 
 export default class CreateConferenceDTO {
     constructor(

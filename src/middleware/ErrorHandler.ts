@@ -1,8 +1,8 @@
+import { STATUS_CODE } from "@app/constants/HttpConstants";
+import BaseHttpException from "@helper/BaseHttpException";
+import BaseHttpResponse from "@helper/BaseHttpResponse";
+import ErrorMiddleware from "@helper/ErrorMiddleware";
 import { NextFunction, Request, Response } from "express";
-import BaseHttpException from "../helper/BaseHttpException.js";
-import ErrorMiddleware from "../helper/ErrorMiddleware.js";
-import BaseHttpResponse from "../helper/BaseHttpResponse.js";
-import { STATUS_CODE } from "../constants/HttpConstants.js";
 
 export default class ErrorHandler extends ErrorMiddleware {
     public handler = async (

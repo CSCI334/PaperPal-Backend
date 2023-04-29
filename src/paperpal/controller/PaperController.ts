@@ -1,15 +1,19 @@
 
 import { controller, httpGet, httpPost, requestParam } from "inversify-express-utils";
 import { Request, Response } from "express";
-import { Authenticate } from "../../middleware/Authenticate.js";
+
 import { inject } from "inversify";
-import PaperService from "../service/paper/PaperService.js";
-import BaseHttpResponse from "../../helper/BaseHttpResponse.js";
-import Phase from "../../middleware/Phase.js";
-import { ConferencePhase } from "../types/ConferencePhase.js";
-import { upload } from "../../middleware/Upload.js";
-import PaperDTO from "../types/dto/PaperDTO.js";
-import ValidateRequest from "../../middleware/ValidateRequest.js";
+import { Authenticate } from "@app/middleware/Authenticate";
+import Phase from "@app/middleware/Phase";
+import { upload } from "@app/middleware/Upload";
+import ValidateRequest from "@app/middleware/ValidateRequest";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import PaperDTO from "@app/paperpal/types/dto/PaperDTO";
+import BaseHttpResponse from "@helper/BaseHttpResponse";
+import PaperService from "@service/paper/PaperService";
+
+
+
 
 @controller("/paper")
 export default class PaperController {
@@ -25,7 +29,7 @@ export default class PaperController {
 
     @httpPost("/upload", Authenticate.for("AUTHOR"), Phase.isCurrently(ConferencePhase.Submission), upload.single("paper"))
     async addPaper(req: Request, res: Response) {
-        const data = this.paperService.addPaper(req.body as PaperDTO, req.file.path, res.locals.accountId);
+        const data = this.paperService.addPaper(req.body as PaperDTO, "req.file.path", res.locals.accountId);
         
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);

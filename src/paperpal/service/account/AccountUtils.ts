@@ -1,8 +1,8 @@
+
+import { TokenData } from "@app/paperpal/types/TokenData";
+import { SECRET } from "@config/Secret";
 import { createHash, randomBytes } from "crypto";
-import { SECRET } from "../../../config/Secret.js";
 import jwt from "jsonwebtoken";
-import { Locals } from "express";
-import { TokenData } from "../../types/TokenData.js";
 
 export default class AccountUtils {
     public static createPasswordHash(password: string, salt: string) {

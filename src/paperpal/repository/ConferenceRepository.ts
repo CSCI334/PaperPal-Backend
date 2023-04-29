@@ -1,6 +1,7 @@
+import DbService from "@app/database/db";
+import Conference from "@model/Conference";
 import { inject, injectable } from "inversify";
-import DbService from "../../database/db.js";
-import Conference from "../../database/models/Conference.js";
+
 
 @injectable()
 export default class ConferenceRepository{

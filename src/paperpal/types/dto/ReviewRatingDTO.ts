@@ -1,6 +1,6 @@
+import RatingDTO from "@app/paperpal/types/dto/RatingDTO";
+import { Rating } from "@app/paperpal/types/Rating";
 import { body, } from "express-validator";
-import { Rating } from "../Rating.js";
-import RatingDTO from "./RatingDTO.js";
 
 export default class PaperRatingDTO extends RatingDTO {
     constructor(

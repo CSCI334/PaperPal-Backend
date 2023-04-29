@@ -1,5 +1,6 @@
-import { STATUS_CODE } from "../constants/HttpConstants.js";
-import BaseHttpException from "../helper/BaseHttpException.js";
+import { STATUS_CODE } from "@app/constants/HttpConstants";
+import BaseHttpException from "@helper/BaseHttpException";
+
 
 export default class InvalidInputException extends BaseHttpException {
     constructor(message: string) {

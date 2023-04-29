@@ -1,17 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { DB_RETRY_AMOUNT, DB_RETRY_INTERVAL_IN_SECOND } from "@app/constants/DbConstants";
+import { PgErrorMap } from "@app/database/types";
+import DatabaseException from "@exception/DatabaseException";
+import { sleep } from "@utils/utils";
 import { injectable } from "inversify";
-import pg from "pg";
-import DatabaseException from "../exceptions/DatabaseException.js";
-import { PgErrorMap } from "./types.js";
-import { DB_RETRY_AMOUNT, DB_RETRY_INTERVAL_IN_SECOND } from "../constants/DbConstants.js";
-import { sleep } from "../common/utils.js";
+import pg, { DatabaseError } from "pg";
+
 @injectable()
 export default class DbService {
     readonly pool: pg.Pool;
     constructor() {
         this.pool = new pg.Pool({
             host: process.env.POSTGRES_HOST,
-            port: parseInt(process.env.POSTGRES_PORT),
+            port: parseInt(process.env.POSTGRES_PORT ?? "5432"),
             database: process.env.POSTGRES_DB,
             user: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
@@ -26,9 +28,13 @@ export default class DbService {
         try {
             return await this.pool.query(query, values);
         } catch (err) {
+            const dbError = err as pg.DatabaseError;
+            const errCode = dbError.code || "0"; 
+
             // Expected Postgres errors
-            if (errorMap && err instanceof pg.DatabaseError && errorMap.has(err.code)) {
-                const pgError: string = errorMap.get(err.code);
+            if (errorMap && errorMap.has(errCode)) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                const pgError: string = errorMap.get(errCode)!;
                 throw new DatabaseException(pgError);
             } 
             // Unexpected errors

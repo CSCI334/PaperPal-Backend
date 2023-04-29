@@ -1,12 +1,12 @@
-import { LooseObject } from "../common/LooseObject.js";
+import { LooseObject } from "@utils/LooseObject";
 import { Response } from "express";
 
 export default class BaseHttpResponse {
     public data: LooseObject = {};
     public statusCode = 200;
 
-    constructor(data: LooseObject | null, statusCode?: number) {
-        this.data = data || null;
+    constructor(data?: LooseObject , statusCode?: number) {
+        this.data = data ?? {};
         this.statusCode = statusCode || 200;
     }
 

@@ -1,9 +1,10 @@
+import DbService from "@app/database/db";
+import { PgErrorMap } from "@app/database/types";
+import Account, { AccountStatus } from "@model/Account";
+import Author from "@model/Author";
+import Reviewer from "@model/Reviewer";
 import { inject, injectable } from "inversify";
-import DbService from "../../database/db.js";
-import Account, { AccountStatus } from "../../database/models/Account.js";
-import { PgErrorMap } from "../../database/types.js";
-import Reviewer from "../../database/models/Reviewer.js";
-import Author from "../../database/models/Author.js";
+
 
 @injectable()
 export default class AccountRepository {

@@ -1,13 +1,12 @@
-import { inject } from "inversify";
-import BidRepository from "../../repository/BidRepository.js";
-import AccountRepository from "../../repository/AccountRepository.js";
-import BidDTO from "../../types/dto/BidDTO.js";
-import { POINTS_PER_PAPER } from "../../../constants/AppConstants.js";
-import AccountService from "../account/AccountService.js";
-import Reviewer from "../../../database/models/Reviewer.js";
-import NotFoundException from "../../../exceptions/NotFoundException.js";
-import ForbiddenException from "../../../exceptions/ForbiddenException.js";
+import { POINTS_PER_PAPER } from "@app/constants/AppConstants";
+import AccountRepository from "@app/paperpal/repository/AccountRepository";
+import BidRepository from "@app/paperpal/repository/BidRepository";
+import BidDTO from "@app/paperpal/types/dto/BidDTO";
+import ForbiddenException from "@exception/ForbiddenException";
+import Reviewer from "@model/Reviewer";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export default class BidService {
     constructor(
         @inject(BidRepository) private readonly bidRepository : BidRepository,

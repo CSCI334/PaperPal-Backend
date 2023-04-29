@@ -1,7 +1,7 @@
-import { inject, injectable } from "inversify";
-import DbService from "../../database/db.js";
-import Review from "../../database/models/Review.js";
-import Comment from "../../database/models/Comment.js";
+import DbService from "@app/database/db";
+import Review from "@model/Review";
+import { injectable, inject } from "inversify";
+
 
 @injectable()
 export default class ReviewRepository{
@@ -9,7 +9,7 @@ export default class ReviewRepository{
     
     // Note that this is accountId and not reviewer id. Join sequence are accountId > reviewerId > paperId
     async getReviewFromAccountAndPaper(accountId: number, paperId: number) : Promise<Review> {
-        return;
+        throw new Error("Method not implemented");
     }
 
     async insertReview(review : Partial<Review>) {
@@ -25,7 +25,7 @@ export default class ReviewRepository{
     }
 
     async addComment(reviewerId: number, paperId: number, comment: string): Promise<Comment> {
-        return;
+        throw new Error("Method not implemented");
     }
 
     async deleteReview() {
@@ -33,13 +33,15 @@ export default class ReviewRepository{
     }
 
     async getAllCommentsForPaper(paperId: number): Promise<Comment[]> {
-        return;
+        throw new Error("Method not implemented");
+
     }
     async getAllReviewsForPaper(paperId: number): Promise<Review[]>{
         `SELECT * 
         FROM review 
         LEFT JOIN paper ON review.paperid = paper.id;`;
-        return;
+        throw new Error("Method not implemented");
+
     }
 
     async updateReview() {

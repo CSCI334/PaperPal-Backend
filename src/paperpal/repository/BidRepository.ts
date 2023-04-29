@@ -1,5 +1,5 @@
+import DbService from "@app/database/db";
 import { inject, injectable } from "inversify";
-import DbService from "../../database/db.js";
 
 @injectable()
 export default class BidRepository{

@@ -1,6 +1,6 @@
 import { body, } from "express-validator";
-import { AccountType } from "../../../database/models/Account.js";
-import RegisterDTO from "./RegisterDTO.js";
+import { AccountType } from "@model/Account";
+import RegisterDTO from "@app/paperpal/types/dto/RegisterDTO";
 
 export default class SignUpDTO extends RegisterDTO {
 

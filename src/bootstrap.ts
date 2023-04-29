@@ -1,5 +1,5 @@
-import { ApplicationOptions } from "./config/ApplicationConfig.js";
-import App from "./app.js";
+import App from "@app/app";
+import { ApplicationOptions } from "@config/ApplicationConfig";
 
 export default function bootstrap() {
     const applicationOptions: ApplicationOptions = {

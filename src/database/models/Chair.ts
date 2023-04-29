@@ -1,4 +1,5 @@
-export default class Chair {
+interface Chair {
     id: number;
     accountid : number;
 }
+export default Chair;

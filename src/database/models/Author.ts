@@ -1,4 +1,5 @@
-export default class Author {
+interface Author {
     id: number;
     accountid : number;
 }
+export default Author;
