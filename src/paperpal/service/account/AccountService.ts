@@ -51,8 +51,6 @@ export default class AuthService {
         // Send verify email here, verify link should contain jwtToken and email
         if(registerDTO.accountType === "AUTHOR") this.sendVerificationEmail(jwtToken);
 
-
-        // TODO: Not sure about this return
         return {
             token: jwtToken,
         };
@@ -80,6 +78,7 @@ export default class AuthService {
     }
 
     async sendVerificationEmail(jwtToken : string) {
+        console.log("sent email");
         return;
     }
 

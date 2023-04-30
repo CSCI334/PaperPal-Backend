@@ -1,5 +1,6 @@
 import RegisterDTO from "@app/paperpal/types/dto/RegisterDTO";
 import { AccountType } from "@model/Account";
+import { body } from "express-validator";
 
 export default class InviteDTO extends RegisterDTO {
     constructor(
@@ -10,6 +11,11 @@ export default class InviteDTO extends RegisterDTO {
         super(email, username, "", accountType, conferenceId);
     }
     static validator = () => {
-        return [...RegisterDTO.validator()];
+        return [...RegisterDTO.validator(), 
+            body("accountType", "accountType field does not exist").exists(),
+            body("accountType", "accountType field is invalid. Value can only be ADMIN, CHAIR, REVIEWER, or AUTHOR").isIn([
+                "ADMIN", "CHAIR", "REVIEWER", "AUTHOR"
+            ]),
+        ];
     };
 }

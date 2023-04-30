@@ -2,9 +2,10 @@ interface Conference {
     id: number;
     conferencename : string;
     conferencelocation : string;
-    submissiondeadline : number;
-    biddingdeadline : number;
-    reviewDeadline : number;
-    announcementtime: number;
+    submissiondeadline : Date;
+    biddingdeadline : Date;
+    reviewdeadline : Date;
+    judgmentdeadline : Date;
+    announcementtime: Date;
 }
 export default Conference;

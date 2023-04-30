@@ -4,7 +4,7 @@ import { Container } from "inversify";
 import { InversifyExpressServer } from "inversify-express-utils";
 
 import cors from "cors";
-import path, { dirname } from "path";
+import path from "path";
 import * as dotenv from "dotenv";
 
 
@@ -14,11 +14,13 @@ import fs from "fs";
 import DbService from "@app/database/db";
 import ErrorHandler from "@app/middleware/ErrorHandler";
 import { ApplicationOptions } from "@config/ApplicationConfig";
+
 import AccountRepository from "@repository/AccountRepository";
 import BidRepository from "@repository/BidRepository";
 import ConferenceRepository from "@repository/ConferenceRepository";
 import PaperRepository from "@repository/PaperRepository";
 import ReviewRepository from "@repository/ReviewRepository";
+
 import AccountService from "@service/account/AccountService";
 import BidService from "@service/bid/BidService";
 import ConferenceService from "@service/conference/ConferenceService";
@@ -30,6 +32,7 @@ import "@controller/BidController";
 import "@controller/ConferenceController";
 import "@controller/PaperController";
 import "@controller/ReviewController";
+
 import ChairPaperStrategy from "@service/paper/impl/ChairPaperStrategy";
 import AuthorReviewStrategy from "@service/review/impl/AuthorReviewStrategy";
 import ReviewerReviewStrategy from "@service/review/impl/ReviewerReviewStrategy";

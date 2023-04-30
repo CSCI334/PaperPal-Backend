@@ -14,10 +14,6 @@ export default abstract class RegisterDTO {
             body("email", "Email field does not exist").exists(),
             body("email", "Malformed email").isEmail().normalizeEmail(),
             body("username", "Username field does not exist").exists().escape(),
-            body("accountType", "accountType field does not exist").exists(),
-            body("accountType", "accountType field is invalid. Value can only be ADMIN, CHAIR, REVIEWER, or AUTHOR").isIn([
-                "ADMIN", "CHAIR", "REVIEWER", "AUTHOR"
-            ]),
             body("conferenceId", "conferenceID field does not exist").exists(),
         ];
     };    

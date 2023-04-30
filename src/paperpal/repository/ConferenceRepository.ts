@@ -9,10 +9,10 @@ export default class ConferenceRepository{
     
     async insertConference(conference : Partial<Conference>){
         const { rows } = await this.db.query(
-            `INSERT INTO conference(conferenceName,conferenceLocation,submissionDeadline,biddingDeadline, reviewDeadline,announcementTime)
+            `INSERT INTO conference(conferenceName,conferenceLocation,submissionDeadline,biddingDeadline,reviewDeadline,announcementTime)
             VALUES($1, $2, $3, $4, $5, $6)
             RETURNING ID`,
-            [conference.conferencename, conference.conferencelocation, conference.submissiondeadline, conference.biddingdeadline, conference.reviewDeadline, conference.announcementtime]
+            [conference.conferencename, conference.conferencelocation, conference.submissiondeadline, conference.biddingdeadline, conference.reviewdeadline, conference.announcementtime]
         );
         return rows[0].id as number;
     }
@@ -33,7 +33,7 @@ export default class ConferenceRepository{
                 reviewDeadline = COALESCE($4, reviewDeadline)
                 announcementTime = COALESCE($5, announcementTime)
                 WHERE id = $1`,
-            [conference.id, conference.submissiondeadline, conference.biddingdeadline, conference.reviewDeadline, conference.announcementtime]);
+            [conference.id, conference.submissiondeadline, conference.biddingdeadline, conference.reviewdeadline, conference.announcementtime]);
         return rows[0].id;
     }
 }

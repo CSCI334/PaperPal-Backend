@@ -1,5 +1,6 @@
 import { body } from "express-validator";
 
+// All deadlines should be in unix time and in seconds.
 export default class UpdateConferenceDTO {
     constructor(
         public readonly conferenceId : number,

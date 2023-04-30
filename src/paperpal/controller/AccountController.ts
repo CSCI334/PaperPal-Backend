@@ -11,8 +11,6 @@ import { Request, Response } from "express";
 import { inject } from "inversify";
 import { controller, httpGet, httpPost } from "inversify-express-utils";
 
-
-
 @controller("")
 export default class AccountController {
     constructor(

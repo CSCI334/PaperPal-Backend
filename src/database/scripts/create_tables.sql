@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS account(
 ALTER TABLE account
 ADD CONSTRAINT uniqueEmailAndConference UNIQUE(email, conferenceId);
 
-
 INSERT INTO account(email, username, hashedPassword, salt, accountType, accountStatus) 
 VALUES('admin@email.com', 'Admin', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bdee401a71019cbae4e1b84', '89946a', 'ADMIN', 'ACCEPTED');
 
@@ -75,14 +74,24 @@ CREATE TABLE IF NOT EXISTS bids(
     CONSTRAINT paperId FOREIGN KEY(paperId) REFERENCES paper(id)
 );
 
+CREATE TABLE IF NOT EXISTS comment(
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    comment TEXT NOT NULL,
+    reviewerId INTEGER NOT NULL,
+    paperId INTEGER NOT NULL,
+    CONSTRAINT paperId FOREIGN KEY(paperId) REFERENCES paper(id),
+    CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES reviewer(reviewerId)
+)
+
 CREATE TABLE IF NOT EXISTS review(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    review TEXT,
     paperRating INTEGER,
     reviewRating INTEGER,
     reviewerId INTEGER NOT NULL,
     paperId INTEGER NOT NULL,
     CONSTRAINT paperId FOREIGN KEY(paperId) REFERENCES paper(id),
-    CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES paper(ownerReviewerId)
+    CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES reviewer(id)
 );
 
 -- ReviewerId and PaperId combined must be unique, 
