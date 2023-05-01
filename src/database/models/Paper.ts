@@ -5,7 +5,7 @@ interface Paper {
     paperstatus : PaperStatus;
     paperid: number;
     authorid: number;
-    coauthors: string[];
+    coauthors: string;
 }
 export default Paper;
 export type PaperStatus = "ACCEPTED" | "REJECTED" | "TBD"

@@ -1,15 +1,16 @@
 import { body, } from "express-validator";
 
 export default class PaperDTO {
+    // Coauthors should be a string delimited by comma
     constructor(
         public readonly title: string, 
-        public readonly coauthor: string[]
+        public readonly coauthors: string
     ) {}
 
     static validator = () => {
         return [
             body("title", "Title field does not exist").exists().escape(),
-            body("coauthor", "Coauthor field does not exist").exists(),
+            body("coauthors", "Coauthor field does not exist").exists(),
         ];
     };
 

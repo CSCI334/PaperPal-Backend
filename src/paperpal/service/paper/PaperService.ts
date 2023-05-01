@@ -81,7 +81,7 @@ export default class PaperService {
             paperstatus: "TBD",
             authorid: author.id,
             filelocation: path,
-            coauthors: paper.coauthor,
+            coauthors: paper.coauthors,
             title: paper.title,
         });
         return data;

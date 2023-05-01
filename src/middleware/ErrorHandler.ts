@@ -21,6 +21,7 @@ export default class ErrorHandler extends ErrorMiddleware {
             return response.toExpressResponse(res);
         }
         
+        console.log(err);
         response.data = { message: "Unexpected server side error" };
         return response.toExpressResponse(res);
     };
