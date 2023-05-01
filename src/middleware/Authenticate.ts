@@ -20,7 +20,7 @@ export class Authenticate extends BaseMiddleware{
     public handler = async (req : Request, res : Response, next: NextFunction) => {
         const bearer = req.headers.authorization ?? "";
         try{
-            if(bearer.length == 0) next(new NotAuthenticatedException("Invalid token"));
+            if(!bearer.length) next(new NotAuthenticatedException("Invalid token"));
             const token = bearer.split("Bearer")[1].trim();
             const decoded = jwt.verify(token, SECRET.PRIVATE_KEY) as TokenData;
             res.locals = {

@@ -8,11 +8,13 @@ export default class PaperRepository{
     constructor(@inject(DbService) private readonly db: DbService) {}
     
     async getPaper(paperId: number) : Promise<Paper> {
-        
-        `SELECT *
-        FROM paper
-        WHERE id = paper.id;`;
-        throw new Error("Method not implemented");
+        const { rows } = await this.db.query(
+            `SELECT *
+            FROM paper
+            WHERE id = $1`,
+            [paperId]
+        );
+        return rows[0] as Paper;
     }
 
     async insertPaper(paper : Partial<Paper>){

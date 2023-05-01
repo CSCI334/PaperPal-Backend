@@ -34,9 +34,9 @@ export default class PaperService {
     ) {}
         
     private getStrategy(accountType : AccountType) {
-        if(accountType === "ADMIN")
+        if(accountType === "AUTHOR")
             return this.authorPaperStrategy;
-        else if(accountType === "AUTHOR")
+        else if(accountType === "REVIEWER")
             return this.reviewerPaperStrategy;
         else if(accountType === "CHAIR")
             return this.chairPaperStrategy;

@@ -10,7 +10,9 @@ import BaseHttpResponse from "@helper/BaseHttpResponse";
 import PaperService from "@service/paper/PaperService";
 import { TokenData } from "@app/paperpal/types/TokenData";
 import { upload } from "@app/middleware/PaperUpload";
-
+import { ROOT_DIR } from "@app/constants/AppConstants";
+import path from "path";
+import fs from "fs";
 @controller("/paper")
 export default class PaperController {
     constructor(
@@ -36,11 +38,13 @@ export default class PaperController {
         return response.toExpressResponse(res);
     }
 
-    @httpGet("/:paperId")
+    @httpGet("/:paperId", Authenticate.any())
     async getPaperFile(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const path = await this.paperService.getPaperFileLocation(res.locals.accountId, paperId);
-
-        return res.sendFile(path);
+        const fileLocation = await this.paperService.getPaperFileLocation(res.locals.accountId, paperId);
+        const file = fs.readFileSync(path.resolve(ROOT_DIR, fileLocation) );
+        
+        res.type("pdf");
+        res.status(200).send(file);
     }
 
     @httpGet("/author", Authenticate.for("AUTHOR"))
