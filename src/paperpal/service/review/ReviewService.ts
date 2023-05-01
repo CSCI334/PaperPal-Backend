@@ -7,13 +7,13 @@ import ReviewRatingDTO from "@app/paperpal/types/dto/ReviewRatingDTO";
 import ForbiddenException from "@exception/ForbiddenException";
 import NotAuthenticatedException from "@exception/NotAuthenticatedException";
 import { AccountType } from "@model/Account";
+import ConferenceRepository from "@repository/ConferenceRepository";
 import AccountService from "@service/account/AccountService";
-import ConferenceService from "@service/conference/ConferenceService";
+import ConferenceUtils from "@service/conference/ConferenceUtils";
 import AuthorReviewStrategy from "@service/review/impl/AuthorReviewStrategy";
 import ChairReviewStrategy from "@service/review/impl/ChairReviewStrategy";
 import ReviewerReviewStrategy from "@service/review/impl/ReviewerReviewStrategy";
 import { inject, injectable } from "inversify";
-
 
 @injectable()
 export default class ReviewService {
@@ -24,7 +24,7 @@ export default class ReviewService {
 
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
         @inject(ReviewRepository) private readonly reviewRepository : ReviewRepository,
-        @inject(ConferenceService) private readonly conferenceService : ConferenceService,
+        @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository,
         @inject(AccountService) private readonly accountService : AccountService,
     ) {}
 
@@ -41,7 +41,9 @@ export default class ReviewService {
     async getComments(accountId: number, paperId : number) {
         const user = await this.accountService.getUser(accountId);
         const strategy = this.getStrategy(user.accounttype);
-        const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
+        const lastConference = await this.conferenceRepository.getLastConference();
+
+        const phase: ConferencePhase = await ConferenceUtils.getConferencePhase(lastConference);
 
         if(!(await this.paperRepository.isPaperInConference(paperId, user.conferenceid))) 
             throw new ForbiddenException("Paper does not belong to your conference");
@@ -52,7 +54,9 @@ export default class ReviewService {
     async getReviews(accountId: number, paperId : number) {
         const user = await this.accountService.getUser(accountId);
         const strategy = this.getStrategy(user.accounttype);
-        const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
+        const lastConference = await this.conferenceRepository.getLastConference();
+
+        const phase: ConferencePhase = ConferenceUtils.getConferencePhase(lastConference);
         
         if(!(await this.paperRepository.isPaperInConference(paperId, user.conferenceid))) 
             throw new ForbiddenException("Paper does not belong to your conference");

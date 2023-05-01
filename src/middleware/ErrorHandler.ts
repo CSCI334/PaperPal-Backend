@@ -20,7 +20,7 @@ export default class ErrorHandler extends ErrorMiddleware {
             response.statusCode = STATUS_CODE.VALIDATION_FAILURE;
             return response.toExpressResponse(res);
         }
-        console.log(err);
+        
         response.data = { message: "Unexpected server side error" };
         return response.toExpressResponse(res);
     };

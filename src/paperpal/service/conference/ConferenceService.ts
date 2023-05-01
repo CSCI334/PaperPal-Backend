@@ -5,7 +5,6 @@ import CreateConferenceDTO from "@app/paperpal/types/dto/CreateConferenceDTO";
 import InviteDTO from "@app/paperpal/types/dto/InviteDTO";
 import UpdateConferenceDTO from "@app/paperpal/types/dto/UpdateConferenceDTO";
 import InvalidInputException from "@exception/InvalidInputException";
-import NotFoundException from "@exception/NotFoundException";
 import AccountService from "@service/account/AccountService";
 import ConferenceUtils from "@service/conference/ConferenceUtils";
 import { epochToDate } from "@utils/utils";
@@ -18,6 +17,14 @@ export default class ConferenceService {
         @inject(AccountService) private readonly accountService : AccountService) {}
         
     async updateConference(conferenceDTO: UpdateConferenceDTO) {
+        const deadlines = [
+            conferenceDTO.submissionDeadline , 
+            conferenceDTO.biddingDeadline, 
+            conferenceDTO.reviewDeadline, 
+            conferenceDTO.announcementTime];
+        
+        if(!ConferenceUtils.deadlinesAreInOrder(deadlines)) throw new InvalidInputException("Conference key dates is not valid");
+        
         const data = await this.conferenceRepository.updateConference({
             id: conferenceDTO.conferenceId,
             submissiondeadline: epochToDate(conferenceDTO.submissionDeadline),
@@ -29,24 +36,21 @@ export default class ConferenceService {
     }
     
     async createConference(conferenceDTO : CreateConferenceDTO) {
+        const lastConference = await this.conferenceRepository.getLastConference();
+
         const deadlines = [
             conferenceDTO.submissionDeadline , 
             conferenceDTO.biddingDeadline, 
             conferenceDTO.reviewDeadline, 
             conferenceDTO.announcementTime];
         
-        if(!ConferenceUtils.deadlinesAreInOrder(deadlines)) throw new InvalidInputException("Conference key dates is not valid");
-
-        const id = await this.conferenceRepository.insertConference(CreateConferenceDTO.toConferenceModel(conferenceDTO));
-        const data = await this.accountService.register(new InviteDTO(conferenceDTO.chairEmail, conferenceDTO.chairName, "CHAIR", id));
+        if(!ConferenceUtils.deadlinesAreInOrder(deadlines)) 
+            throw new InvalidInputException("Conference key dates are not valid");
+        if(lastConference && ConferenceUtils.getConferencePhase(lastConference) < ConferencePhase.Announcement) 
+            throw new InvalidInputException("There is still an ongoing conference");
+        await this.conferenceRepository.insertConference(CreateConferenceDTO.toConferenceModel(conferenceDTO));
+        const data = await this.accountService.register(new InviteDTO(conferenceDTO.chairEmail, conferenceDTO.chairName, "CHAIR"));
         return data;
-    }
-
-    async getConferencePhase(conferenceId : number) {
-        const conference = await this.conferenceRepository.getConference(conferenceId);
-        if(!conference) throw new NotFoundException("Conference not found");
-        
-        return ConferenceUtils.getCurrentPhase(conference);
     }
 
     async moveToNextPhase() : Promise<ConferencePhase> {

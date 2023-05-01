@@ -2,6 +2,7 @@ import DbService from "@app/database/db";
 import { PgErrorMap } from "@app/database/types";
 import Account, { AccountStatus } from "@model/Account";
 import Author from "@model/Author";
+import Chair from "@model/Chair";
 import Reviewer from "@model/Reviewer";
 import { inject, injectable } from "inversify";
 
@@ -29,10 +30,41 @@ export default class AccountRepository {
         return rows[0] as Account;
     }
 
+    async insertAuthor(author: Partial<Author>) {
+        const { rows } = await this.db.query(
+            `INSERT INTO author(accountid) 
+            VALUES($1) RETURNING *`,
+            [author.accountid]);
+        return rows[0] as Author;
+    }
+    async insertReviewer(reviewer: Partial<Reviewer>) {
+        const { rows } = await this.db.query(
+            `INSERT INTO reviewer(accountid) 
+            VALUES($1) RETURNING *`,
+            [reviewer.accountid]);
+        return rows[0] as Reviewer;
+    }
+    
+    async insertChair(chair: Partial<Chair>) {
+        const { rows } = await this.db.query(
+            `INSERT INTO chair(id, accountid) 
+            VALUES($1) RETURNING *`,
+            [chair.accountid]);
+        return rows[0] as Chair;
+    }
+
     async getAccountByEmail(email: string): Promise<Account> {
         const { rows } = await this.db.query(
             `SELECT * FROM account WHERE email = $1`,
             [email]
+        );
+        return rows[0] as Account;
+    }
+
+    async getAccountByEmailAndConference(email:string, conferenceId: number) {
+        const { rows } = await this.db.query(
+            `SELECT * FROM account WHERE email=$1 AND conferenceId=$2`,
+            [email, conferenceId]
         );
         return rows[0] as Account;
     }
@@ -48,10 +80,10 @@ export default class AccountRepository {
 
     async updateAccountStatus(accountid: number, accountStatus: AccountStatus) {
         const { rows } = await this.db.query(
-            `UPDATE account SET accountstatus = $1 WHERE id = $2 RETURNING id`,
+            `UPDATE account SET accountstatus=$1 WHERE id=$2`,
             [accountStatus, accountid]
         );
-        return rows[0] as Account;
+        return;
     }
 
     async getAllReviewer() {

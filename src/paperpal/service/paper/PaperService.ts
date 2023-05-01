@@ -1,14 +1,18 @@
 
 import PaperRepository from "@app/paperpal/repository/PaperRepository";
-import ReviewRepository from "@app/paperpal/repository/ReviewRepository";
 import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import { TokenData } from "@app/paperpal/types/TokenData";
 import PaperDTO from "@app/paperpal/types/dto/PaperDTO";
+import InvalidInputException from "@exception/InvalidInputException";
 import NotAuthenticatedException from "@exception/NotAuthenticatedException";
 import NotFoundException from "@exception/NotFoundException";
 import { AccountType } from "@model/Account";
 import { PaperStatus } from "@model/Paper";
+import AccountRepository from "@repository/AccountRepository";
+import ConferenceRepository from "@repository/ConferenceRepository";
 import AccountService from "@service/account/AccountService";
-import ConferenceService from "@service/conference/ConferenceService";
+import ConferenceUtils from "@service/conference/ConferenceUtils";
+import PhaseService from "@service/conference/PhaseService";
 import AuthorPaperStrategy from "@service/paper/impl/AuthorPaperStrategy";
 import ChairPaperStrategy from "@service/paper/impl/ChairPaperStrategy";
 import ReviewerPaperStrategy from "@service/paper/impl/ReviewerPaperStrategy";
@@ -22,10 +26,12 @@ export default class PaperService {
         @inject(ReviewerPaperStrategy) private readonly reviewerPaperStrategy : ReviewerPaperStrategy,
         @inject(ChairPaperStrategy) private readonly chairPaperStrategy : ChairPaperStrategy,
 
-        @inject(ConferenceService) private readonly conferenceService: ConferenceService,
+        @inject(PhaseService) private readonly phaseService: PhaseService,
         @inject(AccountService) private readonly accountService: AccountService,
+        @inject(AccountRepository) private readonly accountRepository: AccountRepository,
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
-        @inject(ReviewRepository) private readonly reviewRepository: ReviewRepository) {}
+        @inject(ConferenceRepository) private readonly conferenceRepository: ConferenceRepository,
+    ) {}
         
     private getStrategy(accountType : AccountType) {
         if(accountType === "ADMIN")
@@ -40,7 +46,9 @@ export default class PaperService {
     async getPaperFileLocation(accountId: number, paperId : number) {
         const user = await this.accountService.getUser(accountId);
         const strategy : PaperStrategy = this.getStrategy(user.accounttype);
-        const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
+        const lastConference = await this.conferenceRepository.getLastConference();
+
+        const phase: ConferencePhase = await ConferenceUtils.getConferencePhase(lastConference);
         
         return strategy.getPaperFileLocation(user, paperId, phase);
     }
@@ -48,12 +56,15 @@ export default class PaperService {
     async getAllPapers(accountId : number) {
         const user = await this.accountService.getUser(accountId);        
         const strategy : PaperStrategy = this.getStrategy(user.accounttype);
-        const phase: ConferencePhase = await this.conferenceService.getConferencePhase(user.conferenceid);
+        const lastConference = await this.conferenceRepository.getLastConference();
+
+        const phase: ConferencePhase = await ConferenceUtils.getConferencePhase(lastConference);
 
         return strategy.getAvailablePapers(user, phase);
     }
 
-    async judgePaper(paperId: number, status : Extract<PaperStatus, "ACCEPTED" | "REJECTED">) {
+    async judgePaper(paperId: number, conferenceId: number, status : Extract<PaperStatus, "ACCEPTED" | "REJECTED">) {
+        await this.phaseService.isCurrently(conferenceId, ConferencePhase.Judgment);
         const paper = await this.paperRepository.getPaper(paperId);
         if(!paper) throw new NotFoundException("Paper not found"); 
         
@@ -61,12 +72,16 @@ export default class PaperService {
         return data;
     }
 
-    async addPaper(paper: PaperDTO, path: string, authorId: number) {
-        const data = this.paperRepository.insertPaper({
+    async addPaper(paper: PaperDTO, path: string | undefined, token : TokenData) {
+        await this.phaseService.isCurrently(token.conferenceId, ConferencePhase.Submission);
+        const author = await this.accountRepository.getAuthor(token.accountId);
+        if(!author) throw new NotFoundException("Author not found");
+        if(path === undefined) throw new InvalidInputException("Could not upload file");
+        const data = await this.paperRepository.insertPaper({
             paperstatus: "TBD",
-            authorid: authorId,
+            authorid: author.id,
             filelocation: path,
-            coauthors: paper.coauthors,
+            coauthors: paper.coauthor,
             title: paper.title,
         });
         return data;

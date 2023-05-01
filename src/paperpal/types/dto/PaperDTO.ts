@@ -3,13 +3,13 @@ import { body, } from "express-validator";
 export default class PaperDTO {
     constructor(
         public readonly title: string, 
-        public readonly coauthors: string[]
+        public readonly coauthor: string[]
     ) {}
 
     static validator = () => {
         return [
             body("title", "Title field does not exist").exists().escape(),
-            body("coauthor").optional({nullable:true}),
+            body("coauthor", "Coauthor field does not exist").exists(),
         ];
     };
 

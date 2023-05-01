@@ -4,9 +4,10 @@ import { isSortedAsc } from "@utils/utils";
 
 export default class ConferenceUtils {
     // TODO : Remember to make a utility function to move to next phase, the functions should simply shift around the epoch of the conference
-    static getCurrentPhase(conference : Conference) : ConferencePhase {
+    static getConferencePhase(conference : Conference) : ConferencePhase {
         const currentEpoch = Date.now();
         const currentDate = new Date(currentEpoch);
+        
         if(currentDate < conference.submissiondeadline) return ConferencePhase.Submission;
         else if(currentDate > conference.submissiondeadline && currentDate < conference.biddingdeadline) return ConferencePhase.Bidding;
         else if(currentDate > conference.biddingdeadline && currentDate < conference.reviewdeadline) return ConferencePhase.Review;

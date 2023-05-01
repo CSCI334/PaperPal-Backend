@@ -12,6 +12,7 @@
     "@typescript-eslint/parser": "^5.58.0",
     "eslint": "^8.38.0",
     "nodemon": "^2.0.20",
+    "tsconfig-paths": "^4.2.0",
     "tslib": "^2.5.0"
   },
   "name": "backend",
@@ -46,6 +47,7 @@
     "express-validator": "^6.14.2",
     "inversify": "^6.0.1",
     "inversify-express-utils": "^6.4.3",
+    "inversify-inject-decorators": "^3.1.0",
     "jsonwebtoken": "^9.0.0",
     "module-alias": "^2.2.2",
     "morgan": "^1.10.0",

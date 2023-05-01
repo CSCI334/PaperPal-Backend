@@ -7,7 +7,6 @@ import cors from "cors";
 import path from "path";
 import * as dotenv from "dotenv";
 
-
 import morgan from "morgan";
 import fs from "fs";
 
@@ -33,15 +32,16 @@ import "@controller/ConferenceController";
 import "@controller/PaperController";
 import "@controller/ReviewController";
 
-import ChairPaperStrategy from "@service/paper/impl/ChairPaperStrategy";
 import AuthorReviewStrategy from "@service/review/impl/AuthorReviewStrategy";
 import ReviewerReviewStrategy from "@service/review/impl/ReviewerReviewStrategy";
 import ChairReviewStrategy from "@service/review/impl/ChairReviewStrategy";
 import ReviewerPaperStrategy from "@service/paper/impl/ReviewerPaperStrategy";
 import AuthorPaperStrategy from "@service/paper/impl/AuthorPaperStrategy";
+import ChairPaperStrategy from "@service/paper/impl/ChairPaperStrategy";
+import PhaseService from "@service/conference/PhaseService";
 
 export default class App {
-    private readonly container: Container;
+    readonly container: Container;
 
     constructor(options: ApplicationOptions) {
         this.container = new Container();
@@ -67,6 +67,7 @@ export default class App {
         this.container.bind(ConferenceService).toSelf();
         this.container.bind(PaperService).toSelf();
         this.container.bind(ReviewService).toSelf();
+        this.container.bind(PhaseService).toSelf();
 
         // Internal repositories
         this.container.bind(AccountRepository).toSelf();
@@ -76,7 +77,7 @@ export default class App {
         this.container.bind(ConferenceRepository).toSelf();
     }
 
-    async setup(options: ApplicationOptions) {
+    async setup(options : ApplicationOptions) {
         dotenv.config({ path: path.resolve(__dirname, "../.env") });
         const server: InversifyExpressServer = new InversifyExpressServer(
             this.container
@@ -93,10 +94,10 @@ export default class App {
         server.setErrorConfig((app) => {
             app.use(new ErrorHandler().handler);
         });
-
         // Tests db connection
         const dbService: DbService = this.container.get(DbService);
         await dbService.connect();
+        
         
         console.log(`Connection succesful!`);
         

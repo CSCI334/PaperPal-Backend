@@ -16,11 +16,14 @@ export default class PaperRepository{
     }
 
     async insertPaper(paper : Partial<Paper>){
-        `INSERT INTO paper ( title, filelocation, authorid, ownerreviewerid)
-        VALUES ( title, filelocation, authorid, ownerreviewerid);`;
+        const { rows } = await this.db.query(
+            `INSERT INTO paper (title, paperstatus, filelocation, coauthors, authorid)
+            VALUES ($1, $2, $3, $4, $5) 
+            RETURNING*`,
+            [paper.title, paper.paperstatus, paper.filelocation, paper.coauthors, paper.authorid]
+        ); 
 
-        throw new Error("Method not implemented");
-
+        return rows[0] as Paper;
     }
 
     async setPaperStatus(paperId:number, status : PaperStatus) {

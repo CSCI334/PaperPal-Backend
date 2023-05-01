@@ -1,6 +1,7 @@
 import { STATUS_CODE } from "@app/constants/HttpConstants";
 import { Authenticate } from "@app/middleware/Authenticate";
 import ValidateRequest from "@app/middleware/ValidateRequest";
+import { TokenData } from "@app/paperpal/types/TokenData";
 import SignUpDTO from "@app/paperpal/types/dto/AuthorRegisterDTO";
 import InviteDTO from "@app/paperpal/types/dto/InviteDTO";
 import LoginDTO from "@app/paperpal/types/dto/LoginDTO";
@@ -41,9 +42,9 @@ export default class AccountController {
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/verify", ValidateRequest.using(VerifyEmailDTO.validator()))
+    @httpPost("/verify", ValidateRequest.using(VerifyEmailDTO.validator()), Authenticate.allowPending())
     async verify(req: Request, res: Response) {
-        const data = await this.accountService.verifyEmail(req.body as VerifyEmailDTO);
+        const data = await this.accountService.verifyEmail(req.body as VerifyEmailDTO, res.locals as TokenData);
 
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);

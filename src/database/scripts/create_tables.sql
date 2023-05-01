@@ -11,7 +11,7 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
-    CREATE TYPE PaperStatus AS ENUM ('ACCEPTED', 'REJECTED');
+    CREATE TYPE PaperStatus AS ENUM ('ACCEPTED', 'REJECTED', 'TBD');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -47,6 +47,13 @@ VALUES('admin@email.com', 'Admin', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bde
 CREATE TABLE IF NOT EXISTS reviewer(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     bidPoints INTEGER,
+  	paperWorkload INTEGER,
+    accountId INTEGER NOT NULL,
+    CONSTRAINT accountId FOREIGN KEY(accountId) REFERENCES account(id)
+);
+
+CREATE TABLE IF NOT EXISTS chair(
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     accountId INTEGER NOT NULL,
     CONSTRAINT accountId FOREIGN KEY(accountId) REFERENCES account(id)
 );
@@ -61,7 +68,9 @@ CREATE TABLE IF NOT EXISTS paper(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     title TEXT,
     fileLocation TEXT,
+  	paperStatus PaperStatus NOT NULL,
     authorId INTEGER NOT NULL,
+  	coauthors TEXT,
     CONSTRAINT authorId FOREIGN KEY(authorId) REFERENCES author(id)
 );
 
@@ -80,8 +89,8 @@ CREATE TABLE IF NOT EXISTS comment(
     reviewerId INTEGER NOT NULL,
     paperId INTEGER NOT NULL,
     CONSTRAINT paperId FOREIGN KEY(paperId) REFERENCES paper(id),
-    CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES reviewer(reviewerId)
-)
+    CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES reviewer(id)
+);
 
 CREATE TABLE IF NOT EXISTS review(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -98,4 +107,3 @@ CREATE TABLE IF NOT EXISTS review(
 -- you cannot get allocated the same paper twice, nor submit a review twice for the same paper
 ALTER TABLE review
 ADD CONSTRAINT uniqueReviewerAndPaper UNIQUE(reviewerId, paperId);
-

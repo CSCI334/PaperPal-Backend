@@ -1,3 +1,4 @@
+import CreateConferenceDTO from "@app/paperpal/types/dto/CreateConferenceDTO";
 import { body } from "express-validator";
 
 // All deadlines should be in unix time and in seconds.
@@ -13,10 +14,11 @@ export default class UpdateConferenceDTO {
     static validator = () => { 
         return [
             body("conferenceId", "conferenceId does not exists").exists(),
-            body("submissionDeadline", "submissionDeadline is not an epoch number").optional({nullable:true}).isInt(),
-            body("biddingDeadline", "biddingDeadline is not an epoch number").optional({nullable:true}).isInt(),
-            body("reviewDeadline", "reviewDeadline is not an epoch number").optional({nullable:true}).isInt(),
-            body("announcementTime", "announcementTime does not exists").optional({nullable:true}).isInt(),
+            body("submissionDeadline", "submissionDeadline does not exists").exists().isInt(),
+            body("biddingDeadline", "biddingDeadline does not exists").exists().isInt(),
+            body("reviewDeadline", "reviewDeadline does not exists").exists().isInt(),
+            body("announcementTime", "announcementTime does not exists").exists().isInt(),
+            ...CreateConferenceDTO.deadlinesHasNotPassedCurrent()
         ];
     };
 }

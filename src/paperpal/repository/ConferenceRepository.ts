@@ -2,7 +2,6 @@ import DbService from "@app/database/db";
 import Conference from "@model/Conference";
 import { inject, injectable } from "inversify";
 
-
 @injectable()
 export default class ConferenceRepository{
     constructor(@inject(DbService) private readonly db: DbService) {}
@@ -28,12 +27,25 @@ export default class ConferenceRepository{
     async updateConference(conference : Partial<Conference>) {
         const { rows } = await this.db.query(
             `UPDATE conference SET 
-                submissionDeadline = COALESCE($2, submissionDeadline)
-                biddingDeadline = COALESCE($3, biddingDeadline)
-                reviewDeadline = COALESCE($4, reviewDeadline)
+                submissionDeadline = COALESCE($2, submissionDeadline),
+                biddingDeadline = COALESCE($3, biddingDeadline),
+                reviewDeadline = COALESCE($4, reviewDeadline),
                 announcementTime = COALESCE($5, announcementTime)
-                WHERE id = $1`,
-            [conference.id, conference.submissiondeadline, conference.biddingdeadline, conference.reviewdeadline, conference.announcementtime]);
-        return rows[0].id;
+                WHERE id=$1;`,
+            [conference.id, 
+                conference.submissiondeadline?.toISOString(), 
+                conference.biddingdeadline?.toISOString(), 
+                conference.reviewdeadline?.toISOString(), 
+                conference.announcementtime?.toISOString()]);
+        return;
+    }
+
+    async getLastConference() {
+        const { rows } = await this.db.query(
+            `SELECT * FROM conference
+            ORDER BY announcementtime DESC 
+            LIMIT 1` 
+        );
+        return rows[0] as Conference;
     }
 }

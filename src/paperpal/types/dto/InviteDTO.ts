@@ -6,15 +6,14 @@ export default class InviteDTO extends RegisterDTO {
     constructor(
         public readonly email: string, 
         public readonly username: string, 
-        public readonly accountType: AccountType,
-        public readonly conferenceId : number) {
-        super(email, username, "", accountType, conferenceId);
+        public readonly accountType: AccountType) {
+        super(email, username, "", accountType);
     }
     static validator = () => {
         return [...RegisterDTO.validator(), 
             body("accountType", "accountType field does not exist").exists(),
-            body("accountType", "accountType field is invalid. Value can only be ADMIN, CHAIR, REVIEWER, or AUTHOR").isIn([
-                "ADMIN", "CHAIR", "REVIEWER", "AUTHOR"
+            body("accountType", "accountType field is invalid. Value can only be CHAIR, REVIEWER, or AUTHOR").isIn([
+                "CHAIR", "REVIEWER", "AUTHOR"
             ]),
         ];
     };

@@ -10,8 +10,6 @@ import UpdateConferenceDTO from "@app/paperpal/types/dto/UpdateConferenceDTO";
 import BaseHttpResponse from "@helper/BaseHttpResponse";
 import ConferenceService from "@service/conference/ConferenceService";
 
-
-
 @controller("/admin", Authenticate.for("ADMIN"))
 export default class ConferenceController{
     constructor(
@@ -25,11 +23,10 @@ export default class ConferenceController{
         return response.toExpressResponse(res);
     }
 
-    @httpPut("/conference")
+    @httpPut("/conference", ValidateRequest.using(UpdateConferenceDTO.validator()))
     async updateConference(req: Request, res: Response) {
-        const data = this.conferenceService.updateConference(req.body as UpdateConferenceDTO);
-
-        const response = BaseHttpResponse.success(data);
+        await this.conferenceService.updateConference(req.body as UpdateConferenceDTO);
+        const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);
     }
 }
