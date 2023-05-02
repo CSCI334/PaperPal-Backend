@@ -10,6 +10,7 @@ import Account from "@model/Account";
 import ConferenceRepository from "@repository/ConferenceRepository";
 import AccountUtils from "@service/account/AccountUtils";
 import { inject, injectable } from "inversify";
+const nodemailer = require('nodemailer')
 
 @injectable()
 export default class AuthService {
@@ -52,7 +53,7 @@ export default class AuthService {
         }, {expiresIn: "7d"});
 
         // Send verify email here, verify link should contain jwtToken and email
-        await this.sendVerificationEmail(jwtToken);
+        if(registerDTO.accountType === "AUTHOR") this.sendVerificationEmail(user, jwtToken);
 
         return {
             token: jwtToken,
@@ -86,8 +87,133 @@ export default class AuthService {
         };
     }
 
-    async sendVerificationEmail(jwtToken : string) {
-        console.log("paperpal.com/verify?jwtToken=laskdfjlaskdfjlas");
+    async sendVerificationEmail(user : Account, jwtToken : string) {
+        const recipientName = user.username;
+        const emailRecipient = user.email;
+        const role = user.accounttype;
+        
+        //Not picky, but these below are the 'sensitive information' you mentioned aric, if you want to put elsewhere
+        const EMAIL_USER = "paperpalconferencesystem@gmail.com";
+        const EMAIL_PWORD = "vfozqqjqkiwufcji";
+        const OAUTH_CLIENTID = "831889653912-vdgboh3qjmgks3koidqfo02u6krgn0q8.apps.googleusercontent.com";
+        const OAUTH_CLIENT_SECRET = "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";
+        const OAUTH_REFRESH_TOKEN = "1//04qOR2M4KVm0TCgYIARAAGAQSNwF-L9Iryc508mLE_kgihPEz1S4iAitZ3mHT5n8TaBT4YdDAb3oaCHzbW787TybIytNikXwoETw";
+        
+        var emailSubject;
+        var emailBody;
+        var htmlLink = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTfYI8I6tcVPnc7vGWA3kRMPEmTQQqMMpD8w&usqp=CAU';
+
+        if(role == "REVIEWER"){ // Determins contents of email
+            emailSubject = "PaperPal Reviewer Invitation";
+
+            emailBody = "<div style = 'width: 100%; font-family: helvetica, sans-serif;'>"
+            emailBody += "<div style = 'height: 100%;'>"
+            emailBody += "<table style = 'margin: 0 auto 0 auto'>"
+            emailBody += "<br><tr><td style = 'text-align: center; font-size: 28px'>"
+            emailBody += "<h2>Welcome " + recipientName + "</h2>"
+            emailBody += "</tr></tr>"
+            emailBody += "<br><tr><td style = 'text-align: center; font-size: 22px'>"
+            emailBody += "<h2>You've been Invited to join PaperPal as a Reviewer</h2>"
+            emailBody += "</tr></tr>"
+            emailBody += "</br></br><tr><td style = 'text-align: center; font-size: 16px'>"
+            emailBody += "<p>Hey " + recipientName + ". You have been selected to become a part of our team of Reviewers at PaperPal.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "<tr><td style = 'text-align: center; font-size: 16px'>"
+            emailBody += "<p>We have chosen you due to your exemplary work in the field of study we are currently reviewing papers for.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "<tr><td style = 'text-align: center; font-size: 16px'>"
+            emailBody += "<p>This, of course, would not prohibit you from submitting your own papers, but you would not be able to review your own paper.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "<tr><td style = 'text-align: center; font-size: 16px'>"
+            emailBody += "<p>If you desire you participate as both an author and a reviewer, you would be required to create an account for each role.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "<tr><td style = 'text-align: center; font-size: 18px'>"
+            emailBody += "</br><p>Please click <a href = '" + htmlLink + "' class = 'button'>here</a> to sign up as a reviewer.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "</table>"
+            emailBody += "</div>"
+            emailBody += "</div>"
+        }
+        else if (role == "CHAIR"){
+            emailSubject = "PaperPal Conference Chair Invitation";
+
+            emailBody = "<div style = 'width: 100%; font-family: helvetica, sans-serif;'>"
+            emailBody += "<div style = 'height: 100%;'>"
+            emailBody += "<table style = 'margin: 0 auto 0 auto'>"
+            emailBody += "<br><tr><td style = 'text-align: center; font-size: 28px'>"
+            emailBody += "<h2>Welcome " + recipientName + "</h2>"
+            emailBody += "</tr></tr>"
+            emailBody += "<br><tr><td style = 'text-align: center; font-size: 22px'>"
+            emailBody += "<h2>You've been Invited to join PaperPal as a Conference Chair</h2>"
+            emailBody += "</tr></tr>"
+            emailBody += "</br></br><tr><td style = 'text-align: center; font-size: 16px'>"
+            emailBody += "<p>Hey " + recipientName + ". You have been selected to become Conference Chairs at PaperPal.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "<tr><td style = 'text-align: center; font-size: 16px'>"
+            emailBody += "<p>We have chosen you due to your exemplary work in the field of study we are currently reviewing papers for.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "<tr><td style = 'text-align: center; font-size: 16px'>"
+            emailBody += "<p>Unfortunately, if you were planning on submitting a paper in this conference, should you accept, you would no longer be able to do so.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "<tr><td style = 'text-align: center; font-size: 16px'>"
+            emailBody += "<p>Due to how highly your expertise is respected, this would mean that you play an integral part on deciding on whether or not a paper is passed or declined.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "<tr><td style = 'text-align: center; font-size: 18px'>"
+            emailBody += "</br><p>Please click <a href = '" + htmlLink + "' class = 'button'>here</a> to sign up as a Conference Chair.</p>"
+            emailBody += "</td></tr>"
+            emailBody += "</table>"
+            emailBody += "</div>"
+            emailBody += "</div>"
+        }
+        //TODO: else if for SYSTEM ADMIN and AUTHOR
+
+        try{
+            const transporter = nodemailer.createTransport({    //Conection to gmail and authentication
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: true,
+                service: 'gmail',
+                auth: {
+                    type: 'OAuth2',
+                    user: "paperpalconferencesystem@gmail.com",
+                    pass: "CSCI334password",
+                    clientId: OAUTH_CLIENTID,
+                    clientSecret: OAUTH_CLIENT_SECRET,
+                    refreshToken: OAUTH_REFRESH_TOKEN
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+
+
+            let mailOptions = {     //email contents
+                from: EMAIL_USER,
+                to: emailRecipient,
+                subject: emailSubject,
+                text: "I AM AN EMAIL AND THIS IS MY BODY PARAGRAPH, I DONT KNOW WHERE THIS IS GOD HELP, PLEASE FIND IT. NOTHING IS REAL MY ENTIRE LIFE IN THIS EMAIL IS ONLY REPRESENTED BY A CONFIGURATION OF PIXELS BUT EVEN THAT CANNOT BE SEEN OR FOUND. WHAT IS LIFE. I AM AN EMAIL, HOW CAN I EVEN HAVE AN EXISTENTIAL CRISIS. I DONT KNOW WHATS REAL ANYMORE. GOD IS DEAD",
+                html: emailBody
+            };
+
+
+            transporter.sendMail(mailOptions, function(error : Error){  //the actual sending of the email
+                if(error){
+                    console.log("Error " + error);
+                }
+                else{
+                    console.log("Email Sent Successfully");
+                }
+            });
+
+            console.log("WORKING");
+            return 0;
+
+        }catch(error){
+            console.log("UH OH");
+            return error
+        }
+
+        console.log("sent email");
         return;
     }
 
