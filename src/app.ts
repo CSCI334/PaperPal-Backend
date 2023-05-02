@@ -38,7 +38,7 @@ import ChairReviewStrategy from "@service/review/impl/ChairReviewStrategy";
 import ReviewerPaperStrategy from "@service/paper/impl/ReviewerPaperStrategy";
 import AuthorPaperStrategy from "@service/paper/impl/AuthorPaperStrategy";
 import ChairPaperStrategy from "@service/paper/impl/ChairPaperStrategy";
-import PhaseService from "@service/conference/PhaseService";
+import ValidatePhase from "@app/middleware/phase/ValidatePhase";
 
 export default class App {
     readonly container: Container;
@@ -67,14 +67,16 @@ export default class App {
         this.container.bind(ConferenceService).toSelf();
         this.container.bind(PaperService).toSelf();
         this.container.bind(ReviewService).toSelf();
-        this.container.bind(PhaseService).toSelf();
-
+        
         // Internal repositories
         this.container.bind(AccountRepository).toSelf();
         this.container.bind(BidRepository).toSelf();
         this.container.bind(PaperRepository).toSelf();
         this.container.bind(ReviewRepository).toSelf();
         this.container.bind(ConferenceRepository).toSelf();
+
+        // Middleware
+        this.container.bind(ValidatePhase).toSelf();
     }
 
     async setup(options : ApplicationOptions) {

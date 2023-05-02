@@ -1,6 +1,8 @@
-
 import { controller, httpGet, httpPost, requestParam } from "inversify-express-utils";
 import { Request, Response } from "express";
+
+import path from "path";
+import fs from "fs";
 
 import { inject } from "inversify";
 import { Authenticate } from "@app/middleware/Authenticate";
@@ -11,8 +13,11 @@ import PaperService from "@service/paper/PaperService";
 import { TokenData } from "@app/paperpal/types/TokenData";
 import { upload } from "@app/middleware/PaperUpload";
 import { ROOT_DIR } from "@app/constants/AppConstants";
-import path from "path";
-import fs from "fs";
+import PhaseContext from "@app/middleware/phase/PhaseContext";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import ValidatePhase from "@app/middleware/phase/ValidatePhase";
+import { STATUS_CODE } from "@app/constants/HttpConstants";
+
 @controller("/paper")
 export default class PaperController {
     constructor(
@@ -29,6 +34,8 @@ export default class PaperController {
 
     @httpPost("/upload", 
         Authenticate.for("AUTHOR"), 
+        PhaseContext.isCurrently(ConferencePhase.Submission),
+        ValidatePhase,
         upload.single("paper"),
         ValidateRequest.using(PaperDTO.validator()))
     async addPaper(req: Request, res: Response) {
@@ -44,7 +51,7 @@ export default class PaperController {
         const file = fs.readFileSync(path.resolve(ROOT_DIR, fileLocation) );
         
         res.type("pdf");
-        res.status(200).send(file);
+        return res.status(STATUS_CODE.OK).send(file);
     }
 
     @httpGet("/author", Authenticate.for("AUTHOR"))
@@ -57,6 +64,8 @@ export default class PaperController {
 
     @httpPost("/judge/:paperId", 
         Authenticate.for("CHAIR"), 
+        PhaseContext.isCurrently(ConferencePhase.Judgment),
+        ValidatePhase,
         ValidateRequest.using(PaperDTO.paperStatusValidator()))
     async judgePaper(@requestParam("paperId") paperId: number, req: Request, res: Response) {
         const data = this.paperService.judgePaper(paperId, res.locals.conferenceId, req.body.paperStatus);

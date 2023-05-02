@@ -33,7 +33,7 @@ export default class AccountController {
         const response = BaseHttpResponse.success(userData);
         return response.toExpressResponse(res);
     }
-
+    
     @httpPost("/login", ValidateRequest.using(LoginDTO.validator()))
     async login(req: Request, res: Response) {
         const userData = await this.accountService.login(req.body as LoginDTO);

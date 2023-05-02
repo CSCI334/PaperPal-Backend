@@ -28,7 +28,7 @@ export class Authenticate extends BaseMiddleware{
                 accountId : decoded.accountId,
                 email: decoded.email,
                 conferenceId: decoded.conferenceId,
-                accountStatus: decoded.accountStatus
+                accountStatus: decoded.accountStatus,
             };
             if(decoded.accountStatus === "PENDING" && !this.allowPending) 
                 next(new NotAuthenticatedException("User not verified"));

@@ -12,7 +12,6 @@ import AccountRepository from "@repository/AccountRepository";
 import ConferenceRepository from "@repository/ConferenceRepository";
 import AccountService from "@service/account/AccountService";
 import ConferenceUtils from "@service/conference/ConferenceUtils";
-import PhaseService from "@service/conference/PhaseService";
 import AuthorPaperStrategy from "@service/paper/impl/AuthorPaperStrategy";
 import ChairPaperStrategy from "@service/paper/impl/ChairPaperStrategy";
 import ReviewerPaperStrategy from "@service/paper/impl/ReviewerPaperStrategy";
@@ -26,7 +25,6 @@ export default class PaperService {
         @inject(ReviewerPaperStrategy) private readonly reviewerPaperStrategy : ReviewerPaperStrategy,
         @inject(ChairPaperStrategy) private readonly chairPaperStrategy : ChairPaperStrategy,
 
-        @inject(PhaseService) private readonly phaseService: PhaseService,
         @inject(AccountService) private readonly accountService: AccountService,
         @inject(AccountRepository) private readonly accountRepository: AccountRepository,
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
@@ -64,7 +62,6 @@ export default class PaperService {
     }
 
     async judgePaper(paperId: number, conferenceId: number, status : Extract<PaperStatus, "ACCEPTED" | "REJECTED">) {
-        await this.phaseService.isCurrently(conferenceId, ConferencePhase.Judgment);
         const paper = await this.paperRepository.getPaper(paperId);
         if(!paper) throw new NotFoundException("Paper not found"); 
         
@@ -73,7 +70,6 @@ export default class PaperService {
     }
 
     async addPaper(paper: PaperDTO, path: string | undefined, token : TokenData) {
-        await this.phaseService.isCurrently(token.conferenceId, ConferencePhase.Submission);
         const author = await this.accountRepository.getAuthor(token.accountId);
         if(!author) throw new NotFoundException("Author not found");
         if(path === undefined) throw new InvalidInputException("Could not upload file");

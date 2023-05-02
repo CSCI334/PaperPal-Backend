@@ -1,4 +1,4 @@
-import { AccountType } from "./database/models/Account.js";
+import { AccountStatus, AccountType } from "./database/models/Account.js";
 import "express";
 
 declare global {
@@ -6,8 +6,10 @@ declare global {
         export interface Locals{
             accountId: number;
             email: string;
+            accountStatus: AccountStatus;
             accountType: AccountType;
             conferenceId: number;
+            
         }
     }
 }
