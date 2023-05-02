@@ -47,7 +47,7 @@ export default class AccountRepository {
     
     async insertChair(chair: Partial<Chair>) {
         const { rows } = await this.db.query(
-            `INSERT INTO chair(id, accountid) 
+            `INSERT INTO chair(accountid) 
             VALUES($1) RETURNING *`,
             [chair.accountid]);
         return rows[0] as Chair;
@@ -130,4 +130,7 @@ export default class AccountRepository {
         return rows[0] as Reviewer;
     }
 
+    async doesAdminExists() {
+        return true;
+    }
 }

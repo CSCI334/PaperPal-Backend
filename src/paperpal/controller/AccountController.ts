@@ -2,7 +2,7 @@ import { STATUS_CODE } from "@app/constants/HttpConstants";
 import { Authenticate } from "@app/middleware/Authenticate";
 import ValidateRequest from "@app/middleware/ValidateRequest";
 import { TokenData } from "@app/paperpal/types/TokenData";
-import SignUpDTO from "@app/paperpal/types/dto/AuthorRegisterDTO";
+import SignUpDTO from "@app/paperpal/types/dto/SignUpDTO";
 import InviteDTO from "@app/paperpal/types/dto/InviteDTO";
 import LoginDTO from "@app/paperpal/types/dto/LoginDTO";
 import VerifyEmailDTO from "@app/paperpal/types/dto/VerifyEmailDTO";

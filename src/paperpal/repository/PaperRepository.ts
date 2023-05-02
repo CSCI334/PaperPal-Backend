@@ -82,7 +82,6 @@ export default class PaperRepository{
     }
 
     async getConferenceFromPaper(paperId: number): Promise<Conference> {
-        
         `SELECT * 
         FROM paper
         LEFT JOIN conference ON paper.id = conference.id;`;

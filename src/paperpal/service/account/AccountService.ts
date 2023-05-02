@@ -26,13 +26,13 @@ export default class AuthService {
         // the request provided a password or not.
         // If true, it's an author register, create their hashedPassword and salt, send verify email
         // If false, it's other account type, send verify email.
-        const [hashedPassword, salt] = registerDTO.password ? 
-            AccountUtils.createNewPasswordHash(registerDTO.password) :
-            ["", ""];
-        
         const lastConference = await this.conferenceRepository.getLastConference();
         if(!lastConference) throw new InvalidInputException("No ongoing conference. Please wait until an admin creates a conference");
         
+        const [hashedPassword, salt] = registerDTO.password ? 
+            AccountUtils.createNewPasswordHash(registerDTO.password) :
+            ["", ""];
+            
         const user = await this.addUser({
             email : registerDTO.email,
             username: registerDTO.username,
@@ -132,6 +132,9 @@ export default class AuthService {
     }
 
     async addUser(account : Partial<Account>) {
+        if(await this.accountRepository.doesAdminExists() && account.accounttype === "ADMIN") 
+            throw new InvalidInputException("Admin already exists. Cannot sign up as admin");
+
         const user =  await this.accountRepository.insertUser({
             email : account.email,
             username: account.username,

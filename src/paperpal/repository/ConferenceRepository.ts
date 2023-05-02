@@ -11,7 +11,12 @@ export default class ConferenceRepository{
             `INSERT INTO conference(conferenceName,conferenceLocation,submissionDeadline,biddingDeadline,reviewDeadline,announcementTime)
             VALUES($1, $2, $3, $4, $5, $6)
             RETURNING ID`,
-            [conference.conferencename, conference.conferencelocation, conference.submissiondeadline, conference.biddingdeadline, conference.reviewdeadline, conference.announcementtime]
+            [conference.conferencename, 
+                conference.conferencelocation, 
+                conference.submissiondeadline, 
+                conference.biddingdeadline, 
+                conference.reviewdeadline, 
+                conference.announcementtime]
         );
         return rows[0].id as number;
     }

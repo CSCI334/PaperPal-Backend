@@ -1,6 +1,6 @@
 import App from "@app/app";
 import { ApplicationOptions } from "@config/ApplicationConfig";
-import getDecorators from "inversify-inject-decorators";
+
 export default function bootstrap() {
     const applicationOptions: ApplicationOptions = {
         containerOptions: {
