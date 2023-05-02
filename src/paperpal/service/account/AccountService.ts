@@ -102,6 +102,7 @@ export default class AuthService {
         var emailSubject;
         var emailBody;
         var htmlLink = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTfYI8I6tcVPnc7vGWA3kRMPEmTQQqMMpD8w&usqp=CAU';
+                //TODO: OnClick, update user AccountStatus from "PENDING" to "ACCEPTED"
 
         if(role == "REVIEWER"){ // Determins contents of email
             emailSubject = "PaperPal Reviewer Invitation";
@@ -166,6 +167,7 @@ export default class AuthService {
             emailBody += "</div>"
         }
         //TODO: else if for SYSTEM ADMIN and AUTHOR
+        //TODO: ensure account in question is of AccountStatus : "PENDING"
 
         try{
             const transporter = nodemailer.createTransport({    //Conection to gmail and authentication
