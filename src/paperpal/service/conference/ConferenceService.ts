@@ -5,26 +5,21 @@ import CreateConferenceDTO from "@app/paperpal/types/dto/CreateConferenceDTO";
 import InviteDTO from "@app/paperpal/types/dto/InviteDTO";
 import UpdateConferenceDTO from "@app/paperpal/types/dto/UpdateConferenceDTO";
 import InvalidInputException from "@exception/InvalidInputException";
+import Conference from "@model/Conference";
 import AccountService from "@service/account/AccountService";
 import ConferenceUtils from "@service/conference/ConferenceUtils";
 import { epochToDate } from "@utils/utils";
 import { inject, injectable } from "inversify";
-
+import timerMap from "@service/conference/PhaseService";
 @injectable()
 export default class ConferenceService {
-    //var submissionTimer;
-    //var biddingTimer;
-    //var reviewTimer;
-    //var judgementTimer;
-    //var announcementTimer;
-
     constructor(
         @inject(ConferenceRepository) private readonly conferenceRepository: ConferenceRepository,
         @inject(AccountService) private readonly accountService : AccountService) {}
         
     async updateConference(conferenceDTO: UpdateConferenceDTO) {
         const deadlines = [
-            conferenceDTO.submissionDeadline , 
+            conferenceDTO.submissionDeadline, 
             conferenceDTO.biddingDeadline, 
             conferenceDTO.reviewDeadline, 
             conferenceDTO.announcementTime];
@@ -59,81 +54,90 @@ export default class ConferenceService {
         return data;
     }
 
-    async startSubmissionPhase(conferenceDTO: UpdateConferenceDTO){
+    async startSubmissionPhase(){
+        // submissionTimer
+        // biddingTimer
+        // reviewTimer
+        // judgementTimer
+        // announcementTimer
+        const conference =  await this.conferenceRepository.getLastConference();
+        
         console.log("STARTING THE SUBMISSION PHASE");
-        submissionTimer = setTimeout(() => this.endSubmissionPhase(conferenceDTO), (conferenceDTO.submissionDeadline * 1000));
+        const submissionTimer = setTimeout(() => 
+            this.endSubmissionPhase(conference), ((conference.submissiondeadline.getTime() - Date.now()) * 1000)
+        );
         return 0;
     }
     
-    async endSubmissionPhase(conferenceDTO: UpdateConferenceDTO){
+    async endSubmissionPhase(conference: Conference){
         console.log("ENDING THE SUBMISSION PHASE");
-        this.startBiddingPhase(conferenceDTO);
+        this.startBiddingPhase(conference);
         return 0;
     }
 
-    async updateSubmissionPhase(conferenceDTO: UpdateConferenceDTO){
-        clearTimeout(submissionTimer);
-        submissionTimer = setTimeout(() => this.endSubmissionPhase(conferenceDTO), (conferenceDTO.submissionDeadline * 1000));
+    async updateSubmissionPhase(conference: Conference){
+        clearTimeout(timerMap[whatever]);
+        const submissionTimer = setTimeout(() => this.endSubmissionPhase(conference), (conference.submissionDeadline * 1000));
     }
 
-    async startBiddingPhase(conferenceDTO: UpdateConferenceDTO){
+    async startBiddingPhase(conference: Conference){
         console.log("STARTING THE BIDDING PHASE");
-        biddingTimer = setTimeout(() => this.endBiddingPhase(conferenceDTO), (conferenceDTO.biddingDeadline * 1000));
+        biddingTimer = setTimeout(() => this.endBiddingPhase(conference), (conference.biddingDeadline * 1000));
         return 0;
     }
     
-    async endBiddingPhase(conferenceDTO: UpdateConferenceDTO){
+    async endBiddingPhase(conference: Conference){
         console.log("ENDING THE BIDDING PHASE");
-        this.startReviewPhase(conferenceDTO);
+        this.startReviewPhase(conference);
         return 0;
     }
 
-    async updateBiddingPhase(conferenceDTO: UpdateConferenceDTO){
+    async updateBiddingPhase(conference: Conference){
         clearTimeout(biddingTimer);
-        biddingTimer = setTimeout(() => this.endBiddingPhase(conferenceDTO), (conferenceDTO.biddingDeadline * 1000));
+        biddingTimer = setTimeout(() => this.endBiddingPhase(conference), (conference.biddingDeadline * 1000));
     }
 
-    async startReviewPhase(conferenceDTO: UpdateConferenceDTO){
+    async startReviewPhase(conference: Conference){
         console.log("STARTING THE REVIEW PHASE");
-        reviewTimer = setTimeout(() => this.endReviewPhase(conferenceDTO), (conferenceDTO.reviewDeadline * 1000));
+        reviewTimer = setTimeout(() => this.endReviewPhase(conference), (conference.reviewDeadline * 1000));
         return 0;
     }
     
-    async endReviewPhase(conferenceDTO: UpdateConferenceDTO){
+    async endReviewPhase(conference: Conference){
         console.log("ENDING THE REVIEW PHASE");
-        this.startJudgementPhase(conferenceDTO);
+        this.startJudgementPhase(conference);
         return 0;
     }
 
-    async updateReviewPhase(conferenceDTO: UpdateConferenceDTO){
+    async updateReviewPhase(conference: Conference){
         clearTimeout(reviewTimer);
-        reviewTimer = setTimeout(() => this.endReviewPhase(conferenceDTO), (conferenceDTO.reviewDeadline * 1000));
+        reviewTimer = setTimeout(() => this.endReviewPhase(conference), (conference.reviewDeadline * 1000));
     }
 
-    async startJudgementPhase(conferenceDTO: UpdateConferenceDTO){
+    async startJudgementPhase(conference: Conference){
         console.log("STARTING THE JUDGEMENT PHASE");
         //TESTING
-        var time = 5;
-        judgementTimer = setTimeout(() => this.endJudgementPhase(conferenceDTO), (time * 1000));
+        const time = 5;
+        judgementTimer = setTimeout(() => this.endJudgementPhase(conference), (time * 1000));
         return 0;
     }
     
-    async endJudgementPhase(conferenceDTO: UpdateConferenceDTO){
+    async endJudgementPhase(conference: Conference){
         console.log("ENDING THE JUDGEMENT PHASE");
-        this.startAnnouncementPhase(conferenceDTO);
+        this.startAnnouncementPhase(conference);
         return 0;
     }
 
-    async updateJudgementPhase(conferenceDTO: UpdateConferenceDTO){
+    async updateJudgementPhase(conference: Conference){
         clearTimeout(judgementTimer);
         //TESTING
-        var time = 5;
-        judgementTimer = setTimeout(() => this.endJudgementPhase(conferenceDTO), (time * 1000));
+        const time = 5;
+        judgementTimer = setTimeout(() => this.endJudgementPhase(conference), (time * 1000));
     }
 
-    async startAnnouncementPhase(conferenceDTO: UpdateConferenceDTO){
+    async startAnnouncementPhase(conference: Conference){
         console.log("STARTING THE ANNOUNCEMENT PHASE");
-        announcementTimer = setTimeout(() => this.endAnnouncementPhase(), (conferenceDTO.announcementTime * 1000));
+        announcementTimer = setTimeout(() => this.endAnnouncementPhase(), (conference.announcementTime * 1000));
         return 0;
     }
     
@@ -142,8 +146,8 @@ export default class ConferenceService {
         return 0;
     }
 
-    async updateAnnouncementPhase(conferenceDTO: UpdateConferenceDTO){
+    async updateAnnouncementPhase(conference: Conference){
         clearTimeout(announcementTimer);
-        announcementTimer = setTimeout(() => this.endAnnouncementPhase(), (conferenceDTO.announcementTime * 1000));
+        announcementTimer = setTimeout(() => this.endAnnouncementPhase(), (conference.announcementTime * 1000));
     }
 }
