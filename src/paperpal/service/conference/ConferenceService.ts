@@ -14,7 +14,8 @@ import { inject, injectable } from "inversify";
 export default class ConferenceService {
     constructor(
         @inject(ConferenceRepository) private readonly conferenceRepository: ConferenceRepository,
-        @inject(AccountService) private readonly accountService : AccountService) {}
+        @inject(AccountService) private readonly accountService : AccountService
+    ) {}
         
     async updateConference(conferenceDTO: UpdateConferenceDTO) {
         const deadlines = [
