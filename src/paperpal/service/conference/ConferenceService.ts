@@ -12,6 +12,12 @@ import { inject, injectable } from "inversify";
 
 @injectable()
 export default class ConferenceService {
+    //var submissionTimer;
+    //var biddingTimer;
+    //var reviewTimer;
+    //var judgementTimer;
+    //var announcementTimer;
+
     constructor(
         @inject(ConferenceRepository) private readonly conferenceRepository: ConferenceRepository,
         @inject(AccountService) private readonly accountService : AccountService) {}
@@ -53,7 +59,91 @@ export default class ConferenceService {
         return data;
     }
 
-    async moveToNextPhase() : Promise<ConferencePhase> {
-        throw new Error("Not implemented");
+    async startSubmissionPhase(conferenceDTO: UpdateConferenceDTO){
+        console.log("STARTING THE SUBMISSION PHASE");
+        submissionTimer = setTimeout(() => this.endSubmissionPhase(conferenceDTO), (conferenceDTO.submissionDeadline * 1000));
+        return 0;
+    }
+    
+    async endSubmissionPhase(conferenceDTO: UpdateConferenceDTO){
+        console.log("ENDING THE SUBMISSION PHASE");
+        this.startBiddingPhase(conferenceDTO);
+        return 0;
+    }
+
+    async updateSubmissionPhase(conferenceDTO: UpdateConferenceDTO){
+        clearTimeout(submissionTimer);
+        submissionTimer = setTimeout(() => this.endSubmissionPhase(conferenceDTO), (conferenceDTO.submissionDeadline * 1000));
+    }
+
+    async startBiddingPhase(conferenceDTO: UpdateConferenceDTO){
+        console.log("STARTING THE BIDDING PHASE");
+        biddingTimer = setTimeout(() => this.endBiddingPhase(conferenceDTO), (conferenceDTO.biddingDeadline * 1000));
+        return 0;
+    }
+    
+    async endBiddingPhase(conferenceDTO: UpdateConferenceDTO){
+        console.log("ENDING THE BIDDING PHASE");
+        this.startReviewPhase(conferenceDTO);
+        return 0;
+    }
+
+    async updateBiddingPhase(conferenceDTO: UpdateConferenceDTO){
+        clearTimeout(biddingTimer);
+        biddingTimer = setTimeout(() => this.endBiddingPhase(conferenceDTO), (conferenceDTO.biddingDeadline * 1000));
+    }
+
+    async startReviewPhase(conferenceDTO: UpdateConferenceDTO){
+        console.log("STARTING THE REVIEW PHASE");
+        reviewTimer = setTimeout(() => this.endReviewPhase(conferenceDTO), (conferenceDTO.reviewDeadline * 1000));
+        return 0;
+    }
+    
+    async endReviewPhase(conferenceDTO: UpdateConferenceDTO){
+        console.log("ENDING THE REVIEW PHASE");
+        this.startJudgementPhase(conferenceDTO);
+        return 0;
+    }
+
+    async updateReviewPhase(conferenceDTO: UpdateConferenceDTO){
+        clearTimeout(reviewTimer);
+        reviewTimer = setTimeout(() => this.endReviewPhase(conferenceDTO), (conferenceDTO.reviewDeadline * 1000));
+    }
+
+    async startJudgementPhase(conferenceDTO: UpdateConferenceDTO){
+        console.log("STARTING THE JUDGEMENT PHASE");
+        //TESTING
+        var time = 5;
+        judgementTimer = setTimeout(() => this.endJudgementPhase(conferenceDTO), (time * 1000));
+        return 0;
+    }
+    
+    async endJudgementPhase(conferenceDTO: UpdateConferenceDTO){
+        console.log("ENDING THE JUDGEMENT PHASE");
+        this.startAnnouncementPhase(conferenceDTO);
+        return 0;
+    }
+
+    async updateJudgementPhase(conferenceDTO: UpdateConferenceDTO){
+        clearTimeout(judgementTimer);
+        //TESTING
+        var time = 5;
+        judgementTimer = setTimeout(() => this.endJudgementPhase(conferenceDTO), (time * 1000));
+    }
+
+    async startAnnouncementPhase(conferenceDTO: UpdateConferenceDTO){
+        console.log("STARTING THE ANNOUNCEMENT PHASE");
+        announcementTimer = setTimeout(() => this.endAnnouncementPhase(), (conferenceDTO.announcementTime * 1000));
+        return 0;
+    }
+    
+    async endAnnouncementPhase(){
+        console.log("ENDING THE ANNOUNCEMENT PHASE");
+        return 0;
+    }
+
+    async updateAnnouncementPhase(conferenceDTO: UpdateConferenceDTO){
+        clearTimeout(announcementTimer);
+        announcementTimer = setTimeout(() => this.endAnnouncementPhase(), (conferenceDTO.announcementTime * 1000));
     }
 }
