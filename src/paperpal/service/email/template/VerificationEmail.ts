@@ -2,7 +2,8 @@ import { MailOptions } from "@config/EmailConfig";
 import Account from "@model/Account";
 
 // Creates a template for verification email, returns all the email data like subject, body, recipient
-function createVerificationEmail(user: Account): MailOptions {
+// I made this just for author, you might want to add some extra conditions on all the other user types
+export function createVerificationEmail(user: Account): MailOptions {
     const recipientName = user.email;
     const htmlLink = "fakelink";
     const emailSubject = `PaperPal ${user.accounttype.toLowerCase()} Invitation`;
