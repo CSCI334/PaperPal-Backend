@@ -1,7 +1,8 @@
 import { MailOptions } from "@config/EmailConfig";
 import Account from "@model/Account";
 
-function createAuthorVerificationEmail(user: Account): MailOptions {
+// Creates a template for verification email, returns all the email data like subject, body, recipient
+function createVerificationEmail(user: Account): MailOptions {
     const recipientName = user.email;
     const htmlLink = "fakelink";
     const emailSubject = `PaperPal ${user.accounttype.toLowerCase()} Invitation`;

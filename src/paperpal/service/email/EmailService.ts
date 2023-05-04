@@ -26,6 +26,9 @@ export default class EmailService {
         this.transporter = nodemailer.createTransport(emailConfig);
     }
     async send(content: MailOptions) {
-        this.transporter.sendMail(content);
+        this.transporter.sendMail(content, (error) => {
+            if(error) console.log(error);
+            else console.log("Email sent succesfully");
+        });
     }
 }
