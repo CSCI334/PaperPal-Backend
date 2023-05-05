@@ -4,6 +4,8 @@ import BidRepository from "@app/paperpal/repository/BidRepository";
 import BidDTO from "@app/paperpal/types/dto/BidDTO";
 import ForbiddenException from "@exception/ForbiddenException";
 import Reviewer from "@model/Reviewer";
+import ConferenceRepository from "@repository/ConferenceRepository";
+import PaperRepository from "@repository/PaperRepository";
 import { inject, injectable } from "inversify";
 
 @injectable()
@@ -11,6 +13,8 @@ export default class BidService {
     constructor(
         @inject(BidRepository) private readonly bidRepository : BidRepository,
         @inject(AccountRepository) private readonly accountRepository : AccountRepository,
+        @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository,
+        @inject(PaperRepository) private readonly paperRepository : PaperRepository
     ) {} 
     async getBids(accountId: number) {
         return this.bidRepository.getBidsForAccount(accountId);
@@ -30,5 +34,33 @@ export default class BidService {
         if(!reviewer) throw new ForbiddenException("User is not a reviewer");
 
         return this.bidRepository.insertBid(reviewer.id, bidDTO.paperId, bidDTO.bidAmount);
+    }
+    
+    // Automatically allocates paper to all reviewer
+    // Papers are allocated in a round robin manner
+    // Iterate through paper and allocates them until all reviewer has a workload of 0
+
+    // Priority for paper allocation goes:
+    // Highest bid > Highest workload > Not allocated
+    async allocateAllPapers() {
+        const conference = await this.conferenceRepository.getLastConference();
+
+        const allPapers = await this.paperRepository.getAllPapersInConference(conference.id);
+        
+        // Iterate through all the papers in conference
+        // 1. Find if paper has a bidder, find only legitimate candidate (that still has workload > 0)
+        // 2. Sort bidder by the amount that they bid on, 
+        // 3. Get all reviewerId by highest bid, pick highest workload if multiple
+        const sumOfEveryWorkload = 0;
+
+        // It's a bit disgusting but i'm not going to optimize this
+        while(sumOfEveryWorkload > 0) {
+            for(const paper of allPapers) {
+                // Paper allocation logic goes here
+                // allocate(paper)
+            }
+        }
+        
+
     }
 }

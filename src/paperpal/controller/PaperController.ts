@@ -41,6 +41,7 @@ export default class PaperController {
     async addPaper(req: Request, res: Response) {
         console.log(req.body as PaperDTO);
         const data = await this.paperService.addPaper(req.body as PaperDTO, req.file?.path, res.locals as TokenData);
+        
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
     }

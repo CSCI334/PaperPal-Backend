@@ -26,6 +26,7 @@ export default class ConferenceController{
     @httpPut("/conference", ValidateRequest.using(UpdateConferenceDTO.validator()))
     async updateConference(req: Request, res: Response) {
         await this.conferenceService.updateConference(req.body as UpdateConferenceDTO);
+        
         const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);
     }
