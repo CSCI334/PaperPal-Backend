@@ -103,6 +103,14 @@ CREATE TABLE IF NOT EXISTS review(
     CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES reviewer(id)
 );
 
+CREATE VIEW PaperConference AS
+SELECT paper.id AS paperid, paper.title,  conference.id AS conferenceID, conference.conferencename,
+				conference.conferencelocation, account.username
+FROM conference
+JOIN account ON conference.id = account.conferenceid
+JOIN author ON account.id = author.accountid
+JOIN paper ON author.id = paper.authorid;
+
 -- ReviewerId and PaperId combined must be unique, 
 -- you cannot get allocated the same paper twice, nor submit a review twice for the same paper
 ALTER TABLE review
