@@ -58,13 +58,15 @@ export default class PaperRepository{
     async isPaperInConference(paperId:number, conferenceId : number): Promise<boolean> {
         `SELECT
         CASE WHEN EXISTS(
-            SELECT paper.id
-          FROM paper
-          INNER JOIN conference ON paper.id = conference.id
+            SELECT paperID, conferenceID
+          FROM paperconference
+          WHERE paperID = paperId
+          AND
+          conferenceID = conferenceId
         )
         THEN 'TRUE'
         ELSE 'FALSE'
-        END;`;
+        END`;
         return true;
     }
 
@@ -77,6 +79,9 @@ export default class PaperRepository{
     }
     
     async getAllPapersInConference(conferenceId : number): Promise<Paper[]>{
+        `SELECT title, conferencename
+         FROM paperconference
+         WHERE conferenceID = conferenceId;`;
         throw new Error("Method not implemented");
 
     }
