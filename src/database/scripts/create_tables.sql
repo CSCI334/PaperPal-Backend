@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS review(
     CONSTRAINT reviewerId FOREIGN KEY(reviewerId) REFERENCES reviewer(id)
 );
 
-CREATE VIEW PaperConference AS
+CREATE VIEW paperconference AS
 SELECT paper.id AS paperid, paper.title,  conference.id AS conferenceID, conference.conferencename,
 				conference.conferencelocation, account.username
 FROM conference
