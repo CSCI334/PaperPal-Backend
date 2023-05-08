@@ -18,7 +18,8 @@ export default class BidController {
     @httpPost("/bid", 
         Authenticate.for("REVIEWER"), 
         PhaseContext.isCurrently(ConferencePhase.Bidding),
-        ValidatePhase
+        ValidatePhase,
+        ValidateRequest.using(BidDTO.validator())
     )
     async addBid(req: Request, res: Response) {
         await this.bidService.addBid(res.locals.accountId, req.body as BidDTO);
@@ -33,7 +34,7 @@ export default class BidController {
         ValidatePhase,
         ValidateRequest.using(WorkloadDTO.validator()))
     async setReviewerWorkload(req: Request, res: Response) {
-        await this.bidService.setWorkload(res.locals.accountId, req.body.amountOfPaper);
+        await this.bidService.setWorkload(res.locals.accountId, req.body.amountOfPapers);
 
         const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);

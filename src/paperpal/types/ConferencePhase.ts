@@ -6,4 +6,11 @@ export enum ConferencePhase {
     Announcement = 5,
 }
 
+export const numToPhase = {
+    1 : "Submission",
+    2 : "Bidding",
+    3 : "Review",
+    4 : "Judgment",
+    5 : "Announcement",
+};
  

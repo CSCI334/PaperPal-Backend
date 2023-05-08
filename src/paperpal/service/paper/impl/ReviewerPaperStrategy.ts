@@ -25,7 +25,7 @@ export default class ReviewerPaperStrategy implements PaperStrategy {
             // some values such as unbidded papers need to be populated when returning
 
             // Will only return a list of title, co-authors and date. Will not return the file itself.
-            return await this.getBiddablePapers(user);
+            return this.getBiddablePapers(user);
         default:
             // For any other phase, return all allocated papers
             return await this.getAllocatedPaper(user);

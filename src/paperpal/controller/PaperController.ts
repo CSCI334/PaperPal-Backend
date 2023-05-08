@@ -37,9 +37,9 @@ export default class PaperController {
         PhaseContext.isCurrently(ConferencePhase.Submission),
         ValidatePhase,
         upload.single("paper"),
-        ValidateRequest.using(PaperDTO.validator()))
+        ValidateRequest.using(PaperDTO.validator())
+    )
     async addPaper(req: Request, res: Response) {
-        console.log(req.body as PaperDTO);
         const data = await this.paperService.addPaper(req.body as PaperDTO, req.file?.path, res.locals as TokenData);
         
         const response = BaseHttpResponse.success(data);

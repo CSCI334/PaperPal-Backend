@@ -1,6 +1,6 @@
 
 import ConferenceRepository from "@app/paperpal/repository/ConferenceRepository";
-import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
+import { ConferencePhase, numToPhase } from "@app/paperpal/types/ConferencePhase";
 import CreateConferenceDTO from "@app/paperpal/types/dto/CreateConferenceDTO";
 import InviteDTO from "@app/paperpal/types/dto/InviteDTO";
 import UpdateConferenceDTO from "@app/paperpal/types/dto/UpdateConferenceDTO";
@@ -18,7 +18,7 @@ export default class ConferenceService {
         
     async updateConference(conferenceDTO: UpdateConferenceDTO) {
         const deadlines = [
-            conferenceDTO.submissionDeadline , 
+            conferenceDTO.submissionDeadline, 
             conferenceDTO.biddingDeadline, 
             conferenceDTO.reviewDeadline, 
             conferenceDTO.announcementTime];
@@ -53,7 +53,25 @@ export default class ConferenceService {
         return data;
     }
 
-    async moveToNextPhase() : Promise<ConferencePhase> {
-        throw new Error("Not implemented");
+    async moveToNextPhase() {
+        const currentDate = epochToDate(Date.now());
+        const conference = await this.conferenceRepository.getLastConference();
+        const newDeadlines = {
+            id: conference.id,
+            submissiondeadline: conference.submissiondeadline,
+            biddingdeadline: conference.biddingdeadline,
+            reviewdeadline: conference.reviewdeadline,
+            announcementtime: conference.announcementtime,
+        };
+
+        const currentPhase = ConferenceUtils.getConferencePhase(conference);
+        if(currentPhase == ConferencePhase.Submission) newDeadlines.submissiondeadline = currentDate;
+        else if(currentPhase == ConferencePhase.Bidding) newDeadlines.biddingdeadline = currentDate;
+        else if(currentPhase == ConferencePhase.Review) newDeadlines.reviewdeadline = currentDate;
+        else if(currentPhase == ConferencePhase.Judgment) newDeadlines.announcementtime = currentDate;
+
+        const data = await this.conferenceRepository.updateConference(newDeadlines);
+        console.log(numToPhase[ConferenceUtils.getConferencePhase(data)]);
+        return data;
     }
 }

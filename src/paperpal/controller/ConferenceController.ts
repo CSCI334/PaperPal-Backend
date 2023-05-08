@@ -1,5 +1,5 @@
 
-import { controller, httpPost, httpPut } from "inversify-express-utils";
+import { controller, httpGet, httpPost, httpPut } from "inversify-express-utils";
 import { Request ,Response } from "express";
 
 import { inject } from "inversify";
@@ -28,6 +28,12 @@ export default class ConferenceController{
         await this.conferenceService.updateConference(req.body as UpdateConferenceDTO);
         
         const response = BaseHttpResponse.success({});
+        return response.toExpressResponse(res);
+    }
+
+    @httpGet("/next-phase")
+    async moveToNextPhase(req: Request, res: Response) {
+        const response = BaseHttpResponse.success(await this.conferenceService.moveToNextPhase());
         return response.toExpressResponse(res);
     }
 }

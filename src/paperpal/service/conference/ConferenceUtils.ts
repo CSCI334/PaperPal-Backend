@@ -3,7 +3,6 @@ import Conference from "@model/Conference";
 import { isSortedAsc } from "@utils/utils";
 
 export default class ConferenceUtils {
-    // TODO : Remember to make a utility function to move to next phase, the functions should simply shift around the epoch of the conference
     static getConferencePhase(conference : Conference) : ConferencePhase {
         const currentEpoch = Date.now();
         const currentDate = new Date(currentEpoch);

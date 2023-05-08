@@ -11,7 +11,7 @@ export default class BidRepository{
 
     async insertBid(reviewerId: number, paperId: number, bidAmount: number){
         const { rows } = await this.db.query(
-            `INSERT INTO bids (bidamount, reviewid, paperid)
+            `INSERT INTO bids (bidamount, reviewerid, paperid)
             VALUES ($3, $1, $2)`,
             [reviewerId, paperId, bidAmount]
         );
@@ -28,15 +28,13 @@ export default class BidRepository{
         return rows as Bid[];
     }
 
-    // TODO : Check this join, allow null from bids
     async getPapersAndBids(reviewerId: number) {
         const { rows } = await this.db.query(
-            `SELECT paper.id, paper.title, paper.paperstatus, bids.bidamount, 
+            `SELECT paper.id, bids.bidamount, paper.title, paper.coauthors, paper.paperstatus
             FROM bids
-            RIGHT JOIN paper ON paper.id = bids.paperid
-            WHERE bids.reviewerId = $1`,
+            RIGHT JOIN paper ON paper.id = bids.paperid AND bids.reviewerid = $1`,
             [reviewerId]
         );
-        return rows[0] as LooseObject;
+        return rows as LooseObject[];
     }
 }

@@ -122,11 +122,11 @@ export default class AccountRepository {
     async updateReviewer(reviewerId: number, reviewer: Partial<Reviewer>) {
         const { rows } = await this.db.query(
             `UPDATE reviewer SET 
-            bidPoints = COALESCE($2, bidPoints)
-            workload = COALESCE($3, workload)
+            bidPoints = COALESCE($2, bidPoints),
+            paperworkload = COALESCE($3, paperworkload)
             WHERE id = $1
             RETURNING *`,
-            [reviewerId, reviewer.bidpoints, reviewer.workload]
+            [reviewerId, reviewer.bidpoints, reviewer.paperworkload]
         ); 
         return rows[0] as Reviewer;
     }

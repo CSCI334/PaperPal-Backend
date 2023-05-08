@@ -27,7 +27,7 @@ export default class BidService {
         if(!reviewer) throw new ForbiddenException("User is not a reviewer");
         const data = this.accountRepository.updateReviewer(reviewer.id, {
             bidpoints: amountOfPaper * POINTS_PER_PAPER,
-            workload: amountOfPaper,
+            paperworkload: amountOfPaper,
         });
         return data;
     }
@@ -37,7 +37,7 @@ export default class BidService {
         if(!reviewer) throw new ForbiddenException("User is not a reviewer");
 
         const remainingPoints = reviewer.bidpoints - bidDTO.bidAmount;
-        if(remainingPoints < 0) throw new InvalidInputException("Bid exceed remaining points");
+        if(remainingPoints < 0) throw new InvalidInputException("Bid exceeds remaining points");
         await this.accountRepository.updateReviewer(reviewer.id, {
             bidpoints: remainingPoints
         });
@@ -51,6 +51,8 @@ export default class BidService {
 
     // Priority for paper allocation goes:
     // Highest bid > Highest workload > Not allocated
+
+    // TODO
     async allocateAllPapers() {
         const conference = await this.conferenceRepository.getLastConference();
 
