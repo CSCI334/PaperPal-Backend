@@ -10,7 +10,6 @@ import ReviewRatingDTO from "@app/paperpal/types/dto/ReviewRatingDTO";
 import BaseHttpResponse from "@helper/BaseHttpResponse";
 import ReviewService from "@service/review/ReviewService";
 
-
 @controller("/paper")
 export default class ReviewController{
     constructor(@inject(ReviewService) private readonly reviewService: ReviewService) {}
@@ -53,5 +52,11 @@ export default class ReviewController{
         
         const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);
+    }
+
+    @httpGet("/testing")
+    async doesReview(req: Request, res: Response) {
+        await this.reviewService.test();
+        return;
     }
 }

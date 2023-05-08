@@ -104,8 +104,8 @@ CREATE TABLE IF NOT EXISTS review(
 );
 
 CREATE VIEW paperconference AS
-SELECT paper.id AS paperid, paper.title,  conference.id AS conferenceID, conference.conferencename,
-				conference.conferencelocation, account.username
+SELECT paper.id AS paperid, conference.id AS conferenceId, account.id AS accountId, paper.title, conference.conferencename,
+    conference.conferencelocation, account.username, paper.coauthors
 FROM conference
 JOIN account ON conference.id = account.conferenceid
 JOIN author ON account.id = author.accountid

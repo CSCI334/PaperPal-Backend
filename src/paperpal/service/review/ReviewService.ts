@@ -68,14 +68,18 @@ export default class ReviewService {
         const data = this.reviewRepository.addComment(reviewerId, commentDTO.paperId, commentDTO.comment);
         return data;
     }
-
+    
     async addPaperRating(reviewerId : number, ratingDTO : PaperRatingDTO)  {
         const data = await this.reviewRepository.setPaperRating(reviewerId, ratingDTO.paperId, ratingDTO.rating);
         return data;
     }
-
+    
     async addRatingOfReview(reviewerId : number, ratingDTO : ReviewRatingDTO){
         const data = await this.reviewRepository.setReviewRating(reviewerId, ratingDTO.reviewId, ratingDTO.rating);
         return data;
+    }
+
+    async test() {
+        this.reviewRepository.doesPaperBelongToReviewer(1,2);
     }
 }

@@ -13,7 +13,6 @@ export default class ConferenceUtils {
         else if(currentDate > conference.biddingdeadline && currentDate < conference.reviewdeadline) return ConferencePhase.Review;
         else if(currentDate > conference.reviewdeadline && currentDate < conference.announcementtime) return ConferencePhase.Judgment;
         else if(currentDate > conference.announcementtime) return ConferencePhase.Announcement;
-
         throw new Error("Invalid value");
     }
 

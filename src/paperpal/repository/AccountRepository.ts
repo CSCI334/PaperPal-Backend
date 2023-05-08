@@ -37,6 +37,7 @@ export default class AccountRepository {
             [author.accountid]);
         return rows[0] as Author;
     }
+    
     async insertReviewer(reviewer: Partial<Reviewer>) {
         const { rows } = await this.db.query(
             `INSERT INTO reviewer(accountid) 

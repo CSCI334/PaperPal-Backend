@@ -1,20 +1,42 @@
 import DbService from "@app/database/db";
+import Bid from "@model/Bid";
+import { LooseObject } from "@utils/LooseObject";
 import { inject, injectable } from "inversify";
 
 @injectable()
 export default class BidRepository{
-    constructor(@inject(DbService) private readonly db: DbService) {}
+    constructor(
+        @inject(DbService) private readonly db: DbService
+    ) {}
 
     async insertBid(reviewerId: number, paperId: number, bidAmount: number){
-        `INSERT INTO bids (bidamount, reviewid, paperid)
-        VALUES (bidamount, reviewid, paperid)`;
-        return;
+        const { rows } = await this.db.query(
+            `INSERT INTO bids (bidamount, reviewid, paperid)
+            VALUES ($3, $1, $2)`,
+            [reviewerId, paperId, bidAmount]
+        );
+        return rows[0] as Bid;
     }
 
     async getBidsForAccount(reviewerId: number) {
-        `SELECT *
-        FROM bids
-        WHERE id = reviewerId`;
-        return;
+        const { rows } = await this.db.query(
+            `SELECT *
+            FROM bids
+            WHERE id = $1`,
+            [reviewerId]
+        );
+        return rows as Bid[];
+    }
+
+    // TODO : Check this join, allow null from bids
+    async getPapersAndBids(reviewerId: number) {
+        const { rows } = await this.db.query(
+            `SELECT paper.id, paper.title, paper.paperstatus, bids.bidamount, 
+            FROM bids
+            RIGHT JOIN paper ON paper.id = bids.paperid
+            WHERE bids.reviewerId = $1`,
+            [reviewerId]
+        );
+        return rows[0] as LooseObject;
     }
 }

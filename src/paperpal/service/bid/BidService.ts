@@ -16,6 +16,7 @@ export default class BidService {
         @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository,
         @inject(PaperRepository) private readonly paperRepository : PaperRepository
     ) {} 
+    
     async getBids(accountId: number) {
         return this.bidRepository.getBidsForAccount(accountId);
     }
@@ -29,6 +30,7 @@ export default class BidService {
         });
         return data;
     }
+    
     async addBid(accountId: number, bidDTO : BidDTO) {
         const reviewer: Reviewer = await this.accountRepository.getReviewer(accountId); 
         if(!reviewer) throw new ForbiddenException("User is not a reviewer");

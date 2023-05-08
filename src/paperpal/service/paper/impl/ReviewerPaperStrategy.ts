@@ -6,6 +6,7 @@ import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
 import ForbiddenException from "@exception/ForbiddenException";
 import NotFoundException from "@exception/NotFoundException";
 import Account from "@model/Account";
+import BidRepository from "@repository/BidRepository";
 import PaperStrategy from "@service/paper/interfaces/PaperStrategy";
 import { inject, injectable } from "inversify";
 @injectable()
@@ -13,7 +14,8 @@ export default class ReviewerPaperStrategy implements PaperStrategy {
     constructor(
         @inject(AccountRepository) private readonly accountRepository : AccountRepository,
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
-        @inject(ReviewRepository) private readonly reviewRepository : ReviewRepository
+        @inject(ReviewRepository) private readonly reviewRepository : ReviewRepository,
+        @inject(BidRepository) private readonly bidRepository : BidRepository
     ) {}
     
     async getAvailablePapers(user: Account, phase: ConferencePhase) {
@@ -35,22 +37,22 @@ export default class ReviewerPaperStrategy implements PaperStrategy {
         const paper = await this.paperRepository.getPaper(paperId);
         if(!paper) throw new NotFoundException("Paper not found");
 
-        const review = await this.reviewRepository.getReviewFromAccountAndPaper(user.id, paperId);
-        if(!review) throw new ForbiddenException("Reviewer does not own that paper");
+        const isPaperOwned = await this.reviewRepository.doesPaperBelongToReviewer(user.id, paperId);
+        if(!isPaperOwned) throw new ForbiddenException("Reviewer does not own that paper");
 
         return paper.filelocation;
     }
 
     async getAllocatedPaper(user: Account) {
         const reviewer = await this.accountRepository.getReviewer(user.id);
-        const data = this.paperRepository.getAllocatedPapersForReviewer(reviewer.id);
+        const data = await this.paperRepository.getAllocatedPapersForReviewer(reviewer.id);
         if(!data) throw new NotFoundException("Reviewer has no allocated paper");
         return data;
     }
 
     async getBiddablePapers(user: Account) {
         const reviewer = await this.accountRepository.getReviewer(user.id);
-        const data = this.paperRepository.getPapersAndBids(user.conferenceid, reviewer.id);
+        const data = await this.bidRepository.getPapersAndBids(reviewer.id);
         return data;
     }
 }
