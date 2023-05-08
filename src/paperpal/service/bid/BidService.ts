@@ -3,6 +3,7 @@ import AccountRepository from "@app/paperpal/repository/AccountRepository";
 import BidRepository from "@app/paperpal/repository/BidRepository";
 import BidDTO from "@app/paperpal/types/dto/BidDTO";
 import ForbiddenException from "@exception/ForbiddenException";
+import InvalidInputException from "@exception/InvalidInputException";
 import Reviewer from "@model/Reviewer";
 import ConferenceRepository from "@repository/ConferenceRepository";
 import PaperRepository from "@repository/PaperRepository";
@@ -34,6 +35,12 @@ export default class BidService {
     async addBid(accountId: number, bidDTO : BidDTO) {
         const reviewer: Reviewer = await this.accountRepository.getReviewer(accountId); 
         if(!reviewer) throw new ForbiddenException("User is not a reviewer");
+
+        const remainingPoints = reviewer.bidpoints - bidDTO.bidAmount;
+        if(remainingPoints < 0) throw new InvalidInputException("Bid exceed remaining points");
+        await this.accountRepository.updateReviewer(reviewer.id, {
+            bidpoints: remainingPoints
+        });
 
         return this.bidRepository.insertBid(reviewer.id, bidDTO.paperId, bidDTO.bidAmount);
     }

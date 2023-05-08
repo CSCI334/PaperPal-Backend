@@ -55,6 +55,7 @@ export default class PaperController {
         return res.status(STATUS_CODE.OK).send(file);
     }
 
+    // Idk why i have this endpoint
     @httpGet("/author", Authenticate.for("AUTHOR"))
     async getPaperByAuthorId(req: Request, res: Response) {
         const data = this.paperService.getAllPapers(res.locals.accountId);
