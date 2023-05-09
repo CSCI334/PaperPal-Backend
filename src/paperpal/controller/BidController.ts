@@ -28,7 +28,7 @@ export default class BidController {
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/workload", 
+    @httpPost("/workload",
         Authenticate.for("REVIEWER"), 
         PhaseContext.isCurrently(ConferencePhase.Submission, ConferencePhase.Bidding),
         ValidatePhase,
