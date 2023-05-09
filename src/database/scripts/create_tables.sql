@@ -128,3 +128,8 @@ JOIN paper ON author.id = paper.authorid;
 -- you cannot get allocated the same paper twice, nor submit a review twice for the same paper
 ALTER TABLE review
 ADD CONSTRAINT uniqueReviewerAndPaper UNIQUE(reviewerId, paperId);
+
+-- ReviewerId and PaperId combined must be unique, 
+-- you cannot bid on the same paper twice.
+ALTER TABLE bids
+ADD CONSTRAINT uniqueReviewerAndBid UNIQUE(reviewerId, paperId);

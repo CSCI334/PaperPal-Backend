@@ -96,10 +96,10 @@ export default class App {
         server.setErrorConfig((app) => {
             app.use(new ErrorHandler().handler);
         });
+
         // Tests db connection
         const dbService: DbService = this.container.get(DbService);
         await dbService.connect();
-        
         
         console.log(`Connection succesful!`);
         

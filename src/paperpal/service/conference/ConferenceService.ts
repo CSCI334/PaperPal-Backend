@@ -35,6 +35,10 @@ export default class ConferenceService {
         return data;
     }
     
+    async getConferenceInfo() {
+        return await this.conferenceRepository.getLastConference();
+    }
+
     async createConference(conferenceDTO : CreateConferenceDTO) {
         const lastConference = await this.conferenceRepository.getLastConference();
 
@@ -52,9 +56,10 @@ export default class ConferenceService {
         const data = await this.accountService.register(new InviteDTO(conferenceDTO.chairEmail, conferenceDTO.chairName, "CHAIR"));
         return data;
     }
-
+    
+    // Moves the incoming phase to `now - 100,000 seconds` 
     async moveToNextPhase() {
-        const currentDate = epochToDate(Date.now());
+        const currentDate = epochToDate(Date.now() - (100000 * 1000));
         const conference = await this.conferenceRepository.getLastConference();
         const newDeadlines = {
             id: conference.id,
@@ -71,7 +76,31 @@ export default class ConferenceService {
         else if(currentPhase == ConferencePhase.Judgment) newDeadlines.announcementtime = currentDate;
 
         const data = await this.conferenceRepository.updateConference(newDeadlines);
-        console.log(numToPhase[ConferenceUtils.getConferencePhase(data)]);
+        console.log(`Current phase : ${numToPhase[ConferenceUtils.getConferencePhase(data)]}`);
+        return data;
+    }
+
+    // Moves the previous phase to `now + 100,000 seconds` 
+    async moveToPrevPhase() {
+        const currentDate = epochToDate(Date.now() + (100000 * 1000));
+        const conference = await this.conferenceRepository.getLastConference();
+        const newDeadlines = {
+            id: conference.id,
+            submissiondeadline: conference.submissiondeadline,
+            biddingdeadline: conference.biddingdeadline,
+            reviewdeadline: conference.reviewdeadline,
+            announcementtime: conference.announcementtime,
+        };
+
+        const currentPhase = ConferenceUtils.getConferencePhase(conference);
+        if(currentPhase == ConferencePhase.Bidding) newDeadlines.submissiondeadline = currentDate;
+        else if(currentPhase == ConferencePhase.Review) newDeadlines.biddingdeadline = currentDate;
+        else if(currentPhase == ConferencePhase.Judgment) newDeadlines.reviewdeadline = currentDate;
+        else if(currentPhase == ConferencePhase.Announcement) newDeadlines.announcementtime = currentDate;
+
+        const data = await this.conferenceRepository.updateConference(newDeadlines);
+        console.log(`Current phase : ${numToPhase[ConferenceUtils.getConferencePhase(data)]}`);
+        
         return data;
     }
 }

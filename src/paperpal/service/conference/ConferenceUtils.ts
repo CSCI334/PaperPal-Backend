@@ -3,6 +3,12 @@ import Conference from "@model/Conference";
 import { isSortedAsc } from "@utils/utils";
 
 export default class ConferenceUtils {
+    // Determines a conference phase by looking at if the current time is in between unix time of the phases.
+
+    // e.g.
+    // If date.now is larger than submission deadline, but smaller than bidding deadline, 
+    // it means that the conference has ended submission, and is now waiting for bidding to end. 
+    // This would mean that conference is in bidding phase.
     static getConferencePhase(conference : Conference) : ConferencePhase {
         const currentEpoch = Date.now();
         const currentDate = new Date(currentEpoch);

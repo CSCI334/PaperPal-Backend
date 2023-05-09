@@ -89,9 +89,10 @@ export default class AccountRepository {
 
     async getAllReviewer() {
         const { rows } = await this.db.query(
-            `SELECT * FROM account`
+            `SELECT account.id, account.email, account.username, account.accounttype, account.accountstatus FROM account 
+            JOIN reviewer ON account.id = reviewer.accountid`
         );
-
+        
         return rows as Account[];
     }
 

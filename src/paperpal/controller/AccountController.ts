@@ -54,7 +54,7 @@ export default class AccountController {
     async getUserData(req: Request, res: Response) {
         const response = await this.accountService.getUser(res.locals.accountId);
         return res.status(STATUS_CODE.OK).json({
-            token: res.locals.token,
+            token: req.body.token,
             username: response.username,
             email: response.email,
         });
@@ -62,12 +62,13 @@ export default class AccountController {
 
     @httpGet("/contact", Authenticate.for("ADMIN"))
     async getAllReviewer(req: Request, res: Response) {
-        const data = this.accountService.getAllReviewer();
+        const data = await this.accountService.getAllReviewer();
 
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
     }
 
+    // Doesn't do anything for now
     @httpPost("/contact/email", Authenticate.for("ADMIN"))
     async sendEmailToReviewer(req: Request, res: Response) {
         const response = BaseHttpResponse.success({});
