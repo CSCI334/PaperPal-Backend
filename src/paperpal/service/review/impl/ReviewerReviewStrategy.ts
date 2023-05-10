@@ -38,8 +38,7 @@ export default class ReviewerReviewStrategy implements ReviewStrategy {
     async reviewerHasSubmittedReviewForPaper(accountId: number, paperId: number): Promise<boolean> {
         const review = await this.reviewRepository.getReviewFromAccountAndPaper(accountId, paperId);
         if(!review) throw new NotFoundException("Review not found");
-        
         // If there is no rating, reviewer has not submitted review 
-        return review.paperrating !== undefined;
+        return review.paperrating !== null;
     }
 }

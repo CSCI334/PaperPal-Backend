@@ -12,9 +12,9 @@ export default class ReviewRepository{
         const { rows } = await this.db.query(
             `SELECT * 
             FROM account
-            INNER JOIN reviewer ON reviewer.accountId = $1 
-            INNER JOIN review ON review.reviewerId = reviewer.id
-            WHERE review.paperId = $2`,
+            JOIN reviewer ON reviewer.accountId = account.id 
+            JOIN review ON review.reviewerId = reviewer.id
+            WHERE account.id=$1 AND review.paperId = $2`,
             [accountId, paperId]
         );
         return rows[0] as Review;
@@ -47,13 +47,13 @@ export default class ReviewRepository{
         return rows[0] as Review;
     }
 
-    async setPaperRating(reviewerId: number, paperId: number, rating: number) {
+    async setReview(reviewerId: number, paperId: number, rating: number, review: string) {
         const { rows } = await this.db.query(
             `UPDATE review
-            SET paperrating=$3
+            SET paperrating=$3, review=$4
             WHERE reviewerId=$1 AND paperId=$2
             RETURNING *`,
-            [reviewerId, paperId, rating]
+            [reviewerId, paperId, rating, review]
         );
         return rows[0] as Review;
     }
