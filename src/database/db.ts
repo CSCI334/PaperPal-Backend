@@ -29,12 +29,12 @@ export default class DbService {
             return await this.pool.query(query, values);
         } catch (err) {
             const dbError = err as pg.DatabaseError;
-            const errCode = dbError.code || "0"; 
+            const errConstraint = dbError.constraint || "0"; 
 
             // Expected Postgres errors
-            if (errorMap && errorMap.has(errCode)) {
+            if (errorMap && errorMap.has(errConstraint)) {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const pgError: string = errorMap.get(errCode)!;
+                const pgError: string = errorMap.get(errConstraint)!;
                 throw new DatabaseException(pgError);
             } 
             // Unexpected errors

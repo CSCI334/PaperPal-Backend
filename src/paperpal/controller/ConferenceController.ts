@@ -62,9 +62,9 @@ export default class ConferenceController{
 
     @httpGet("/allocate-papers")
     async allocatePapers(req: Request, res: Response) {
-        const data = {};
+        await this.bidService.allocateAllPapers();
 
-        const response = BaseHttpResponse.success(data);
+        const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);
     }
 }

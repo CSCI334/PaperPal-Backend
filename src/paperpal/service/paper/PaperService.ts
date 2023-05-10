@@ -70,7 +70,7 @@ export default class PaperService {
     }
 
     async addPaper(paper: PaperDTO, path: string | undefined, token : TokenData) {
-        const author = await this.accountRepository.getAuthor(token.accountId);
+        const author = await this.accountRepository.getAuthorByAccountId(token.accountId);
         if(!author) throw new NotFoundException("Author not found");
         if(path === undefined) throw new InvalidInputException("Could not upload file");
         const data = await this.paperRepository.insertPaper({
@@ -80,11 +80,6 @@ export default class PaperService {
             coauthors: paper.coauthors,
             title: paper.title,
         });
-        return data;
-    }
-
-    async allocatePaperToReviewer(paperId: number, reviewerId: number) {
-        const data = this.paperRepository.allocatePaperToReviewer(paperId, reviewerId);
         return data;
     }
 }

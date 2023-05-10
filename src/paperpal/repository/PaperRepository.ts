@@ -1,4 +1,5 @@
 import DbService from "@app/database/db";
+import { PgErrorMap } from "@app/database/types";
 import Conference from "@model/Conference";
 import Paper, { PaperStatus } from "@model/Paper";
 import Review from "@model/Review";
@@ -112,14 +113,4 @@ export default class PaperRepository{
         return rows[0] as Conference;
     }
 
-    // Create empty Review column with paperId and reviewerId
-    async allocatePaperToReviewer(paperId: number, reviewerId: number){
-        const { rows } = await this.db.query(
-            `INSERT INTO review(paperId, reviewerId)
-            VALUES ($1, $2)
-            RETURNING *`,
-            [paperId, reviewerId]
-        );
-        return rows[0] as Review;
-    }
 }

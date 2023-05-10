@@ -23,7 +23,7 @@ export default class BidService {
     }
     
     async setWorkload(accountId: number, amountOfPaper: number) {
-        const reviewer: Reviewer = await this.accountRepository.getReviewer(accountId); 
+        const reviewer: Reviewer = await this.accountRepository.getReviewerByAccountId(accountId); 
         if(!reviewer) throw new ForbiddenException("User is not a reviewer");
         const data = this.accountRepository.updateReviewer(reviewer.id, {
             bidpoints: amountOfPaper * POINTS_PER_PAPER,
@@ -33,7 +33,7 @@ export default class BidService {
     }
     
     async addBid(accountId: number, bidDTO : BidDTO) {
-        const reviewer: Reviewer = await this.accountRepository.getReviewer(accountId); 
+        const reviewer: Reviewer = await this.accountRepository.getReviewerByAccountId(accountId); 
         if(!reviewer) throw new ForbiddenException("User is not a reviewer");
 
         const remainingPoints = reviewer.bidpoints - bidDTO.bidAmount;
@@ -52,25 +52,24 @@ export default class BidService {
     // Priority for paper allocation goes:
     // Highest bid > Highest workload > Not allocated
 
-    // TODO
     async allocateAllPapers() {
         const conference = await this.conferenceRepository.getLastConference();
-
-        const allPapers = await this.paperRepository.getAllPapersInConference(conference.id);
+        const sortedBids = await this.bidRepository.getSortedBids(conference.id);
         
         // Iterate through all the papers in conference
         // 1. Find if paper has a bidder, find only legitimate candidate (that still has workload > 0)
         // 2. Sort bidder by the amount that they bid on, 
         // 3. Get all reviewerId by highest bid, pick highest workload if multiple
-        const sumOfEveryWorkload = 0;
 
-        // It's a bit disgusting but i'm not going to optimize this
-        while(sumOfEveryWorkload > 0) {
-            for(const paper of allPapers) {
-                
-                // Paper allocation logic goes here
-                // allocate(paper)
-            }
+        for(const bids of sortedBids) {
+            this.allocatePaperToReviewer(bids.paperid, bids.reviewerid);
         }
+    }
+
+    async allocatePaperToReviewer(paperId: number, reviewerId: number) {
+        const reviewer = await this.accountRepository.getReviewer(reviewerId);
+        const allocatedPaperCount = await this.bidRepository.getAllocatedPaperCount(reviewerId);
+
+        if((reviewer.paperworkload - allocatedPaperCount) > 0) this.bidRepository.allocatePaperToReviewer(paperId, reviewerId);
     }
 }

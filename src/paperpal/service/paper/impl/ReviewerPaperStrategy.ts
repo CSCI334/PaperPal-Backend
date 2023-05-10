@@ -44,14 +44,14 @@ export default class ReviewerPaperStrategy implements PaperStrategy {
     }
 
     async getAllocatedPaper(user: Account) {
-        const reviewer = await this.accountRepository.getReviewer(user.id);
+        const reviewer = await this.accountRepository.getReviewerByAccountId(user.id);
         const data = await this.paperRepository.getAllocatedPapersForReviewer(reviewer.id);
         if(!data) throw new NotFoundException("Reviewer has no allocated paper");
         return data;
     }
 
     async getBiddablePapers(user: Account) {
-        const reviewer = await this.accountRepository.getReviewer(user.id);
+        const reviewer = await this.accountRepository.getReviewerByAccountId(user.id);
         const data = await this.bidRepository.getPapersAndBids(reviewer.id);
         return data;
     }

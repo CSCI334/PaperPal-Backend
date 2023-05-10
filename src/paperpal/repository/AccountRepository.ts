@@ -105,7 +105,7 @@ export default class AccountRepository {
         return rows[0] as Account;
     }
 
-    async getAuthor(accountId: number) {
+    async getAuthorByAccountId(accountId: number) {
         const { rows } = await this.db.query(
             `SELECT * FROM author WHERE accountid = $1`, 
             [accountId]
@@ -113,10 +113,18 @@ export default class AccountRepository {
         return rows[0] as Author;
     }
 
-    async getReviewer(accountId: number) {
+    async getReviewerByAccountId(accountId: number) {
         const { rows } = await this.db.query(
             `SELECT * FROM reviewer WHERE accountid = $1`, 
             [accountId]
+        ); 
+        return rows[0] as Reviewer;
+    }
+
+    async getReviewer(id: number) {
+        const { rows } = await this.db.query(
+            `SELECT * FROM reviewer WHERE id = $1`, 
+            [id]
         ); 
         return rows[0] as Reviewer;
     }
@@ -133,12 +141,15 @@ export default class AccountRepository {
         return rows[0] as Reviewer;
     }    
 
-    async getAllReviewerInConference(conferenceId: number) {
+    async getTotalWorkloadInConference(conferenceId: number) {
         const { rows } = await this.db.query(
-            ``,
+            `SELECT SUM(reviewer.paperworkload)
+            FROM reviewer 
+            JOIN account ON reviewer.accountId=account.id
+            WHERE account.conferenceId=$1`,
             [conferenceId]
         );
-        return rows as LooseObject[];
+        return rows[0].sum as number;
     }
 
     async doesAdminExists() {
