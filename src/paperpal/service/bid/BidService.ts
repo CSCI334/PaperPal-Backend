@@ -67,11 +67,10 @@ export default class BidService {
         // It's a bit disgusting but i'm not going to optimize this
         while(sumOfEveryWorkload > 0) {
             for(const paper of allPapers) {
+                
                 // Paper allocation logic goes here
                 // allocate(paper)
             }
         }
-        
-
     }
 }

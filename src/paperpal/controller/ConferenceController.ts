@@ -9,11 +9,14 @@ import CreateConferenceDTO from "@app/paperpal/types/dto/CreateConferenceDTO";
 import UpdateConferenceDTO from "@app/paperpal/types/dto/UpdateConferenceDTO";
 import BaseHttpResponse from "@helper/BaseHttpResponse";
 import ConferenceService from "@service/conference/ConferenceService";
+import BidService from "@service/bid/BidService";
 
 @controller("")
 export default class ConferenceController{
     constructor(
-        @inject(ConferenceService) private readonly conferenceService : ConferenceService) {}
+        @inject(ConferenceService) private readonly conferenceService : ConferenceService,
+        @inject(BidService) private readonly bidService : BidService
+    ) {}
 
     @httpGet("/conference")
     async getConferenceInfo(req: Request, res: Response) {
@@ -54,6 +57,14 @@ export default class ConferenceController{
     @httpGet("/prev-phase")
     async moveToPrevPhase(req: Request, res: Response) {
         const response = BaseHttpResponse.success(await this.conferenceService.moveToPrevPhase());
+        return response.toExpressResponse(res);
+    }
+
+    @httpGet("/allocate-papers")
+    async allocatePapers(req: Request, res: Response) {
+        const data = {};
+
+        const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
     }
 }

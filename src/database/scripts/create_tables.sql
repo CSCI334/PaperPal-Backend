@@ -109,12 +109,20 @@ VALUES('admin@email.com', 'Admin', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bde
 INSERT INTO account(email, username, hashedPassword, salt, accountType, accountStatus, conferenceId) 
 VALUES('reviewer@email.com', 'Reviewer', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bdee401a71019cbae4e1b84', '89946a', 'REVIEWER', 'ACCEPTED', 1);
 
+INSERT INTO reviewer(accountId, bidPoints, paperWorkload)
+VALUES(2, 15, 5);
+
 INSERT INTO account(email, username, hashedPassword, salt, accountType, accountStatus, conferenceId) 
 VALUES('author@email.com', 'Author', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bdee401a71019cbae4e1b84', '89946a', 'AUTHOR', 'ACCEPTED', 1);
+
+INSERT INTO author(accountId)
+VALUES(3);
 
 INSERT INTO account(email, username, hashedPassword, salt, accountType, accountStatus, conferenceId) 
 VALUES('chair@email.com', 'Chair', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bdee401a71019cbae4e1b84', '89946a', 'CHAIR', 'ACCEPTED', 1);
 
+INSERT INTO chair(accountId)
+VALUES(4);
 
 CREATE VIEW paperconference AS
 SELECT paper.id AS paperid, conference.id AS conferenceId, account.id AS accountId, paper.title, conference.conferencename,

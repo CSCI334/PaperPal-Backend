@@ -12,7 +12,9 @@ import ReviewService from "@service/review/ReviewService";
 
 @controller("/paper")
 export default class ReviewController{
-    constructor(@inject(ReviewService) private readonly reviewService: ReviewService) {}
+    constructor(
+        @inject(ReviewService) private readonly reviewService: ReviewService
+    ) {}
 
     @httpGet("/:paperId/comments", Authenticate.any()) 
     async getPaperComments(@requestParam("paperId") paperId: number, req: Request, res: Response) {

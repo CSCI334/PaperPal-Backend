@@ -4,6 +4,7 @@ import Account, { AccountStatus } from "@model/Account";
 import Author from "@model/Author";
 import Chair from "@model/Chair";
 import Reviewer from "@model/Reviewer";
+import { LooseObject } from "@utils/LooseObject";
 import { inject, injectable } from "inversify";
 
 
@@ -130,6 +131,14 @@ export default class AccountRepository {
             [reviewerId, reviewer.bidpoints, reviewer.paperworkload]
         ); 
         return rows[0] as Reviewer;
+    }    
+
+    async getAllReviewerInConference(conferenceId: number) {
+        const { rows } = await this.db.query(
+            ``,
+            [conferenceId]
+        );
+        return rows as LooseObject[];
     }
 
     async doesAdminExists() {
