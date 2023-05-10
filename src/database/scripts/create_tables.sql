@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS review(
 );
 
 INSERT INTO conference(conferenceName,conferenceLocation,submissionDeadline,biddingDeadline, reviewDeadline,announcementTime)
-VALUES('The conference of all time','placeholder location','2023-06-14', '2023-06-15', '2023-06-16', '2023-06-17')
+VALUES('The conference of all time','placeholder location','2023-06-14', '2023-06-15', '2023-06-16', '2023-06-17');
 
 INSERT INTO account(email, username, hashedPassword, salt, accountType, accountStatus) 
 VALUES('admin@email.com', 'Admin', 'e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bdee401a71019cbae4e1b84', '89946a', 'ADMIN', 'ACCEPTED');
