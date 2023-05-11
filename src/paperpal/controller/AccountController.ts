@@ -42,9 +42,17 @@ export default class AccountController {
         return response.toExpressResponse(res);
     }
 
+    @httpPost("/verify-author", Authenticate.allowPending())
+    async verifyAuthor(req: Request, res: Response) {
+        const data = await this.accountService.verifySignupEmail(res.locals as TokenData);
+
+        const response = BaseHttpResponse.success(data);
+        return response.toExpressResponse(res);
+    }
+
     @httpPost("/verify", ValidateRequest.using(VerifyEmailDTO.validator()), Authenticate.allowPending())
     async verify(req: Request, res: Response) {
-        const data = await this.accountService.verifyEmail(req.body as VerifyEmailDTO, res.locals as TokenData);
+        const data = await this.accountService.verifyInvitedEmail(req.body as VerifyEmailDTO, res.locals as TokenData);
 
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);

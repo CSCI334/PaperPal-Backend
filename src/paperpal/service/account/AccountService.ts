@@ -91,7 +91,27 @@ export default class AuthService {
         return;
     }
 
-    async verifyEmail(verifyEmailDTO: VerifyEmailDTO, token: TokenData) {
+    async verifySignupEmail(token: TokenData) {
+        const user = await this.accountRepository.getAccountByEmail(token.email);
+        const ongoingConference = await this.conferenceRepository.getLastConference();
+
+        if(!user) throw new NotFoundException("User not found");
+        if(user.conferenceid != ongoingConference.id) throw new NotAuthenticatedException("Verification token is invalid for current conference");
+        if(user.accountstatus === "ACCEPTED") throw new NotAuthenticatedException("User already verified");
+
+        await this.accountRepository.updateAccountStatus(token.accountId, "ACCEPTED");
+        return {
+            token : AccountUtils.createUserJwtToken({
+                accountId: token.accountId,
+                accountType: token.accountType,
+                conferenceId: token.conferenceId,
+                email: token.email,
+                accountStatus : "ACCEPTED"
+            })
+        };
+    }
+
+    async verifyInvitedEmail(verifyEmailDTO: VerifyEmailDTO, token: TokenData) {
         const user = await this.accountRepository.getAccountByEmail(token.email);
         const ongoingConference = await this.conferenceRepository.getLastConference();
 
