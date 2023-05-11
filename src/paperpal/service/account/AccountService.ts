@@ -98,7 +98,7 @@ export default class AuthService {
         const EMAIL_PWORD = "CSCI334password";
         const OAUTH_CLIENTID = "831889653912-vdgboh3qjmgks3koidqfo02u6krgn0q8.apps.googleusercontent.com";
         const OAUTH_CLIENT_SECRET = "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";
-        const OAUTH_REFRESH_TOKEN = "1//04qOR2M4KVm0TCgYIARAAGAQSNwF-L9Iryc508mLE_kgihPEz1S4iAitZ3mHT5n8TaBT4YdDAb3oaCHzbW787TybIytNikXwoETw";
+        const OAUTH_REFRESH_TOKEN = "1//04GsrU_seR6NRCgYIARAAGAQSNwF-L9Ir4KqtLwRAVrd1JKV5z4t4KmudV5hbFgc4Ul1hygtxxT6v4utI3vGbauVtfIQsI-GqtFQ";
         
         let emailSubject;
         let emailBody;
