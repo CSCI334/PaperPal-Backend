@@ -62,7 +62,6 @@ export default class AccountController {
     async getUserData(req: Request, res: Response) {
         const response = await this.accountService.getUser(res.locals.accountId);
         return res.status(STATUS_CODE.OK).json({
-            token: req.body.token,
             username: response.username,
             email: response.email,
         });
