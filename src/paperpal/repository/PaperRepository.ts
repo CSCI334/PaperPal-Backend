@@ -93,7 +93,7 @@ export default class PaperRepository{
     
     async getAllPapersInConference(conferenceId : number): Promise<Paper[]>{
         const { rows } = await this.db.query(
-            `SELECT paper.*
+            `SELECT paper.*, paperconference.username as author
             FROM paperconference
             LEFT JOIN paper ON paperconference.paperId=paper.id
             WHERE conferenceId=$1;`,
