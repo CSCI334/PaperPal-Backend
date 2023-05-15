@@ -20,6 +20,8 @@ export default class ReviewerPaperStrategy implements PaperStrategy {
     
     async getAvailablePapers(user: Account, phase: ConferencePhase) {
         switch(phase) {
+        case ConferencePhase.Submission:
+            return this.getBiddablePapers(user);
         case ConferencePhase.Bidding:
             // For bidding phase, return a nice and joined table of Papers and Bids, 
             // some values such as unbidded papers need to be populated when returning
