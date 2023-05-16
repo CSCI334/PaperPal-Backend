@@ -89,12 +89,13 @@ export default class ReviewRepository{
         return rows as Comment[];
     }
         
-    // TODO: Get reviewer name
     async getAllReviewsForPaper(paperId: number): Promise<Review[]>{
         const { rows } = await this.db.query(
-            `SELECT * 
+            `SELECT review.*, account.username as reviewername
             FROM review 
-            LEFT JOIN paper ON review.paperid=$1;`,
+            JOIN paper ON paper.id=$1
+            JOIN reviewer ON reviewer.id = review.reviewerid
+            JOIN account ON reviewer.accountid = account.id`,
             [paperId]
         );
         return rows as Review[];
@@ -102,7 +103,7 @@ export default class ReviewRepository{
         
     async deleteReview() {
         `DELETE FROM review
-            WHERE review.id = INT;`;
+        WHERE review.id = INT;`;
         return;
     }
     
