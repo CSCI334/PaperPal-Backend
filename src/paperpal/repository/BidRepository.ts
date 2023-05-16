@@ -36,9 +36,11 @@ export default class BidRepository{
 
     async getPapersAndBids(reviewerId: number) {
         const { rows } = await this.db.query(
-            `SELECT paper.id, bids.bidamount, paper.title, paper.coauthors, paper.paperstatus
+            `SELECT paper.id, bids.bidamount, paper.title, paper.coauthors, paper.paperstatus, account.username
             FROM bids
-            RIGHT JOIN paper ON paper.id = bids.paperid AND bids.reviewerid = $1`,
+            RIGHT JOIN paper ON paper.id = bids.paperid AND bids.reviewerid = $1
+            JOIN author ON paper.authorid = author.id
+            JOIN account ON account.id = author.accountid`,
             [reviewerId]
         );
         return rows as LooseObject[];
