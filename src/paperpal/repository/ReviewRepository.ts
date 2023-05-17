@@ -73,7 +73,7 @@ export default class ReviewRepository{
         const { rows } = await this.db.query(
             `INSERT INTO comment (paperid, reviewerId, comment)
             VALUES($1, $2, $3);`,
-            [paperId, reviewerId, comment]
+            [paperId, reviewerId, comment]  
         );
         return rows[0] as Comment;
     }

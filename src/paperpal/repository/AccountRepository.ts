@@ -152,6 +152,18 @@ export default class AccountRepository {
         return rows[0].sum as number;
     }
 
+    async getConferenceInfo(conferenceId: number) {
+        const {rows } = await this.db.query(
+            `SELECT conference.*, account.username as chair_name, account.email as chair_email
+            FROM account
+            JOIN conference ON conference.id = account.conferenceid
+            WHERE accounttype = 'CHAIR' AND conferenceId = $1
+            LIMIT 1`,
+            [conferenceId]
+        );
+        return rows[0] as LooseObject;
+    }
+
     async doesAdminExists() {
         return true;
     }

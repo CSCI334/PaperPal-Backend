@@ -5,6 +5,8 @@ import CreateConferenceDTO from "@app/paperpal/types/dto/CreateConferenceDTO";
 import InviteDTO from "@app/paperpal/types/dto/InviteDTO";
 import UpdateConferenceDTO from "@app/paperpal/types/dto/UpdateConferenceDTO";
 import InvalidInputException from "@exception/InvalidInputException";
+import Conference from "@model/Conference";
+import AccountRepository from "@repository/AccountRepository";
 import AccountService from "@service/account/AccountService";
 import ConferenceUtils from "@service/conference/ConferenceUtils";
 import { epochToDate } from "@utils/utils";
@@ -14,6 +16,7 @@ import { inject, injectable } from "inversify";
 export default class ConferenceService {
     constructor(
         @inject(ConferenceRepository) private readonly conferenceRepository: ConferenceRepository,
+        @inject(AccountRepository) private readonly accountRepository: AccountRepository,
         @inject(AccountService) private readonly accountService : AccountService) {}
         
     async updateConference(conferenceDTO: UpdateConferenceDTO) {
@@ -36,7 +39,8 @@ export default class ConferenceService {
     }
     
     async getConferenceInfo() {
-        return await this.conferenceRepository.getLastConference();
+        const conference: Conference = await this.conferenceRepository.getLastConference();
+        return await this.accountRepository.getConferenceInfo(conference.id);
     }
 
     async createConference(conferenceDTO : CreateConferenceDTO) {
