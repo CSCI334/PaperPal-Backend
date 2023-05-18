@@ -14,7 +14,7 @@ export default class AccountRepository {
     
     async insertUser(account: Partial<Account>) {
         const errorMap: PgErrorMap = new Map([
-            ["23505", "Email already used by another account"],
+            ["uniqueemailandconference", "Email already used in this conference"],
         ]);
         const { rows } = await this.db.query(
             `INSERT INTO account(email, username, hashedpassword, salt, accountType, accountStatus, conferenceId) 
@@ -40,10 +40,13 @@ export default class AccountRepository {
     }
     
     async insertReviewer(reviewer: Partial<Reviewer>) {
+        const constraint : PgErrorMap = new Map();
+        constraint.set("uniqueemailandconference", "Reviewer with that email already exists in this conference");
         const { rows } = await this.db.query(
             `INSERT INTO reviewer(accountid) 
             VALUES($1) RETURNING *`,
-            [reviewer.accountid]);
+            [reviewer.accountid],
+            constraint);
         return rows[0] as Reviewer;
     }
     

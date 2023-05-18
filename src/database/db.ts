@@ -30,8 +30,7 @@ export default class DbService {
         } catch (err) {
             const dbError = err as pg.DatabaseError;
             const errConstraint = dbError.constraint || "0"; 
-
-            // Expected Postgres errors
+            // Expected Postgres error
             if (errorMap && errorMap.has(errConstraint)) {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const pgError: string = errorMap.get(errConstraint)!;
