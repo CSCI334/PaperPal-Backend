@@ -55,9 +55,11 @@ export default class PaperRepository{
 
     async getAllocatedPapersForReviewer(reviewerId: number) : Promise<LooseObject[]>{      
         const { rows } = await this.db.query(
-            `SELECT *
+            `SELECT paper.*, review.paperrating, review.review, review.reviewrating, account.username as author_name
             FROM review
             LEFT JOIN paper ON paper.id = review.paperId
+            JOIN author ON paper.authorid = author.id
+            JOIN account ON author.accountid = account.id
             WHERE review.reviewerId = $1`, 
             [reviewerId]
         );

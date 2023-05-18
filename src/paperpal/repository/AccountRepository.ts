@@ -7,7 +7,6 @@ import Reviewer from "@model/Reviewer";
 import { LooseObject } from "@utils/LooseObject";
 import { inject, injectable } from "inversify";
 
-
 @injectable()
 export default class AccountRepository {
     constructor(@inject(DbService) private readonly db: DbService) {}
