@@ -10,6 +10,8 @@ import NotFoundException from "@exception/NotFoundException";
 import Account from "@model/Account";
 import ConferenceRepository from "@repository/ConferenceRepository";
 import AccountUtils from "@service/account/AccountUtils";
+import EmailService from "@service/email/EmailService";
+import { createVerificationEmail } from "@service/email/template/VerificationEmail";
 import { inject, injectable } from "inversify";
 import nodemailer from "nodemailer";
 
@@ -17,7 +19,8 @@ import nodemailer from "nodemailer";
 export default class AuthService {
     constructor(
         @inject(AccountRepository) private readonly accountRepository: AccountRepository,
-        @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository
+        @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository,
+        @inject(EmailService) private readonly emailService: EmailService
     ) { }
 
     async register(registerDTO: RegisterDTO) {
@@ -54,7 +57,8 @@ export default class AuthService {
         }, {expiresIn: "7d"});
 
         // Send verify email here, verify link should contain jwtToken and email
-        if(registerDTO.accountType === "AUTHOR") this.sendVerificationEmail(user, jwtToken);
+        console.log(process.env.NODE_ENV);
+        this.sendVerificationEmail(user);
 
         return {
             token: jwtToken,
@@ -88,107 +92,21 @@ export default class AuthService {
         };
     }
 
-    async sendVerificationEmail(user : Account, jwtToken : string) {
-        const recipientName = user.username;
-        const emailRecipient = user.email;
-        const role = user.accounttype;
-        
-        //Not picky, but these below are the 'sensitive information' you mentioned aric, if you want to put elsewhere
-        const EMAIL_USER = "paperpalconferencesystem@gmail.com";
-        const EMAIL_PWORD = "CSCI334password";
-        const OAUTH_CLIENTID = "831889653912-vdgboh3qjmgks3koidqfo02u6krgn0q8.apps.googleusercontent.com";
-        const OAUTH_CLIENT_SECRET = "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";
-        const OAUTH_REFRESH_TOKEN = "1//04GsrU_seR6NRCgYIARAAGAQSNwF-L9Ir4KqtLwRAVrd1JKV5z4t4KmudV5hbFgc4Ul1hygtxxT6v4utI3vGbauVtfIQsI-GqtFQ";
-        
-        let emailSubject;
-        let emailBody;
-        const htmlLink = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTfYI8I6tcVPnc7vGWA3kRMPEmTQQqMMpD8w&usqp=CAU";
-        //TODO: OnClick, update user AccountStatus from "PENDING" to "ACCEPTED"
+    async sendVerificationEmail(user : Account) {
+        const jwtToken = AccountUtils.createUserJwtToken({
+            accountId: user.id, 
+            email: user.email,
+            accountType: user.accounttype,
+            conferenceId: user.conferenceid,
+            accountStatus: user.accountstatus
+        }, {expiresIn: "7d"});
 
-        if(role == "REVIEWER"){ // Determins contents of email
-            emailSubject = "PaperPal Reviewer Invitation";
-
+        if((process.env.ENVIRONMENT ?? "dev") !== "prod") {
+            console.log("hey");
+            this.emailService.send(createVerificationEmail(
+                user, jwtToken
+            ));
         }
-        else if (role == "CHAIR"){
-            emailSubject = "PaperPal Conference Chair Invitation";
-
-            emailBody = "<div style = 'width: 100%; font-family: helvetica, sans-serif;'>";
-            emailBody += "<div style = 'height: 100%;'>";
-            emailBody += "<table style = 'margin: 0 auto 0 auto'>";
-            emailBody += "<br><tr><td style = 'text-align: center; font-size: 28px'>";
-            emailBody += "<h2>Welcome " + recipientName + "</h2>";
-            emailBody += "</tr></tr>";
-            emailBody += "<br><tr><td style = 'text-align: center; font-size: 22px'>";
-            emailBody += "<h2>You've been Invited to join PaperPal as a Conference Chair</h2>";
-            emailBody += "</tr></tr>";
-            emailBody += "</br></br><tr><td style = 'text-align: center; font-size: 16px'>";
-            emailBody += "<p>Hey " + recipientName + ". You have been selected to become Conference Chairs at PaperPal.</p>";
-            emailBody += "</td></tr>";
-            emailBody += "<tr><td style = 'text-align: center; font-size: 16px'>";
-            emailBody += "<p>We have chosen you due to your exemplary work in the field of study we are currently reviewing papers for.</p>";
-            emailBody += "</td></tr>";
-            emailBody += "<tr><td style = 'text-align: center; font-size: 16px'>";
-            emailBody += "<p>Unfortunately, if you were planning on submitting a paper in this conference, should you accept, you would no longer be able to do so.</p>";
-            emailBody += "</td></tr>";
-            emailBody += "<tr><td style = 'text-align: center; font-size: 16px'>";
-            emailBody += "<p>Due to how highly your expertise is respected, this would mean that you play an integral part on deciding on whether or not a paper is passed or declined.</p>";
-            emailBody += "</td></tr>";
-            emailBody += "<tr><td style = 'text-align: center; font-size: 18px'>";
-            emailBody += "</br><p>Please click <a href = '" + htmlLink + "' class = 'button'>here</a> to sign up as a Conference Chair.</p>";
-            emailBody += "</td></tr>";
-            emailBody += "</table>";
-            emailBody += "</div>";
-            emailBody += "</div>";
-        }
-        //TODO: else if for SYSTEM ADMIN and AUTHOR
-
-        try{
-            const option: EmailConfig = {
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: true,
-                service: "gmail",
-                auth: {
-                    type: "OAUTH2",
-                    user: "paperpalconferencesystem@gmail.com",
-                    pass: EMAIL_PWORD,
-                    clientId: OAUTH_CLIENTID,
-                    clientSecret: OAUTH_CLIENT_SECRET,
-                    refreshToken: OAUTH_REFRESH_TOKEN,
-                },
-                tls: {
-                    rejectUnauthorized: false
-                } 
-            };
-            
-            const transporter = nodemailer.createTransport(option);
-
-            const mailOptions = {     //email contents
-                from: EMAIL_USER,
-                to: emailRecipient,
-                subject: emailSubject,
-                html: emailBody
-            };
-
-            transporter.sendMail(mailOptions, (error) => {
-                if (error) {
-                    console.log("Error " + error);
-                }
-                else {
-                    console.log("Email Sent Successfully");
-                }
-            });
-
-            console.log("WORKING");
-            return 0;
-
-        } catch(error){
-            console.log("UH OH");
-            return error;
-        }
-
-        console.log("sent email");
-        return;
     }
 
     async verifyEmail(verifyEmailDTO: VerifyEmailDTO, token: TokenData) {

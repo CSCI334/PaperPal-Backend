@@ -39,6 +39,7 @@ import ReviewerPaperStrategy from "@service/paper/impl/ReviewerPaperStrategy";
 import AuthorPaperStrategy from "@service/paper/impl/AuthorPaperStrategy";
 import ChairPaperStrategy from "@service/paper/impl/ChairPaperStrategy";
 import ValidatePhase from "@app/middleware/phase/ValidatePhase";
+import EmailService from "@service/email/EmailService";
 
 export default class App {
     readonly container: Container;
@@ -67,6 +68,7 @@ export default class App {
         this.container.bind(ConferenceService).toSelf();
         this.container.bind(PaperService).toSelf();
         this.container.bind(ReviewService).toSelf();
+        this.container.bind(EmailService).toSelf();
         
         // Internal repositories
         this.container.bind(AccountRepository).toSelf();
