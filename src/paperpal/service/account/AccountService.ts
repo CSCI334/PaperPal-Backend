@@ -3,7 +3,6 @@ import { TokenData } from "@app/paperpal/types/TokenData";
 import LoginDTO from "@app/paperpal/types/dto/LoginDTO";
 import RegisterDTO from "@app/paperpal/types/dto/RegisterDTO";
 import VerifyEmailDTO from "@app/paperpal/types/dto/VerifyEmailDTO";
-import { EmailConfig } from "@config/EmailConfig";
 import InvalidInputException from "@exception/InvalidInputException";
 import NotAuthenticatedException from "@exception/NotAuthenticatedException";
 import NotFoundException from "@exception/NotFoundException";
@@ -13,7 +12,6 @@ import AccountUtils from "@service/account/AccountUtils";
 import EmailService from "@service/email/EmailService";
 import { createVerificationEmail } from "@service/email/template/VerificationEmail";
 import { inject, injectable } from "inversify";
-import nodemailer from "nodemailer";
 
 @injectable()
 export default class AuthService {
@@ -47,22 +45,11 @@ export default class AuthService {
             accountstatus : "PENDING",
             conferenceid: lastConference.id,
         });
-        
-        const jwtToken = AccountUtils.createUserJwtToken({
-            accountId: user.id, 
-            email: registerDTO.email,
-            accountType: registerDTO.accountType,
-            conferenceId: lastConference.id,
-            accountStatus: user.accountstatus
-        }, {expiresIn: "7d"});
 
         // Send verify email here, verify link should contain jwtToken and email
-        console.log(process.env.NODE_ENV);
         this.sendVerificationEmail(user);
 
-        return {
-            token: jwtToken,
-        };
+        return {};
     }
 
     async login(loginDTO: LoginDTO) {
@@ -101,8 +88,7 @@ export default class AuthService {
             accountStatus: user.accountstatus
         }, {expiresIn: "7d"});
 
-        if((process.env.ENVIRONMENT ?? "dev") !== "prod") {
-            console.log("hey");
+        if((process.env.ENVIRONMENT ?? "dev") === "prod") {
             this.emailService.send(createVerificationEmail(
                 user, jwtToken
             ));
