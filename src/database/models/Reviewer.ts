@@ -1,7 +1,7 @@
 interface Reviewer {
     id: number;
     bidpoints : number;
-    workload: number;
+    paperworkload: number;
     accountid : number;
 }
 export default Reviewer;

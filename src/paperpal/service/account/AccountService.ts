@@ -31,13 +31,13 @@ export default class AuthService {
         // the request provided a password or not.
         // If true, it's an author register, create their hashedPassword and salt, send verify email
         // If false, it's other account type, send verify email.
-        const [hashedPassword, salt] = registerDTO.password ? 
-            AccountUtils.createNewPasswordHash(registerDTO.password) :
-            ["", ""];
-        
         const lastConference = await this.conferenceRepository.getLastConference();
         if(!lastConference) throw new InvalidInputException("No ongoing conference. Please wait until an admin creates a conference");
         
+        const [hashedPassword, salt] = registerDTO.password ? 
+            AccountUtils.createNewPasswordHash(registerDTO.password) :
+            ["", ""];
+            
         const user = await this.addUser({
             email : registerDTO.email,
             username: registerDTO.username,
@@ -109,7 +109,27 @@ export default class AuthService {
         }
     }
 
-    async verifyEmail(verifyEmailDTO: VerifyEmailDTO, token: TokenData) {
+    async verifySignupEmail(token: TokenData) {
+        const user = await this.accountRepository.getAccountByEmail(token.email);
+        const ongoingConference = await this.conferenceRepository.getLastConference();
+
+        if(!user) throw new NotFoundException("User not found");
+        if(user.conferenceid != ongoingConference.id) throw new NotAuthenticatedException("Verification token is invalid for current conference");
+        if(user.accountstatus === "ACCEPTED") throw new NotAuthenticatedException("User already verified");
+
+        await this.accountRepository.updateAccountStatus(token.accountId, "ACCEPTED");
+        return {
+            token : AccountUtils.createUserJwtToken({
+                accountId: token.accountId,
+                accountType: token.accountType,
+                conferenceId: token.conferenceId,
+                email: token.email,
+                accountStatus : "ACCEPTED"
+            })
+        };
+    }
+
+    async verifyInvitedEmail(verifyEmailDTO: VerifyEmailDTO, token: TokenData) {
         const user = await this.accountRepository.getAccountByEmail(token.email);
         const ongoingConference = await this.conferenceRepository.getLastConference();
 
@@ -150,6 +170,9 @@ export default class AuthService {
     }
 
     async addUser(account : Partial<Account>) {
+        if(await this.accountRepository.doesAdminExists() && account.accounttype === "ADMIN") 
+            throw new InvalidInputException("Admin already exists. Cannot sign up as admin");
+
         const user =  await this.accountRepository.insertUser({
             email : account.email,
             username: account.username,

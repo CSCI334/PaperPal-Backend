@@ -1,6 +1,9 @@
 import DbService from "@app/database/db";
+import { PgErrorMap } from "@app/database/types";
 import Conference from "@model/Conference";
 import Paper, { PaperStatus } from "@model/Paper";
+import Review from "@model/Review";
+import { LooseObject } from "@utils/LooseObject";
 import { inject, injectable } from "inversify";
 
 @injectable()
@@ -21,86 +24,95 @@ export default class PaperRepository{
         const { rows } = await this.db.query(
             `INSERT INTO paper (title, paperstatus, filelocation, coauthors, authorid)
             VALUES ($1, $2, $3, $4, $5) 
-            RETURNING*`,
+            RETURNING *`,
             [paper.title, paper.paperstatus, paper.filelocation, paper.coauthors, paper.authorid]
         ); 
-
         return rows[0] as Paper;
     }
 
-    async setPaperStatus(paperId:number, status : PaperStatus) {
-        
-        `UPDATE paper
-        SET status = 'status'
-        WHERE id = id;`;
-        throw new Error("Method not implemented");
+    async setPaperStatus(paperId: number, status : PaperStatus) {
+        const { rows } = await this.db.query(
+            `UPDATE paper
+            SET status = $2
+            WHERE id = $1 
+            RETURNING *`,
+            [paperId, status]
+        );
+        return rows[0] as Paper;
     }
 
     // May be multiple reviewers
     async getAllReviewerFromPaper(paperId: number) {
-        `SELECT * 
-        FROM reviewer
-        LEFT JOIN review ON reviewer.id = review.reviewerid;`;
-        throw new Error("Method not implemented");
-
-    }
-
-        
-    async getAllocatedPapersForReviewer(reviewerId: number) : Promise<Paper[]>{      
-        
-        `SELECT paper.title , account.username, review.reviewrating
-        FROM paper
-        INNER JOIN account ON paper.authorid = account.id
-        INNER JOIN review ON account.id = review.reviewerid;`;
+        const { rows } = await this.db.query(
+            `SELECT * 
+            FROM reviewer
+            LEFT JOIN review ON reviewer.id = review.reviewerid
+            WHERE review.paperId=$1`,
+            [paperId]
+        );
         throw new Error("Method not implemented");
     }
 
-    async isPaperInConference(paperId:number, conferenceId : number): Promise<boolean> {
-        `SELECT
-        CASE WHEN EXISTS(
-            SELECT paper.id
-          FROM paper
-          INNER JOIN conference ON paper.id = conference.id
-        )
-        THEN 'TRUE'
-        ELSE 'FALSE'
-        END;`;
-        return true;
+    async getAllocatedPapersForReviewer(reviewerId: number) : Promise<LooseObject[]>{      
+        const { rows } = await this.db.query(
+            `SELECT paper.*, review.paperrating, review.review, review.reviewrating, account.username as author_name
+            FROM review
+            LEFT JOIN paper ON paper.id = review.paperId
+            JOIN author ON paper.authorid = author.id
+            JOIN account ON author.accountid = account.id
+            WHERE review.reviewerId = $1`, 
+            [reviewerId]
+        );
+        return rows as LooseObject[];
+    }
+
+    async isPaperInConference(paperId: number, conferenceId :number): Promise<boolean> {
+        const { rows } = await this.db.query(
+            `SELECT
+            CASE WHEN EXISTS(
+                SELECT paperID, conferenceID
+                FROM paperconference
+                WHERE paperID=$1 AND conferenceID=$2
+            )
+            THEN true
+            ELSE false
+            END`, 
+            [paperId, conferenceId]
+        );
+        return rows[0].case;
     }
 
     // Get all papers an author is in
-    async getAllPaperForAuthor(authorId: number){
-        `SELECT * 
-        FROM author
-        LEFT JOIN paper ON author.id = paper.authorid;`;
-        return {};
+    async getAllPaperForAuthor(authorId: number): Promise<Paper[]>{
+        const { rows } = await this.db.query(
+            `SELECT * 
+            FROM paper
+            WHERE authorid = $1;`,
+            [authorId]
+        );
+        return rows as Paper[];
     }
     
     async getAllPapersInConference(conferenceId : number): Promise<Paper[]>{
-        throw new Error("Method not implemented");
-
+        const { rows } = await this.db.query(
+            `SELECT paper.*, paperconference.username as author
+            FROM paperconference
+            LEFT JOIN paper ON paperconference.paperId=paper.id
+            WHERE conferenceId=$1;`,
+            [conferenceId]
+        );
+        return rows as Paper[];
     }
 
     async getConferenceFromPaper(paperId: number): Promise<Conference> {
-        
-        `SELECT * 
-        FROM paper
-        LEFT JOIN conference ON paper.id = conference.id;`;
-        throw new Error("Method not implemented");
+        const { rows } = await this.db.query(
+            `SELECT conference.* 
+            FROM paperconference
+            LEFT JOIN conference ON paperconference.conferenceid=conference.id
+            WHERE paperid=$1`,
+            [paperId]
+        );
+        return rows[0] as Conference;
     }
 
-
-    async getPapersAndBids(conferenceId: number, reviewerId: number) {
-        `SELECT paper.*, bids.bidamount
-        FROM paper
-        INNER JOIN bids ON paper.id = bids.paperid;`;
-        return {};
-    }
-
-    async allocatePaperToReviewer(paperId: number, reviewerId: number){
-        // Create empty Review column with paperId and reviewerId
-        `INSERT INTO (paperrating, reviewrating)
-        VALUES (val1, val2);`;
-        throw new Error("Method not implemented");
-    }
 }

@@ -11,7 +11,12 @@ export default class ConferenceRepository{
             `INSERT INTO conference(conferenceName,conferenceLocation,submissionDeadline,biddingDeadline,reviewDeadline,announcementTime)
             VALUES($1, $2, $3, $4, $5, $6)
             RETURNING ID`,
-            [conference.conferencename, conference.conferencelocation, conference.submissiondeadline, conference.biddingdeadline, conference.reviewdeadline, conference.announcementtime]
+            [conference.conferencename, 
+                conference.conferencelocation, 
+                conference.submissiondeadline, 
+                conference.biddingdeadline, 
+                conference.reviewdeadline, 
+                conference.announcementtime]
         );
         return rows[0].id as number;
     }
@@ -31,13 +36,14 @@ export default class ConferenceRepository{
                 biddingDeadline = COALESCE($3, biddingDeadline),
                 reviewDeadline = COALESCE($4, reviewDeadline),
                 announcementTime = COALESCE($5, announcementTime)
-                WHERE id=$1;`,
+                WHERE id=$1
+                RETURNING *`,
             [conference.id, 
                 conference.submissiondeadline?.toISOString(), 
                 conference.biddingdeadline?.toISOString(), 
                 conference.reviewdeadline?.toISOString(), 
                 conference.announcementtime?.toISOString()]);
-        return;
+        return rows[0] as Conference;
     }
 
     async getLastConference() {

@@ -17,7 +17,7 @@ export default class AuthorPaperStrategy implements PaperStrategy {
 
     // Gets all paper created by the logged in Author
     async getAvailablePapers(user: Account) {
-        const author : Author = await this.accountRepository.getAuthor(user.id);
+        const author : Author = await this.accountRepository.getAuthorByAccountId(user.id);
         if(!author) throw new NotAuthenticatedException("User is not an author"); 
 
         const data = await this.paperRepository.getAllPaperForAuthor(author.id);
@@ -29,7 +29,7 @@ export default class AuthorPaperStrategy implements PaperStrategy {
         const paper = await this.paperRepository.getPaper(paperId);
         if(!paper) throw new NotFoundException("Paper not found");
 
-        const author = await this.accountRepository.getAuthor(user.id);
+        const author = await this.accountRepository.getAuthorByAccountId(user.id);
         if(!author) throw new NotAuthenticatedException("User is not an author");
         if(paper.authorid != author.id) throw new NotAuthenticatedException("User is not author of paper");   
         

@@ -8,7 +8,7 @@ export default class SignUpDTO extends RegisterDTO {
         public readonly username: string, 
         public readonly password: string,
         public readonly accountType: AccountType) {
-        super(email, username, password, "AUTHOR");
+        super(email, username, password, accountType);
     }
     static validator = () =>{
         return [
@@ -16,8 +16,8 @@ export default class SignUpDTO extends RegisterDTO {
             body("password", "Password field does not exist").exists(),
             body("password", "Password field must contain at least 6 characters").isLength({ min: 6 }).escape(),
             body("accountType", "accountType field does not exist").exists(),
-            body("accountType", "accountType field is invalid. Value can only be CHAIR, REVIEWER, or AUTHOR").isIn([
-                "AUTHOR"
+            body("accountType", "accountType field is invalid. Value can only be AUTHOR or ADMIN").isIn([
+                "AUTHOR", "ADMIN"
             ]),
         ];
     };

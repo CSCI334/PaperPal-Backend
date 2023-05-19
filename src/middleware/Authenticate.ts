@@ -13,8 +13,6 @@ export class Authenticate extends BaseMiddleware{
         super();
         this.accountType = accountType;
         this.allowPending = allowPending;
-        // Temporary, makes it so that admin can do anything just cause they're cool like that
-        // this.accountType.push("ADMIN");
     }
 
     public handler = async (req : Request, res : Response, next: NextFunction) => {
@@ -30,6 +28,7 @@ export class Authenticate extends BaseMiddleware{
                 conferenceId: decoded.conferenceId,
                 accountStatus: decoded.accountStatus,
             };
+            req.body.token = token;
             if(decoded.accountStatus === "PENDING" && !this.allowPending) 
                 next(new NotAuthenticatedException("User not verified"));
             if(this.accountType.length > 0 && !this.accountType.includes(decoded.accountType))

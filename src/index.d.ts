@@ -9,7 +9,6 @@ declare global {
             accountStatus: AccountStatus;
             accountType: AccountType;
             conferenceId: number;
-            
         }
     }
 }

@@ -11,16 +11,15 @@ import BidService from "@service/bid/BidService";
 import PhaseContext from "@app/middleware/phase/PhaseContext";
 import ValidatePhase from "@app/middleware/phase/ValidatePhase";
 
-
 @controller("")
 export default class BidController {
     constructor(@inject(BidService) private readonly bidService: BidService) {}
 
-    @httpPost(
-        "/bid", 
+    @httpPost("/bid", 
         Authenticate.for("REVIEWER"), 
-        PhaseContext.hasPassed(ConferencePhase.Bidding),
-        ValidatePhase
+        PhaseContext.isCurrently(ConferencePhase.Bidding),
+        ValidatePhase,
+        ValidateRequest.using(BidDTO.validator())
     )
     async addBid(req: Request, res: Response) {
         await this.bidService.addBid(res.locals.accountId, req.body as BidDTO);
@@ -29,13 +28,13 @@ export default class BidController {
         return response.toExpressResponse(res);
     }
 
-    @httpPost("/workload", 
+    @httpPost("/workload",
         Authenticate.for("REVIEWER"), 
-        PhaseContext.isCurrently(ConferencePhase.Bidding),
+        PhaseContext.isCurrently(ConferencePhase.Submission, ConferencePhase.Bidding),
         ValidatePhase,
         ValidateRequest.using(WorkloadDTO.validator()))
     async setReviewerWorkload(req: Request, res: Response) {
-        await this.bidService.setWorkload(res.locals.accountId, req.body.amountOfPaper);
+        await this.bidService.setWorkload(res.locals.accountId, req.body.amountOfPapers);
 
         const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);
