@@ -42,9 +42,17 @@ export default class AccountController {
         return response.toExpressResponse(res);
     }
 
+    @httpPost("/verify-author", Authenticate.allowPending())
+    async verifyAuthor(req: Request, res: Response) {
+        const data = await this.accountService.verifySignupEmail(res.locals as TokenData);
+
+        const response = BaseHttpResponse.success(data);
+        return response.toExpressResponse(res);
+    }
+
     @httpPost("/verify", ValidateRequest.using(VerifyEmailDTO.validator()), Authenticate.allowPending())
     async verify(req: Request, res: Response) {
-        const data = await this.accountService.verifyEmail(req.body as VerifyEmailDTO, res.locals as TokenData);
+        const data = await this.accountService.verifyInvitedEmail(req.body as VerifyEmailDTO, res.locals as TokenData);
 
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
@@ -54,7 +62,6 @@ export default class AccountController {
     async getUserData(req: Request, res: Response) {
         const response = await this.accountService.getUser(res.locals.accountId);
         return res.status(STATUS_CODE.OK).json({
-            token: res.locals.token,
             username: response.username,
             email: response.email,
         });
@@ -62,12 +69,13 @@ export default class AccountController {
 
     @httpGet("/contact", Authenticate.for("ADMIN"))
     async getAllReviewer(req: Request, res: Response) {
-        const data = this.accountService.getAllReviewer();
+        const data = await this.accountService.getAllReviewer();
 
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);
     }
 
+    // Doesn't do anything for now
     @httpPost("/contact/email", Authenticate.for("ADMIN"))
     async sendEmailToReviewer(req: Request, res: Response) {
         const response = BaseHttpResponse.success({});

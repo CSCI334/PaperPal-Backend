@@ -36,13 +36,14 @@ export default class ConferenceRepository{
                 biddingDeadline = COALESCE($3, biddingDeadline),
                 reviewDeadline = COALESCE($4, reviewDeadline),
                 announcementTime = COALESCE($5, announcementTime)
-                WHERE id=$1;`,
+                WHERE id=$1
+                RETURNING *`,
             [conference.id, 
                 conference.submissiondeadline?.toISOString(), 
                 conference.biddingdeadline?.toISOString(), 
                 conference.reviewdeadline?.toISOString(), 
                 conference.announcementtime?.toISOString()]);
-        return;
+        return rows[0] as Conference;
     }
 
     async getLastConference() {

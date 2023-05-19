@@ -4,8 +4,8 @@ import Account, { AccountStatus } from "@model/Account";
 import Author from "@model/Author";
 import Chair from "@model/Chair";
 import Reviewer from "@model/Reviewer";
+import { LooseObject } from "@utils/LooseObject";
 import { inject, injectable } from "inversify";
-
 
 @injectable()
 export default class AccountRepository {
@@ -13,7 +13,7 @@ export default class AccountRepository {
     
     async insertUser(account: Partial<Account>) {
         const errorMap: PgErrorMap = new Map([
-            ["23505", "Email already used by another account"],
+            ["uniqueemailandconference", "Email already used in this conference"],
         ]);
         const { rows } = await this.db.query(
             `INSERT INTO account(email, username, hashedpassword, salt, accountType, accountStatus, conferenceId) 
@@ -37,11 +37,15 @@ export default class AccountRepository {
             [author.accountid]);
         return rows[0] as Author;
     }
+    
     async insertReviewer(reviewer: Partial<Reviewer>) {
+        const constraint : PgErrorMap = new Map();
+        constraint.set("uniqueemailandconference", "Reviewer with that email already exists in this conference");
         const { rows } = await this.db.query(
             `INSERT INTO reviewer(accountid) 
             VALUES($1) RETURNING *`,
-            [reviewer.accountid]);
+            [reviewer.accountid],
+            constraint);
         return rows[0] as Reviewer;
     }
     
@@ -88,9 +92,10 @@ export default class AccountRepository {
 
     async getAllReviewer() {
         const { rows } = await this.db.query(
-            `SELECT * FROM account`
+            `SELECT account.id, account.email, account.username, account.accounttype, account.accountstatus FROM account 
+            JOIN reviewer ON account.id = reviewer.accountid`
         );
-
+        
         return rows as Account[];
     }
 
@@ -102,7 +107,7 @@ export default class AccountRepository {
         return rows[0] as Account;
     }
 
-    async getAuthor(accountId: number) {
+    async getAuthorByAccountId(accountId: number) {
         const { rows } = await this.db.query(
             `SELECT * FROM author WHERE accountid = $1`, 
             [accountId]
@@ -110,7 +115,7 @@ export default class AccountRepository {
         return rows[0] as Author;
     }
 
-    async getReviewer(accountId: number) {
+    async getReviewerByAccountId(accountId: number) {
         const { rows } = await this.db.query(
             `SELECT * FROM reviewer WHERE accountid = $1`, 
             [accountId]
@@ -118,16 +123,47 @@ export default class AccountRepository {
         return rows[0] as Reviewer;
     }
 
+    async getReviewer(id: number) {
+        const { rows } = await this.db.query(
+            `SELECT * FROM reviewer WHERE id = $1`, 
+            [id]
+        ); 
+        return rows[0] as Reviewer;
+    }
+
     async updateReviewer(reviewerId: number, reviewer: Partial<Reviewer>) {
         const { rows } = await this.db.query(
             `UPDATE reviewer SET 
-            bidPoints = COALESCE($2, bidPoints)
-            workload = COALESCE($3, workload)
+            bidPoints = COALESCE($2, bidPoints),
+            paperworkload = COALESCE($3, paperworkload)
             WHERE id = $1
             RETURNING *`,
-            [reviewerId, reviewer.bidpoints, reviewer.workload]
+            [reviewerId, reviewer.bidpoints, reviewer.paperworkload]
         ); 
         return rows[0] as Reviewer;
+    }    
+
+    async getTotalWorkloadInConference(conferenceId: number) {
+        const { rows } = await this.db.query(
+            `SELECT SUM(reviewer.paperworkload)
+            FROM reviewer 
+            JOIN account ON reviewer.accountId=account.id
+            WHERE account.conferenceId=$1`,
+            [conferenceId]
+        );
+        return rows[0].sum as number;
+    }
+
+    async getConferenceInfo(conferenceId: number) {
+        const {rows } = await this.db.query(
+            `SELECT conference.*, account.username as chair_name, account.email as chair_email
+            FROM account
+            JOIN conference ON conference.id = account.conferenceid
+            WHERE accounttype = 'CHAIR' AND conferenceId = $1
+            LIMIT 1`,
+            [conferenceId]
+        );
+        return rows[0] as LooseObject;
     }
 
     async doesAdminExists() {

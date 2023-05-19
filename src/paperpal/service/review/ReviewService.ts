@@ -2,11 +2,12 @@ import PaperRepository from "@app/paperpal/repository/PaperRepository";
 import ReviewRepository from "@app/paperpal/repository/ReviewRepository";
 import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
 import CommentDTO from "@app/paperpal/types/dto/CommentDTO";
-import PaperRatingDTO from "@app/paperpal/types/dto/PaperRatingDTO";
+import ReviewDTO from "@app/paperpal/types/dto/PaperRatingDTO";
 import ReviewRatingDTO from "@app/paperpal/types/dto/ReviewRatingDTO";
 import ForbiddenException from "@exception/ForbiddenException";
 import NotAuthenticatedException from "@exception/NotAuthenticatedException";
 import { AccountType } from "@model/Account";
+import AccountRepository from "@repository/AccountRepository";
 import ConferenceRepository from "@repository/ConferenceRepository";
 import AccountService from "@service/account/AccountService";
 import ConferenceUtils from "@service/conference/ConferenceUtils";
@@ -23,6 +24,7 @@ export default class ReviewService {
         @inject(ChairReviewStrategy) private readonly chairReviewStrategy : ChairReviewStrategy,
 
         @inject(PaperRepository) private readonly paperRepository : PaperRepository,
+        @inject(AccountRepository) private readonly accountRepository : AccountRepository,
         @inject(ReviewRepository) private readonly reviewRepository : ReviewRepository,
         @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository,
         @inject(AccountService) private readonly accountService : AccountService,
@@ -64,18 +66,21 @@ export default class ReviewService {
         return strategy.getReviews(user, paperId, phase);
     }
     
-    async addComments(reviewerId : number, commentDTO : CommentDTO) {
-        const data = this.reviewRepository.addComment(reviewerId, commentDTO.paperId, commentDTO.comment);
+    async addComments(accountId : number, commentDTO : CommentDTO) {
+        const reviewer = await this.accountRepository.getReviewerByAccountId(accountId);
+        const data = await this.reviewRepository.addComment(reviewer.id, commentDTO.paperId, commentDTO.comment);
         return data;
     }
-
-    async addPaperRating(reviewerId : number, ratingDTO : PaperRatingDTO)  {
-        const data = await this.reviewRepository.setPaperRating(reviewerId, ratingDTO.paperId, ratingDTO.rating);
+    
+    async addReview(accountId : number, ratingDTO : ReviewDTO)  {
+        const reviewer = await this.accountRepository.getReviewerByAccountId(accountId);
+        const data = await this.reviewRepository.setReview(reviewer.id, ratingDTO.paperId, ratingDTO.rating, ratingDTO.review);
         return data;
     }
-
-    async addRatingOfReview(reviewerId : number, ratingDTO : ReviewRatingDTO){
-        const data = await this.reviewRepository.setReviewRating(reviewerId, ratingDTO.reviewId, ratingDTO.rating);
+    
+    async addRatingOfReview(accountId : number, ratingDTO : ReviewRatingDTO){
+        const reviewer = await this.accountRepository.getAuthorByAccountId(accountId);
+        const data = await this.reviewRepository.setReviewRating(reviewer.id, ratingDTO.reviewId, ratingDTO.rating);
         return data;
     }
 }

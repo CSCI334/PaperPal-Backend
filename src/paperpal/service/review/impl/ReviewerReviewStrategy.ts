@@ -4,6 +4,7 @@ import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
 import ForbiddenException from "@exception/ForbiddenException";
 import NotFoundException from "@exception/NotFoundException";
 import Account from "@model/Account";
+import Comment from "@model/Comment";
 import AccountService from "@service/account/AccountService";
 import ReviewStrategy from "@service/review/interfaces/ReviewStrategy";
 import { inject, injectable } from "inversify";
@@ -21,7 +22,7 @@ export default class ReviewerReviewStrategy implements ReviewStrategy {
         if(!(await this.reviewerHasSubmittedReviewForPaper(user.id, paperId))) 
             throw new ForbiddenException("Reviewer cannot view comments before they have submitted");
 
-        return this.reviewRepository.getAllCommentsForPaper(paperId);
+        return await this.reviewRepository.getAllCommentsForPaper(paperId);
     }
 
     // Reviewer can only get reviews if they have submitted their own review, and phase is currently or has passed review
@@ -37,8 +38,7 @@ export default class ReviewerReviewStrategy implements ReviewStrategy {
     async reviewerHasSubmittedReviewForPaper(accountId: number, paperId: number): Promise<boolean> {
         const review = await this.reviewRepository.getReviewFromAccountAndPaper(accountId, paperId);
         if(!review) throw new NotFoundException("Review not found");
-        
         // If there is no rating, reviewer has not submitted review 
-        return review.paperrating !== undefined;
+        return review.paperrating !== null;
     }
 }

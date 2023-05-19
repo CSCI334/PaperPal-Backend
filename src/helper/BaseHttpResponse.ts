@@ -10,7 +10,7 @@ export default class BaseHttpResponse {
         this.statusCode = statusCode || 200;
     }
 
-    public toExpressResponse(res: Response) {
+    public toExpressResponse(res: Response): Response {
         return res.status(this.statusCode).json(this.data);
     }
 

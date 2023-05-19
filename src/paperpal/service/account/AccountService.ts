@@ -9,20 +9,23 @@ import NotFoundException from "@exception/NotFoundException";
 import Account from "@model/Account";
 import ConferenceRepository from "@repository/ConferenceRepository";
 import AccountUtils from "@service/account/AccountUtils";
+import EmailService from "@service/email/EmailService";
+import { createVerificationEmail } from "@service/email/template/VerificationEmail";
 import { inject, injectable } from "inversify";
 
 @injectable()
 export default class AuthService {
     constructor(
         @inject(AccountRepository) private readonly accountRepository: AccountRepository,
-        @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository
+        @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository,
+        @inject(EmailService) private readonly emailService: EmailService
     ) { }
 
     async register(registerDTO: RegisterDTO) {
         // This is inelegant but it's better than the alternative.
         // Registering a new user uses the same logic for every user (who needs admin to invite them) except author (who can register on their own)
         
-        // Rather than making three strategy consisting of different user roles with minute difference, we if
+        // Rather than making three strategy consisting of different user roles with minute difference, we check if
         // the request provided a password or not.
         // If true, it's an author register, create their hashedPassword and salt, send verify email
         // If false, it's other account type, send verify email.
@@ -42,21 +45,11 @@ export default class AuthService {
             accountstatus : "PENDING",
             conferenceid: lastConference.id,
         });
-        
-        const jwtToken = AccountUtils.createUserJwtToken({
-            accountId: user.id, 
-            email: registerDTO.email,
-            accountType: registerDTO.accountType,
-            conferenceId: lastConference.id,
-            accountStatus: user.accountstatus
-        }, {expiresIn: "7d"});
 
         // Send verify email here, verify link should contain jwtToken and email
-        await this.sendVerificationEmail(jwtToken);
+        this.sendVerificationEmail(user);
 
-        return {
-            token: jwtToken,
-        };
+        return {};
     }
 
     async login(loginDTO: LoginDTO) {
@@ -86,12 +79,43 @@ export default class AuthService {
         };
     }
 
-    async sendVerificationEmail(jwtToken : string) {
-        console.log("paperpal.com/verify?jwtToken=laskdfjlaskdfjlas");
-        return;
+    async sendVerificationEmail(user : Account) {
+        const jwtToken = AccountUtils.createUserJwtToken({
+            accountId: user.id, 
+            email: user.email,
+            accountType: user.accounttype,
+            conferenceId: user.conferenceid,
+            accountStatus: user.accountstatus
+        }, {expiresIn: "7d"});
+
+        if((process.env.ENVIRONMENT ?? "dev") === "prod") {
+            this.emailService.send(createVerificationEmail(
+                user, jwtToken
+            ));
+        }
     }
 
-    async verifyEmail(verifyEmailDTO: VerifyEmailDTO, token: TokenData) {
+    async verifySignupEmail(token: TokenData) {
+        const user = await this.accountRepository.getAccountByEmail(token.email);
+        const ongoingConference = await this.conferenceRepository.getLastConference();
+
+        if(!user) throw new NotFoundException("User not found");
+        if(user.conferenceid != ongoingConference.id) throw new NotAuthenticatedException("Verification token is invalid for current conference");
+        if(user.accountstatus === "ACCEPTED") throw new NotAuthenticatedException("User already verified");
+
+        await this.accountRepository.updateAccountStatus(token.accountId, "ACCEPTED");
+        return {
+            token : AccountUtils.createUserJwtToken({
+                accountId: token.accountId,
+                accountType: token.accountType,
+                conferenceId: token.conferenceId,
+                email: token.email,
+                accountStatus : "ACCEPTED"
+            })
+        };
+    }
+
+    async verifyInvitedEmail(verifyEmailDTO: VerifyEmailDTO, token: TokenData) {
         const user = await this.accountRepository.getAccountByEmail(token.email);
         const ongoingConference = await this.conferenceRepository.getLastConference();
 

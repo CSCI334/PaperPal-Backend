@@ -9,6 +9,7 @@ RUN npm run build
 FROM node:lts-alpine
 WORKDIR /backend
 ENV TZ=Australia/NSW
+RUN mkdir ./uploads
 COPY --from=build /backend/package.* ./
 RUN npm install --production
 COPY --from=build /backend/dist ./dist
