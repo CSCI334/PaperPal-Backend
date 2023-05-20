@@ -10,7 +10,7 @@ export default class ConferenceRepository{
         const { rows } = await this.db.query(
             `INSERT INTO conference(conferenceName,conferenceLocation,submissionDeadline,biddingDeadline,reviewDeadline,announcementTime)
             VALUES($1, $2, $3, $4, $5, $6)
-            RETURNING ID`,
+            RETURNING *`,
             [conference.conferencename, 
                 conference.conferencelocation, 
                 conference.submissiondeadline, 
@@ -18,7 +18,7 @@ export default class ConferenceRepository{
                 conference.reviewdeadline, 
                 conference.announcementtime]
         );
-        return rows[0].id as number;
+        return rows[0] as Conference;
     }
 
     async getConference(conferenceId: number) {
@@ -52,6 +52,7 @@ export default class ConferenceRepository{
             ORDER BY announcementtime DESC 
             LIMIT 1` 
         );
+        
         return rows[0] as Conference;
     }
 }

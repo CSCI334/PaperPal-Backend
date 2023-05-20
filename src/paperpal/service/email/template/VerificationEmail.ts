@@ -91,7 +91,7 @@ function createForAdmin(user: Account, token: string, domain: string) : MailOpti
 function createForAuthor(user: Account, token: string, domain: string) : MailOptions{
     const recipientName = user.username;
     const recipient = user.email;
-    const htmlLink = `http://${domain}/register-author?token=${token}`;
+    const htmlLink = `http://${domain}/verify-author?token=${token}`;
 
     const emailSubject = `PaperPal Confirmation Email`;
     const emailBody = `

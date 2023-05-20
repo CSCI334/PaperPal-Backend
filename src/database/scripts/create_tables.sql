@@ -20,10 +20,10 @@ CREATE TABLE IF NOT EXISTS conference(
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     conferenceName TEXT NOT NULL, 
     conferenceLocation TEXT NOT NULL,
-    submissionDeadline TIMESTAMP NOT NULL,
-    biddingDeadline TIMESTAMP NOT NULL,
-    reviewDeadline TIMESTAMP NOT NULL,
-    announcementTime TIMESTAMP NOT NULL
+    submissionDeadline TIMESTAMPTZ NOT NULL,
+    biddingDeadline TIMESTAMPTZ NOT NULL,
+    reviewDeadline TIMESTAMPTZ NOT NULL,
+    announcementTime TIMESTAMPTZ NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS account(

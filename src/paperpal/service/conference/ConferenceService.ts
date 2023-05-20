@@ -8,17 +8,20 @@ import InvalidInputException from "@exception/InvalidInputException";
 import Conference from "@model/Conference";
 import AccountRepository from "@repository/AccountRepository";
 import AccountService from "@service/account/AccountService";
+import BidService from "@service/bid/BidService";
 import ConferenceUtils from "@service/conference/ConferenceUtils";
+import { conferenceTimerMap, ConferenceTimers } from "@service/conference/Timeout";
 import { epochToDate } from "@utils/utils";
 import { inject, injectable } from "inversify";
-import PaperService from "@service/paper/PaperService";
 
 @injectable()
 export default class ConferenceService {
     constructor(
         @inject(ConferenceRepository) private readonly conferenceRepository: ConferenceRepository,
         @inject(AccountRepository) private readonly accountRepository: AccountRepository,
-        @inject(AccountService) private readonly accountService : AccountService) {}
+        @inject(AccountService) private readonly accountService : AccountService,
+        @inject(BidService) private readonly bidService: BidService,
+    ) {}
         
     async updateConference(conferenceDTO: UpdateConferenceDTO) {
         const deadlines = [
@@ -28,7 +31,6 @@ export default class ConferenceService {
             conferenceDTO.announcementTime];
         
         if(!ConferenceUtils.deadlinesAreInOrder(deadlines)) throw new InvalidInputException("Conference key dates is not valid");
-        
         const data = await this.conferenceRepository.updateConference({
             id: conferenceDTO.conferenceId,
             submissiondeadline: epochToDate(conferenceDTO.submissionDeadline),
@@ -36,6 +38,9 @@ export default class ConferenceService {
             reviewdeadline: epochToDate(conferenceDTO.reviewDeadline),
             announcementtime: epochToDate(conferenceDTO.announcementTime),
         });
+        
+        this.updateConferenceTimers(data);
+
         return data;
     }
     
@@ -48,7 +53,7 @@ export default class ConferenceService {
         const lastConference = await this.conferenceRepository.getLastConference();
 
         const deadlines = [
-            conferenceDTO.submissionDeadline , 
+            conferenceDTO.submissionDeadline, 
             conferenceDTO.biddingDeadline, 
             conferenceDTO.reviewDeadline, 
             conferenceDTO.announcementTime];
@@ -58,9 +63,9 @@ export default class ConferenceService {
         if(lastConference && ConferenceUtils.getConferencePhase(lastConference) < ConferencePhase.Announcement) 
             throw new InvalidInputException("There is still an ongoing conference");
 
-        await this.conferenceRepository.insertConference(CreateConferenceDTO.toConferenceModel(conferenceDTO));
-        const data = await this.accountService.register(new InviteDTO(conferenceDTO.chairEmail, conferenceDTO.chairName, "CHAIR"));
-        return data;
+        const conference: Conference = await this.conferenceRepository.insertConference(CreateConferenceDTO.toConferenceModel(conferenceDTO));
+        await this.accountService.register(new InviteDTO(conferenceDTO.chairEmail, conferenceDTO.chairName, "CHAIR"));
+        return conference;
     }
     
     // Moves the incoming phase to `now - 100,000 seconds` 
@@ -98,6 +103,7 @@ export default class ConferenceService {
             announcementtime: conference.announcementtime,
         };
         const currentPhase = ConferenceUtils.getConferencePhase(conference);
+
         if(currentPhase == ConferencePhase.Bidding) newDeadlines.submissiondeadline = currentDate;
         else if(currentPhase == ConferencePhase.Review) newDeadlines.biddingdeadline = currentDate;
         else if(currentPhase == ConferencePhase.Judgment) newDeadlines.reviewdeadline = currentDate;
@@ -109,16 +115,44 @@ export default class ConferenceService {
         return data;
     }
 
+    // Not a great implementation, ideally we use cron to do this, or a recursive setTimeout 
+    // For now, the time between now and announcementDeadline can only be 24.8 days (32-bit int)
     async startConferenceTimers(conference : Conference){
-        // this.paperService()
-        // const submissionTimer = setTimeout(() => 
-        //     this.endSubmissionPhase(conference), ((conference.biddingdeadline.getTime() - Date.now()) * 1000)
-        // );
-        return 0;
+        const allocateDeadline = conference.biddingdeadline.getTime() - Date.now();
+        const announcementDeadline = conference.announcementtime.getTime() - Date.now();
+        const MAX_INT = 2147483647;
+
+        let allocateTimer = null;
+        if(allocateDeadline > 1 && allocateDeadline < MAX_INT)  {
+            allocateTimer = setTimeout(() => {
+                console.log(`Allocated paper for conference ${conference.conferencename}`);
+                this.bidService.allocateAllPapers();
+            }, (allocateDeadline));
+        }
+
+        let announcementTimer = null;
+        if(announcementDeadline > 1 && announcementDeadline < MAX_INT) {
+            announcementTimer = setTimeout(() => {
+                // TODO: Announce results here
+                console.log(`Sent announcement emails for conference ${conference.conferencename}`);
+            }, (announcementDeadline));
+        }
+
+        conferenceTimerMap[conference.id] = {
+            allocateTimer: allocateTimer,
+            announcementTimer: announcementTimer
+        };
+        return conferenceTimerMap[conference.id];
     }
 
-    async updateConferenceTimers(conference: Conference) {
-        return;
-    }
     
+    async updateConferenceTimers(conference: Conference) {
+        const timers = conferenceTimerMap[conference.id];
+        
+        if(!timers) return this.startConferenceTimers(conference);
+        else if(timers.allocateTimer) clearTimeout(timers.allocateTimer);
+        else if(timers.announcementTimer) clearTimeout(timers.announcementTimer);
+
+        return this.startConferenceTimers(conference);
+    }    
 }

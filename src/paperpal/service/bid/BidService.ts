@@ -50,8 +50,8 @@ export default class BidService {
     }
     
     // Automatically allocates paper to all reviewer
-    // Papers are allocated in a round robin manner
-    // Iterate through paper and allocates them until all reviewer has a workload of 0
+    // Iterate through a joined table of bids and paper, sorted by bidAmount and reviewerWorkload
+    // A reviewer has to bid before they can get any paper
 
     // Priority for paper allocation goes:
     // Highest bid > Highest workload > Not allocated
@@ -61,10 +61,9 @@ export default class BidService {
         const sortedBids = await this.bidRepository.getSortedBids(conference.id);
         
         // Iterate through all the papers in conference
-        // 1. Find if paper has a bidder, find only legitimate candidate (that still has workload > 0)
-        // 2. Sort bidder by the amount that they bid on, 
-        // 3. Get all reviewerId by highest bid, pick highest workload if multiple
-
+        // 1. Sort bidder by the amount that they bid on, 
+        // 2. Get all reviewerId by highest bid, pick highest workload if multiple
+        // 3. Try to allocate paper to reviewer (that still has workload > 0)
         for(const bids of sortedBids) {
             this.allocatePaperToReviewer(bids.paperid, bids.reviewerid);
         }
