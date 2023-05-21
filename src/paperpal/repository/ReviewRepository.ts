@@ -94,9 +94,9 @@ export default class ReviewRepository{
         const { rows } = await this.db.query(
             `SELECT review.*, account.username as reviewername
             FROM review 
-            JOIN paper ON paper.id=$1
             JOIN reviewer ON reviewer.id = review.reviewerid
-            JOIN account ON reviewer.accountid = account.id`,
+            JOIN account ON reviewer.accountid = account.id
+            WHERE review.paperid=$1`,
             [paperId]
         );
         return rows as Review[];
