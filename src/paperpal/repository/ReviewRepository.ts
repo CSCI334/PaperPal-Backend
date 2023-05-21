@@ -83,7 +83,8 @@ export default class ReviewRepository{
         const { rows } = await this.db.query(
             `SELECT *
             FROM comment
-            LEFT JOIN paper ON comment.paperid=$1;`,
+            LEFT JOIN paper ON comment.paperid=paper.id
+            WHERE paper.id = $1;`,
             [paperId]
         );
         return rows as Comment[];
