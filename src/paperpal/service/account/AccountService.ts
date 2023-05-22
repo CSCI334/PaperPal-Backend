@@ -88,11 +88,9 @@ export default class AuthService {
             accountStatus: user.accountstatus
         }, {expiresIn: "7d"});
 
-        if((process.env.ENVIRONMENT ?? "dev") === "prod") {
-            this.emailService.send(createVerificationEmail(
-                user, jwtToken
-            ));
-        }
+        this.emailService.send(createVerificationEmail(
+            user, jwtToken
+        ));
     }
 
     async verifySignupEmail(token: TokenData) {

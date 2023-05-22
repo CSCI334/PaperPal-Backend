@@ -32,9 +32,11 @@ export default class EmailService {
 
     // Sends an email
     async send(content: MailOptions) {
-        this.transporter.sendMail(content, (error) => {
-            if(error) console.log(error);
-            else console.log("Email sent succesfully");
-        });
+        if((process.env.ENVIRONMENT ?? "dev") === "prod") {
+            this.transporter.sendMail(content, (error) => {
+                if(error) console.log(error);
+                else console.log("Email sent succesfully");
+            });
+        }
     }
 }
