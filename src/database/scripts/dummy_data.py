@@ -46,21 +46,21 @@ for i in range(100):
     username.append(fake.name())
 
 for i in range(100):
-    hashedpassword.append(fake.word())
+    hashedpassword.append('e3d22c3c4ea69d5612ffab07e55d9a40e46f187c3bdee401a71019cbae4e1b84')
 
 for i in range(100):
-    salt.append(fake.word())
+    salt.append('89946a')
 
 accountType.append('ADMIN')
 
-for i in range(9):
+for i in range(1):
     accountType.append(fake.word(ext_word_list=['CHAIR']))
 
-for i in range(90):
+for i in range(98):
     accountType.append(fake.word(ext_word_list=['AUTHOR', 'REVIEWER']))
 
 
-for i in range(11):
+for i in range(2):
     accountstatus.append('ACCEPTED')
 
 
@@ -128,13 +128,13 @@ for i in range(100):
     submittedTime.append(fake.date_time_between_dates('-1y', 'now'))
 
 for i in range(100):
-    
-    fileLocation.append(fake.file_path(depth=3, extension = 'pdf'))
+    locNum = fake.random_int(min = 1, max = 8)
+    fileLocation.append('uploads\\'+ str(locNum))
 
 
 
 while len(authorId) < 100:
-    
+     
     authorId.append(fake.random_int(min = 1, max = len(authorAccountId)))
 
 
@@ -195,7 +195,7 @@ for i in range (100):
     reviewRating.append(fake.random_int(min = 1, max = 10))
 
 for i in range (100):
-    reviewPaperId.append(fake.random_int(min = 0, max = 99))
+    reviewPaperId.append(fake.random_int(min = 1, max = 99))
 
 while len(reviewReviewerId) < 100:
     
@@ -207,11 +207,11 @@ while len(reviewReviewerId) < 100:
 
 
 
-connection = psycopg2.connect(user="USERNAME",
+connection = psycopg2.connect(user="postgres",
                                   password="PASSWORD",
-                                  host="HOST",
+                                  host="localhost",
                                   port="5432",
-                                  database="DATEBASE")
+                                  database="PaperPal")
 
 postgres_insert_query = """INSERT INTO conference(conferencename, conferencelocation, submissionDeadline, biddingDeadline, reviewDeadline, announcementTime)
 VALUES (%s, %s, %s, %s, %s, %s)"""
