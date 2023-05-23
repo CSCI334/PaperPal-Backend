@@ -11,7 +11,6 @@ import { inject, injectable } from "inversify";
 @injectable()
 export default class ReviewerReviewStrategy implements ReviewStrategy {
     constructor(
-        @inject(AccountService) private readonly accountService: AccountService,
         @inject(ReviewRepository) private readonly reviewRepository : ReviewRepository,
     ) {}
     
@@ -30,7 +29,7 @@ export default class ReviewerReviewStrategy implements ReviewStrategy {
         if(phase < ConferencePhase.Review) 
             throw new ForbiddenException("Conference is not in review phase yet");
         if(!(await this.reviewerHasSubmittedReviewForPaper(user.id, paperId))) 
-            throw new ForbiddenException("Reviewer cannot view comments before they have submitted");
+            throw new ForbiddenException("Reviewer cannot view reviews before they have submitted");
         
         return this.reviewRepository.getAllReviewsForPaper(paperId);
     }
