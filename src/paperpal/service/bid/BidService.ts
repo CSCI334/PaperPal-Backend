@@ -24,6 +24,19 @@ export default class BidService {
         return this.bidRepository.getBidsForAccount(accountId);
     }
     
+    async getWorkload(accountId: number) {
+        const reviewer: Reviewer = await this.accountRepository.getReviewerByAccountId(accountId); 
+        if(!reviewer) throw new ForbiddenException("User is not a reviewer");
+    
+        let bidAmount = 0;
+        if(reviewer.bidpoints) bidAmount = reviewer.bidpoints;
+
+        return {
+            paperworkload: reviewer.paperworkload,
+            bidpoints: bidAmount
+        };
+    }
+
     async setWorkload(accountId: number, amountOfPaper: number) {
         const reviewer: Reviewer = await this.accountRepository.getReviewerByAccountId(accountId); 
         if(!reviewer) throw new ForbiddenException("User is not a reviewer");

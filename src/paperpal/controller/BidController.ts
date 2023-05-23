@@ -1,4 +1,4 @@
-import { controller, httpPost } from "inversify-express-utils";
+import { controller, httpGet, httpPost } from "inversify-express-utils";
 import { Request ,Response } from "express";
 import { inject } from "inversify";
 import { Authenticate } from "@app/middleware/Authenticate";
@@ -14,6 +14,14 @@ import ValidatePhase from "@app/middleware/phase/ValidatePhase";
 @controller("")
 export default class BidController {
     constructor(@inject(BidService) private readonly bidService: BidService) {}
+
+    @httpGet("/workload", 
+        Authenticate.for("REVIEWER"), 
+    )
+    async getWorkload(req: Request, res: Response) {
+        const response = BaseHttpResponse.success(await this.bidService.getWorkload(res.locals.accountId));
+        return response.toExpressResponse(res);
+    }
 
     @httpPost("/bid", 
         Authenticate.for("REVIEWER"), 
