@@ -55,7 +55,6 @@ export default class BidService {
 
     // Priority for paper allocation goes:
     // Highest bid > Highest workload > Not allocated
-
     async allocateAllPapers() {
         const conference = await this.conferenceRepository.getLastConference();
         const sortedBids = await this.bidRepository.getSortedBids(conference.id);

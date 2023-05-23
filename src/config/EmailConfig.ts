@@ -1,6 +1,6 @@
 
 export type MailOptions = {
-    to : string,
+    to : string[],
     subject : string,
     html : string
 }

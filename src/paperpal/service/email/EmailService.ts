@@ -32,6 +32,7 @@ export default class EmailService {
 
     // Sends an email
     async send(content: MailOptions) {
+        console.log(process.env.ENVIRONMENT ?? "dev");
         if((process.env.ENVIRONMENT ?? "dev") === "prod") {
             this.transporter.sendMail(content, (error) => {
                 if(error) console.log(error);

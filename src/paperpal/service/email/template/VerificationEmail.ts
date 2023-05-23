@@ -52,7 +52,7 @@ function createForChair(user: Account, token: string, domain: string): MailOptio
     return {
         html: emailBody,
         subject: emailSubject,
-        to: recipient
+        to: [recipient]
     };
 }
 
@@ -84,7 +84,7 @@ function createForAdmin(user: Account, token: string, domain: string) : MailOpti
     return {
         html: emailBody,
         subject: emailSubject,
-        to: recipient
+        to: [recipient]
     };
 }
 
@@ -115,7 +115,7 @@ function createForAuthor(user: Account, token: string, domain: string) : MailOpt
     return {
         html: emailBody,
         subject: emailSubject,
-        to: recipient
+        to: [recipient]
     };
 }
 
@@ -158,6 +158,6 @@ function createForReviewer(user: Account, token: string, domain: string): MailOp
     return {
         html: emailBody,
         subject: emailSubject,
-        to: recipient
+        to: [recipient]
     };
 }

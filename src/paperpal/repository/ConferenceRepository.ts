@@ -1,5 +1,8 @@
 import DbService from "@app/database/db";
+import Account from "@model/Account";
 import Conference from "@model/Conference";
+import { PaperStatus } from "@model/Paper";
+import { LooseObject } from "@utils/LooseObject";
 import { inject, injectable } from "inversify";
 
 @injectable()
@@ -54,5 +57,32 @@ export default class ConferenceRepository{
         );
         
         return rows[0] as Conference;
+    }
+
+    async getAllEmailFromConference(conferenceId: number) {
+        const { rows } = await this.db.query(
+            `SELECT email FROM account
+            WHERE conferenceid=$1 AND (accounttype='AUTHOR' OR accounttype='REVIEWER') AND accountstatus='ACCEPTED';`,
+            [conferenceId]
+        );
+        return rows as LooseObject[];
+    }
+
+    async getAllAcceptedPaperTitles(conferenceId: number) {
+        const { rows } = await this.db.query(
+            `SELECT title FROM paperconference
+            WHERE conferenceid=$1 AND paperstatus='ACCEPTED';`,
+            [conferenceId]
+        );
+        return rows as LooseObject[];
+    }
+
+    async getAllRejectedPaperTitles(conferenceId: number) {
+        const { rows } = await this.db.query(
+            `SELECT title FROM paperconference
+            WHERE conferenceid=$1 AND paperstatus IN ('REJECTED','TBD');`,
+            [conferenceId]
+        );
+        return rows as LooseObject[];
     }
 }

@@ -48,7 +48,7 @@ export default class ConferenceController{
         return response.toExpressResponse(res);
     }
 
-    @httpGet("/next-phase")
+    @httpGet("/next-phase",)
     async moveToNextPhase(req: Request, res: Response) {
         const response = BaseHttpResponse.success(await this.conferenceService.moveToNextPhase());
         return response.toExpressResponse(res);
@@ -63,6 +63,14 @@ export default class ConferenceController{
     @httpGet("/allocate-papers")
     async allocatePapers(req: Request, res: Response) {
         await this.bidService.allocateAllPapers();
+
+        const response = BaseHttpResponse.success({});
+        return response.toExpressResponse(res);
+    }
+    
+    @httpGet("/send-announcement")
+    async sendAnnouncement(req: Request, res: Response) {
+        await this.conferenceService.sendAnnouncementEmails();
 
         const response = BaseHttpResponse.success({});
         return response.toExpressResponse(res);

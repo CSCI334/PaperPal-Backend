@@ -10,7 +10,9 @@ import AccountRepository from "@repository/AccountRepository";
 import AccountService from "@service/account/AccountService";
 import BidService from "@service/bid/BidService";
 import ConferenceUtils from "@service/conference/ConferenceUtils";
-import { conferenceTimerMap, ConferenceTimers } from "@service/conference/Timeout";
+import { conferenceTimerMap } from "@service/conference/Timeout";
+import EmailService from "@service/email/EmailService";
+import { createAnnouncementEmail } from "@service/email/template/AnnouncementEmail";
 import { epochToDate } from "@utils/utils";
 import { inject, injectable } from "inversify";
 
@@ -21,6 +23,7 @@ export default class ConferenceService {
         @inject(AccountRepository) private readonly accountRepository: AccountRepository,
         @inject(AccountService) private readonly accountService : AccountService,
         @inject(BidService) private readonly bidService: BidService,
+        @inject(EmailService) private readonly emailService: EmailService
     ) {}
         
     async updateConference(conferenceDTO: UpdateConferenceDTO) {
@@ -133,8 +136,8 @@ export default class ConferenceService {
         let announcementTimer = null;
         if(announcementDeadline > 1 && announcementDeadline < MAX_INT) {
             announcementTimer = setTimeout(() => {
-                // TODO: Announce results here
                 console.log(`Sent announcement emails for conference ${conference.conferencename}`);
+                this.sendAnnouncementEmails();
             }, (announcementDeadline));
         }
 
@@ -145,7 +148,6 @@ export default class ConferenceService {
         return conferenceTimerMap[conference.id];
     }
 
-    
     async updateConferenceTimers(conference: Conference) {
         const timers = conferenceTimerMap[conference.id];
         
@@ -154,5 +156,23 @@ export default class ConferenceService {
         else if(timers.announcementTimer) clearTimeout(timers.announcementTimer);
 
         return this.startConferenceTimers(conference);
-    }    
+    }
+
+    async sendAnnouncementEmails() {
+        const conference = await this.conferenceRepository.getLastConference();
+        const emailList = await this.conferenceRepository.getAllEmailFromConference(conference.id);
+        const acceptedPapers = await this.conferenceRepository.getAllAcceptedPaperTitles(conference.id);
+        const rejectedPapers = await this.conferenceRepository.getAllRejectedPaperTitles(conference.id);
+        
+        const recipientList = emailList.map(value => value.email);
+        const acceptedPaperList = acceptedPapers.map(value => value.title);
+        const rejectedPaperList = rejectedPapers.map(value => value.title);
+        
+        this.emailService.send(createAnnouncementEmail(
+            conference,
+            recipientList,
+            acceptedPaperList,
+            rejectedPaperList
+        ));
+    }
 }
