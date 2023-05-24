@@ -33,7 +33,7 @@ export default class PaperRepository{
     async setPaperStatus(paperId: number, status : PaperStatus) {
         const { rows } = await this.db.query(
             `UPDATE paper
-            SET status = $2
+            SET paperstatus = $2
             WHERE id = $1 
             RETURNING *`,
             [paperId, status]
