@@ -37,9 +37,6 @@ accountstatus = []
 conferenceid = []
 
 
-authorAccountId = []
-reviewerAccountId = []
-
 while len(email) < 100:
     fakeEmail = fake.email()
     if fakeEmail not in email:
@@ -59,15 +56,8 @@ accountType.append('ADMIN')
 for i in range(1):
     accountType.append(fake.word(ext_word_list=['CHAIR']))
 
-for i in range(3,100):
-
-    accType = fake.word(ext_word_list=['AUTHOR', 'REVIEWER'])
-    accountType.append(accType)
-
-    if accType == 'AUTHOR':
-        authorAccountId.append(i)
-    else:
-        reviewerAccountId.append(i)
+for i in range(98):
+    accountType.append(fake.word(ext_word_list=['AUTHOR', 'REVIEWER']))
 
 
 for i in range(2):
@@ -87,22 +77,30 @@ for i in range(100):
 
 chairAccountId = []
 
+for i in range(2, 10):
 
-chairAccountId.append(2)
-
-
-
+    chairAccountId.append(i)
 
 
 
+
+
+authorAccountId = []
+
+for i in range (accountType.count('AUTHOR')):
+
+    authorAccountId.append(fake.random_int(min = 11, max = 100))
 
 #reviewer data generation
 bidPoints = []
 paperWorkLoad = []
+reviewerAccountId = []
 
 
-
-
+while len(reviewerAccountId) < (accountType.count('REVIEWER')):
+    reviewerId = fake.random_int(min = 11, max = 100)
+    if reviewerId not in reviewerAccountId:
+        reviewerAccountId.append(reviewerId)
 
 for i in range(accountType.count('REVIEWER')):
     bidPoints.append(fake.random_int(min = 50, max = 100))
@@ -131,7 +129,7 @@ for i in range(100):
 
 for i in range(100):
     locNum = fake.random_int(min = 1, max = 8)
-    fileLocation.append('uploads\\'+ str(locNum) + '.pdf')
+    fileLocation.append('uploads\\'+ str(locNum))
 
 
 
@@ -245,8 +243,7 @@ connection.commit()
 postgres_insert_query = """INSERT INTO account(email, username, hashedPassword, salt, accounttype, accountstatus, conferenceid)
 VALUES (%s, %s, %s, %s, %s, %s, %s)"""
 
-for i in range(99):
-    
+for i in range(100):
     record_to_insert = (email[i], username[i], hashedpassword[i], salt[i], accountType[i], accountstatus[i], conferenceid[i])
     cursor.execute(postgres_insert_query, record_to_insert)
     connection.commit()
