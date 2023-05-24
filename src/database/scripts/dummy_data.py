@@ -37,6 +37,9 @@ accountstatus = []
 conferenceid = []
 
 
+authorAccountId = []
+reviewerAccountId = []
+
 while len(email) < 100:
     fakeEmail = fake.email()
     if fakeEmail not in email:
@@ -56,8 +59,15 @@ accountType.append('ADMIN')
 for i in range(1):
     accountType.append(fake.word(ext_word_list=['CHAIR']))
 
-for i in range(98):
-    accountType.append(fake.word(ext_word_list=['AUTHOR', 'REVIEWER']))
+for i in range(3,100):
+
+    accType = fake.word(ext_word_list=['AUTHOR', 'REVIEWER'])
+    accountType.append(accType)
+
+    if accType == 'AUTHOR':
+        authorAccountId.append(i)
+    else:
+        reviewerAccountId.append(i)
 
 
 for i in range(2):
@@ -77,30 +87,22 @@ for i in range(100):
 
 chairAccountId = []
 
-for i in range(2, 10):
 
-    chairAccountId.append(i)
-
+chairAccountId.append(2)
 
 
 
 
-authorAccountId = []
 
-for i in range (accountType.count('AUTHOR')):
 
-    authorAccountId.append(fake.random_int(min = 11, max = 100))
 
 #reviewer data generation
 bidPoints = []
 paperWorkLoad = []
-reviewerAccountId = []
 
 
-while len(reviewerAccountId) < (accountType.count('REVIEWER')):
-    reviewerId = fake.random_int(min = 11, max = 100)
-    if reviewerId not in reviewerAccountId:
-        reviewerAccountId.append(reviewerId)
+
+
 
 for i in range(accountType.count('REVIEWER')):
     bidPoints.append(fake.random_int(min = 50, max = 100))
@@ -129,7 +131,7 @@ for i in range(100):
 
 for i in range(100):
     locNum = fake.random_int(min = 1, max = 8)
-    fileLocation.append('uploads\\'+ str(locNum))
+    fileLocation.append('uploads\\'+ str(locNum) + '.pdf')
 
 
 
@@ -147,6 +149,7 @@ comment = []
 commentPaperId = []
 commentReviewerId = []
 
+
 for i in range(200):
     comment.append(fake.paragraph(nb_sentences=3))
 
@@ -163,18 +166,21 @@ while len(commentReviewerId) < 200:
 bidAmount = []
 bidsReviewerId = []
 bidsPaperid = []
+bidKeys = set()
 
 for i in range(100):
     bidAmount.append(fake.random_int(min = 0, max = 5))
 
-while len(bidsReviewerId) < 100:
-    
-    bidsReviewerId.append(fake.random_int(min = 1, max = len(reviewerAccountId)))
-
-for i in range (100):
-    bidsPaperid.append(fake.random_int(min = 1, max = 100))
 
 
+while len(bidKeys) < 100:
+    paperId = fake.random_int(min = 1, max = 100)
+    reviewerId = fake.random_int(min = 1, max = len(reviewerAccountId))
+    pair = (paperId, reviewerId)
+    if pair not in bidKeys:
+        bidKeys.add(pair)
+        bidsPaperid.append(paperId)
+        bidsReviewerId.append(reviewerId)
 
 #review data generation
 
@@ -184,6 +190,9 @@ paperRating = []
 reviewRating = []
 reviewPaperId = []
 reviewReviewerId = []
+revKeys = set()
+
+
 
 for i in range(100):
     review.append(fake.paragraph(nb_sentences=3))
@@ -194,12 +203,23 @@ for i in range (100):
 for i in range (100):
     reviewRating.append(fake.random_int(min = 1, max = 10))
 
-for i in range (100):
-    reviewPaperId.append(fake.random_int(min = 1, max = 99))
 
-while len(reviewReviewerId) < 100:
+
+while len(revKeys) < 100:
+    paperId = fake.random_int(min = 1, max = 99)
+    reviewerId = fake.random_int(min = 1, max = len(reviewerAccountId))
+    pair = (paperId, reviewerId)
+    if pair not in revKeys:
+        revKeys.add(pair)
+        reviewPaperId.append(paperId)
+        reviewReviewerId.append(reviewerId)
     
-    reviewReviewerId.append(fake.random_int(min = 1, max = len(reviewerAccountId)))
+        
+  
+
+    
+  
+    
 
 
 
@@ -211,7 +231,7 @@ connection = psycopg2.connect(user="postgres",
                                   password="PASSWORD",
                                   host="localhost",
                                   port="5432",
-                                  database="PaperPal")
+                                  database="PaperPal3")
 
 postgres_insert_query = """INSERT INTO conference(conferencename, conferencelocation, submissionDeadline, biddingDeadline, reviewDeadline, announcementTime)
 VALUES (%s, %s, %s, %s, %s, %s)"""
@@ -225,7 +245,8 @@ connection.commit()
 postgres_insert_query = """INSERT INTO account(email, username, hashedPassword, salt, accounttype, accountstatus, conferenceid)
 VALUES (%s, %s, %s, %s, %s, %s, %s)"""
 
-for i in range(100):
+for i in range(99):
+    
     record_to_insert = (email[i], username[i], hashedpassword[i], salt[i], accountType[i], accountstatus[i], conferenceid[i])
     cursor.execute(postgres_insert_query, record_to_insert)
     connection.commit()
