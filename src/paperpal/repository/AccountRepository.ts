@@ -9,7 +9,9 @@ import { inject, injectable } from "inversify";
 
 @injectable()
 export default class AccountRepository {
-    constructor(@inject(DbService) private readonly db: DbService) {}
+    constructor(
+        @inject(DbService) private readonly db: DbService
+    ) {}
     
     async insertUser(account: Partial<Account>) {
         const errorMap: PgErrorMap = new Map([

@@ -59,7 +59,8 @@ export default class PaperController {
         Authenticate.for("CHAIR"), 
         PhaseContext.isCurrently(ConferencePhase.Judgment),
         ValidatePhase,
-        ValidateRequest.using(PaperDTO.paperStatusValidator()))
+        ValidateRequest.using(PaperDTO.paperStatusValidator())
+    )
     async judgePaper(@requestParam("paperId") paperId: number, req: Request, res: Response) {
         const data = this.paperService.judgePaper(paperId, res.locals.conferenceId, req.body.paperStatus);
 

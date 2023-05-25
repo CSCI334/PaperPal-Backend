@@ -1,4 +1,3 @@
-import { EmailConfig } from "@config/EmailConfig";
 import { LooseObject } from "@utils/LooseObject";
 import { interfaces } from "inversify";
 
