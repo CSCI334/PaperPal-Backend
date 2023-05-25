@@ -50,7 +50,7 @@ export default class ReviewController{
 
     @httpPost("/review/rating", Authenticate.for("AUTHOR"), ValidateRequest.using(ReviewRatingDTO.validator()))
     async addRatingOfReview(req: Request, res: Response) {
-        const data = await this.reviewService.addRatingOfReview(res.locals.accountId, req.body as ReviewRatingDTO);
+        const data = await this.reviewService.addRatingOfReview(req.body as ReviewRatingDTO);
         
         const response = BaseHttpResponse.success(data);
         return response.toExpressResponse(res);

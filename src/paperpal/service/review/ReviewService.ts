@@ -78,9 +78,8 @@ export default class ReviewService {
         return data;
     }
     
-    async addRatingOfReview(accountId : number, ratingDTO : ReviewRatingDTO){
-        const reviewer = await this.accountRepository.getAuthorByAccountId(accountId);
-        const data = await this.reviewRepository.setReviewRating(reviewer.id, ratingDTO.reviewId, ratingDTO.rating);
+    async addRatingOfReview(ratingDTO : ReviewRatingDTO){
+        const data = await this.reviewRepository.setReviewRating(ratingDTO.reviewId, ratingDTO.rating);
         return data;
     }
 }
