@@ -49,7 +49,8 @@ export default class ConferenceService {
     
     async getConferenceInfo() {
         const conference: Conference = await this.conferenceRepository.getLastConference();
-        return await this.accountRepository.getConferenceInfo(conference.id);
+        if(conference) return await this.accountRepository.getConferenceInfo(conference.id);
+        return {};
     }
 
     async createConference(conferenceDTO : CreateConferenceDTO) {
