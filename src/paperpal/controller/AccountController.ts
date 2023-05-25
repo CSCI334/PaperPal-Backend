@@ -75,10 +75,4 @@ export default class AccountController {
         return response.toExpressResponse(res);
     }
 
-    // Doesn't do anything for now
-    @httpPost("/contact/email", Authenticate.for("ADMIN"))
-    async sendEmailToReviewer(req: Request, res: Response) {
-        const response = BaseHttpResponse.success({});
-        return response.toExpressResponse(res);
-    }
 }

@@ -31,7 +31,7 @@ export default class PaperService {
         @inject(ConferenceRepository) private readonly conferenceRepository: ConferenceRepository,
     ) {}
         
-    private getStrategy(accountType : AccountType) {
+    private getStrategy(accountType : AccountType): PaperStrategy {
         if(accountType === "AUTHOR")
             return this.authorPaperStrategy;
         else if(accountType === "REVIEWER")
@@ -41,7 +41,7 @@ export default class PaperService {
         throw new NotAuthenticatedException("Unknown user type");
     }
 
-    async getPaperFileLocation(accountId: number, paperId : number) {
+    async getPaperFile(accountId: number, paperId : number) {
         const user = await this.accountService.getUser(accountId);
         const strategy : PaperStrategy = this.getStrategy(user.accounttype);
         const lastConference = await this.conferenceRepository.getLastConference();

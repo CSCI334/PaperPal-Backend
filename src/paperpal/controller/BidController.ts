@@ -13,7 +13,8 @@ import ValidatePhase from "@app/middleware/phase/ValidatePhase";
 
 @controller("")
 export default class BidController {
-    constructor(@inject(BidService) private readonly bidService: BidService) {}
+    constructor(@inject(BidService) private readonly bidService: BidService
+    ) {}
 
     @httpGet("/workload", 
         Authenticate.for("REVIEWER"), 

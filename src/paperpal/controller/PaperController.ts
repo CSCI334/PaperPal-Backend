@@ -14,8 +14,8 @@ import { TokenData } from "@app/paperpal/types/TokenData";
 import { upload } from "@app/middleware/PaperUpload";
 import { ROOT_DIR } from "@app/constants/AppConstants";
 import PhaseContext from "@app/middleware/phase/PhaseContext";
-import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
 import ValidatePhase from "@app/middleware/phase/ValidatePhase";
+import { ConferencePhase } from "@app/paperpal/types/ConferencePhase";
 import { STATUS_CODE } from "@app/constants/HttpConstants";
 
 @controller("/paper")
@@ -48,20 +48,11 @@ export default class PaperController {
 
     @httpGet("/:paperId", Authenticate.any())
     async getPaperFile(@requestParam("paperId") paperId: number, req: Request, res: Response) {
-        const fileLocation = await this.paperService.getPaperFileLocation(res.locals.accountId, paperId);
+        const fileLocation = await this.paperService.getPaperFile(res.locals.accountId, paperId);
         const file = fs.readFileSync(path.resolve(ROOT_DIR, fileLocation) );
         
         res.type("pdf");
         return res.status(STATUS_CODE.OK).send(file);
-    }
-
-    // Idk why i have this endpoint
-    @httpGet("/author", Authenticate.for("AUTHOR"))
-    async getPaperByAuthorId(req: Request, res: Response) {
-        const data = this.paperService.getAllPapers(res.locals.accountId);
-        
-        const response = BaseHttpResponse.success(data);
-        return response.toExpressResponse(res);
     }
 
     @httpPost("/judge/:paperId", 

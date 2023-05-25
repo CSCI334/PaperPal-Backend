@@ -5,7 +5,6 @@ import ForbiddenException from "@exception/ForbiddenException";
 import NotFoundException from "@exception/NotFoundException";
 import Account from "@model/Account";
 import Comment from "@model/Comment";
-import AccountService from "@service/account/AccountService";
 import ReviewStrategy from "@service/review/interfaces/ReviewStrategy";
 import { inject, injectable } from "inversify";
 @injectable()

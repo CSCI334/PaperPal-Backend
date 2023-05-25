@@ -14,7 +14,7 @@ import { createVerificationEmail } from "@service/email/template/VerificationEma
 import { inject, injectable } from "inversify";
 
 @injectable()
-export default class AuthService {
+export default class AccountService {
     constructor(
         @inject(AccountRepository) private readonly accountRepository: AccountRepository,
         @inject(ConferenceRepository) private readonly conferenceRepository : ConferenceRepository,
