@@ -61,7 +61,7 @@ export default class ReviewRepository{
     async setReviewRating(reviewId: number, rating: number) {
         const { rows } = await this.db.query(
             `UPDATE review
-            SET reviewrating=$3
+            SET reviewrating=$2
             WHERE id=$1
             RETURNING *`,
             [reviewId, rating]
